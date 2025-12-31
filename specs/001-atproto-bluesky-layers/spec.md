@@ -67,16 +67,17 @@
 
 ### Functional Requirements
 
-- **FR-001**: ライブラリはAtProtocol層とBluesky層の2つの独立したモジュールで構成されなければならない
+- **FR-001**: ライブラリはAtProtocol層とBluesky層の2つの独立したNuGetパッケージ（BlueBlaze.AtProtocol、BlueBlaze.Bluesky）で構成されなければならない。BlueBlaze.BlueskyはBlueBlaze.AtProtocolに依存する
 - **FR-002**: AtProtocol層は、XRPC呼び出し、DID解決、Lexiconスキーマ処理の機能を提供しなければならない
 - **FR-003**: AtProtocol層は、Bluesky層に依存せず、単独で動作可能でなければならない
 - **FR-004**: Bluesky層は、AtProtocol層の上に構築され、app.bsky.* Lexiconの操作を提供しなければならない
 - **FR-005**: Bluesky層は、投稿作成・取得・削除、プロフィール管理、フォロー機能をサポートしなければならない
 - **FR-006**: 両層は、明確に定義されたインターフェースで分離され、独立してテスト可能でなければならない
 - **FR-007**: AtProtocol層は、将来の他のAtProtocolアプリケーション（Bluesky以外）でも再利用可能でなければならない
-- **FR-008**: 各層は、適切なエラー処理とロギングを提供しなければならない
-- **FR-009**: Lexiconスキーマのバリデーションは、AtProtocol層で実装されなければならない
-- **FR-010**: 認証とセッション管理は、AtProtocol層で実装され、Bluesky層から利用されなければならない
+- **FR-008**: 各層は、構造化されたエラー処理とロギングを提供しなければならない。エラーには、標準化されたエラーコード、明確なメッセージ、リトライ可否フラグ、詳細情報を含む。明確な例外階層（AtProtocolException基底クラス、認証・ネットワーク・バリデーション等の派生クラス）を定義し、一時的な障害に対する自動リトライロジックを実装する
+- **FR-009**: Lexiconスキーマのバリデーションは、AtProtocol層で実装されなければならない。Source Generatorを使用してLexicon定義（JSON Schema形式）からC#クラスをコンパイル時に生成し、型安全性を保証する。ランタイムバリデーションは、外部データの整合性検証と詳細なエラー報告に使用する
+- **FR-010**: 認証とセッション管理は、AtProtocol層で抽象化されたインターフェースとして実装され、Bluesky層から利用されなければならない。初期実装としてApp PasswordsとOAuth 2.0 + DPoP + PKCEの両方をサポートし、将来の認証方式の追加が容易な設計とする
+- **FR-011**: ライブラリは.NET（C#）で実装されなければならない。他言語バインディングは初期スコープ外とする
 
 ### Key Entities
 
@@ -84,7 +85,15 @@
 - **BlueskyClient**: Bluesky固有の操作を提供。AtProtocolClientを内部で使用。投稿、プロフィール、フォロー機能を含む
 - **XRPCRequest/Response**: AtProtocolのXRPCメッセージを表現
 - **DIDDocument**: DID解決の結果を表現
-- **LexiconSchema**: Lexiconスキーマ定義とバリデーションロジック
+- **LexiconSchema**: Lexiconスキーマ定義（JSON Schema形式）とバリデーションロジック
+- **LexiconSourceGenerator**: Lexicon定義からC#クラスを生成するSource Generator（ビルド時実行）
+- **GeneratedLexiconTypes**: Source Generatorが生成する型安全なC#クラス（各Lexiconスキーマに対応）
+- **AuthenticationProvider**: 抽象化された認証インターフェース（AtProtocol層）。複数の認証方式を統一的に扱う
+- **AppPasswordAuth / OAuthDPoPAuth**: AuthenticationProviderの具体実装（App Passwords方式、OAuth 2.0 + DPoP + PKCE方式）
+- **Session**: 認証後のセッション情報とトークン管理を表現
+- **AtProtocolException**: 例外階層の基底クラス。エラーコード、メッセージ、リトライ可否、詳細情報を含む
+- **AuthenticationException / NetworkException / ValidationException / RateLimitException**: 特定のエラー状況を表現する派生例外クラス
+- **RetryPolicy**: 自動リトライのロジックと設定を管理
 - **Post/Profile/Follow**: Bluesky Lexiconのエンティティ（Bluesky層のみ）
 
 ## Success Criteria *(mandatory)*
@@ -93,9 +102,9 @@
 
 - **SC-001**: 開発者が20行以下のコードでAtProtocol層を使用して任意のXRPCリクエストを送信できる
 - **SC-002**: 開発者が30行以下のコードでBluesky層を使用して投稿を作成・取得・削除できる
-- **SC-003**: AtProtocol層とBluesky層のコードベースが明確に分離され、互いに独立してビルド・テスト可能である
+- **SC-003**: BlueBlaze.AtProtocolとBlueBlaze.BlueskyのNuGetパッケージが互いに独立してビルド・テスト可能である（BlueBlaze.AtProtocolはBluesky層に依存しない）
 - **SC-004**: 開発者が新しいAtProtocolアプリケーションのクライアントを、AtProtocol層を再利用して50行以下で実装できる
-- **SC-005**: すべてのLexicon操作が、スキーマバリデーションを通過し、型安全性が保証される
+- **SC-005**: すべてのLexicon操作が、Source Generatorによって生成された型を使用し、コンパイル時型チェックとランタイムスキーマバリデーションの両方を通過する。不正な型の操作はコンパイルエラーとなる
 - **SC-006**: 両層のAPI操作が通常の条件下で2秒以内に完了する
 - **SC-007**: ライブラリが少なくとも2つの異なるAtProtocolアプリケーション（Blueskyを含む）で再利用される
 
@@ -106,5 +115,14 @@
 - 開発者は分離されたアーキテクチャの利点を理解している（関心の分離、再利用性）
 - ネットワーク接続は比較的安定している
 - Lexiconスキーマは適切にバージョン管理されている
-- 両層は同じプログラミング環境で動作する
 - パフォーマンス要件は標準的なWebアプリケーションの期待値に基づく（レスポンスタイム2秒以内）
+
+## Clarifications
+
+### Session 2026-01-01
+
+- Q: プログラミング言語・ランタイムの技術制約は？ → A: .NET（C#）のみ、他言語バインディングは将来検討
+- Q: モジュール分離の物理的構造は？ → A: 別々のNuGetパッケージ（BlueBlaze.AtProtocol、BlueBlaze.Bluesky）、Blueskyは前者に依存
+- Q: 認証とセッション管理の方式は？ → A: 両方サポート（App Passwords、OAuth 2.0 + DPoP + PKCE）、抽象化し拡張可能なプロトコル設計とする
+- Q: エラー処理の具体的な基準は？ → A: 構造化エラー（エラーコード、メッセージ、リトライ可否、詳細）+ 明確な例外階層 + 自動リトライ
+- Q: Lexiconスキーマバリデーションの実装方式は？ → A: Source Generatorによる静的型生成（Lexicon定義からC#クラス生成）+ ランタイムバリデーション
