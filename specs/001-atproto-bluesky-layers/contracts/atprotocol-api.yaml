@@ -1,0 +1,396 @@
+openapi: 3.1.0
+info:
+  title: BlueBlaze.AtProtocol Client API
+  version: 1.0.0
+  description: |
+    AtProtocol層のクライアントAPI契約定義。
+    このAPIは.NETクライアントライブラリとして提供され、AtProtocolサーバー（PDS）との通信を抽象化します。
+
+servers:
+  - url: https://bsky.social
+    description: 公式Bluesky PDS（例）
+  - url: https://{custom-pds}
+    description: カスタムPDS
+    variables:
+      custom-pds:
+        default: example.com
+
+paths:
+  # 認証関連
+  /xrpc/com.atproto.server.createSession:
+    post:
+      summary: App Passwordsによるセッション作成
+      operationId: createSession
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - identifier
+                - password
+              properties:
+                identifier:
+                  type: string
+                  description: ハンドルまたはDID
+                  example: alice.bsky.social
+                password:
+                  type: string
+                  format: password
+                  description: アプリパスワード
+                  minLength: 16
+      responses:
+        '200':
+          description: セッション作成成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+        '401':
+          description: 認証失敗
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /xrpc/com.atproto.server.refreshSession:
+    post:
+      summary: セッショントークンのリフレッシュ
+      operationId: refreshSession
+      tags:
+        - Authentication
+      security:
+        - refreshToken: []
+      responses:
+        '200':
+          description: リフレッシュ成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+        '401':
+          description: リフレッシュトークン無効
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /xrpc/com.atproto.server.getSession:
+    get:
+      summary: 現在のセッション情報取得
+      operationId: getSession
+      tags:
+        - Authentication
+      security:
+        - accessToken: []
+      responses:
+        '200':
+          description: セッション情報
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionInfo'
+        '401':
+          description: 未認証
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # DID解決（外部エンドポイント）
+  https://plc.directory/{did}:
+    get:
+      summary: did:plc DIDドキュメント解決
+      operationId: resolvePlcDid
+      tags:
+        - DID Resolution
+      parameters:
+        - name: did
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: ^did:plc:[a-z0-9]+$
+          example: did:plc:abc123xyz
+      responses:
+        '200':
+          description: DIDドキュメント
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DIDDocument'
+        '404':
+          description: DID not found
+
+  /.well-known/did.json:
+    get:
+      summary: did:web DIDドキュメント解決
+      operationId: resolveWebDid
+      tags:
+        - DID Resolution
+      responses:
+        '200':
+          description: DIDドキュメント
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DIDDocument'
+
+  # XRPC汎用エンドポイント（クライアント側で動的構築）
+  /xrpc/{nsid}:
+    get:
+      summary: 汎用XRPCクエリ（GET）
+      operationId: xrpcQuery
+      tags:
+        - XRPC
+      parameters:
+        - name: nsid
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: ^[a-z][a-z0-9-]*(\.[a-z0-9-]+)+$
+          description: Lexicon NSID
+          example: app.bsky.feed.getTimeline
+      security:
+        - accessToken: []
+      responses:
+        '200':
+          description: 成功（レスポンス型はNSIDにより異なる）
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+
+    post:
+      summary: 汎用XRPCプロシージャ（POST）
+      operationId: xrpcProcedure
+      tags:
+        - XRPC
+      parameters:
+        - name: nsid
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Lexicon NSID
+          example: app.bsky.feed.post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: リクエストボディ（NSIDにより異なる）
+      security:
+        - accessToken: []
+        - dpopToken: []
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+
+components:
+  schemas:
+    Session:
+      type: object
+      required:
+        - did
+        - handle
+        - accessJwt
+        - refreshJwt
+      properties:
+        did:
+          type: string
+          pattern: ^did:(plc|web):.+$
+          example: did:plc:abc123xyz
+        handle:
+          type: string
+          example: alice.bsky.social
+        accessJwt:
+          type: string
+          format: jwt
+          description: アクセストークン（有効期限: 通常2時間）
+        refreshJwt:
+          type: string
+          format: jwt
+          description: リフレッシュトークン（有効期限: 通常90日）
+        email:
+          type: string
+          format: email
+          description: メールアドレス（オプション）
+
+    SessionInfo:
+      type: object
+      required:
+        - did
+        - handle
+      properties:
+        did:
+          type: string
+        handle:
+          type: string
+
+    DIDDocument:
+      type: object
+      required:
+        - id
+        - alsoKnownAs
+        - verificationMethod
+        - service
+      properties:
+        id:
+          type: string
+          pattern: ^did:(plc|web):.+$
+          example: did:plc:abc123xyz
+        alsoKnownAs:
+          type: array
+          items:
+            type: string
+          example:
+            - at://alice.bsky.social
+        verificationMethod:
+          type: array
+          items:
+            type: object
+            required:
+              - id
+              - type
+              - controller
+              - publicKeyMultibase
+            properties:
+              id:
+                type: string
+                example: "#atproto"
+              type:
+                type: string
+                example: Multikey
+              controller:
+                type: string
+              publicKeyMultibase:
+                type: string
+        service:
+          type: array
+          items:
+            type: object
+            required:
+              - id
+              - type
+              - serviceEndpoint
+            properties:
+              id:
+                type: string
+                example: "#atproto_pds"
+              type:
+                type: string
+                example: AtprotoPersonalDataServer
+              serviceEndpoint:
+                type: string
+                format: uri
+                example: https://bsky.social
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+        - message
+      properties:
+        error:
+          type: string
+          description: エラーコード
+          enum:
+            - InvalidRequest
+            - InvalidToken
+            - ExpiredToken
+            - AuthRequired
+            - RateLimitExceeded
+            - ServiceUnavailable
+          example: InvalidToken
+        message:
+          type: string
+          description: 人間可読なエラーメッセージ
+          example: The access token has expired
+
+  responses:
+    BadRequest:
+      description: 不正なリクエスト
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    Unauthorized:
+      description: 未認証または認証失敗
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    RateLimited:
+      description: レート制限超過
+      headers:
+        RateLimit-Limit:
+          schema:
+            type: integer
+          description: レート制限の上限
+        RateLimit-Remaining:
+          schema:
+            type: integer
+          description: 残り回数
+        RateLimit-Reset:
+          schema:
+            type: integer
+          description: リセット時刻（Unixタイムスタンプ）
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+  securitySchemes:
+    accessToken:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: アクセストークン（Authorization: Bearer ヘッダー）
+
+    refreshToken:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: リフレッシュトークン（Authorizationヘッダー）
+
+    dpopToken:
+      type: apiKey
+      in: header
+      name: DPoP
+      description: DPoP Proof（OAuth 2.1 + DPoP使用時）
+
+tags:
+  - name: Authentication
+    description: 認証・セッション管理
+  - name: DID Resolution
+    description: DID解決
+  - name: XRPC
+    description: 汎用XRPCエンドポイント
+
+externalDocs:
+  description: AtProtocol公式仕様
+  url: https://atproto.com/specs/xrpc

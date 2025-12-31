@@ -1,0 +1,612 @@
+openapi: 3.1.0
+info:
+  title: BlueBlaze.Bluesky Client API
+  version: 1.0.0
+  description: |
+    Bluesky層のクライアントAPI契約定義。
+    このAPIはBlueBlaze.AtProtocolの上に構築され、Bluesky固有のLexicon操作を提供します。
+
+servers:
+  - url: https://bsky.social
+    description: 公式Bluesky PDS
+
+paths:
+  # 投稿操作
+  /xrpc/app.bsky.feed.post:
+    post:
+      summary: 投稿作成
+      operationId: createPost
+      tags:
+        - Posts
+      security:
+        - accessToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePostInput'
+      responses:
+        '200':
+          description: 投稿作成成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreatePostOutput'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /xrpc/app.bsky.feed.getPostThread:
+    get:
+      summary: 投稿とスレッド取得
+      operationId: getPostThread
+      tags:
+        - Posts
+      parameters:
+        - name: uri
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uri
+            pattern: ^at://
+          description: 投稿URI
+          example: at://did:plc:abc123/app.bsky.feed.post/xyz789
+      security:
+        - accessToken: []
+      responses:
+        '200':
+          description: 投稿スレッド
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostThread'
+        '404':
+          description: 投稿が見つからない
+
+  /xrpc/com.atproto.repo.deleteRecord:
+    post:
+      summary: レコード削除（投稿削除に使用）
+      operationId: deleteRecord
+      tags:
+        - Posts
+      security:
+        - accessToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - repo
+                - collection
+                - rkey
+              properties:
+                repo:
+                  type: string
+                  description: リポジトリDID
+                collection:
+                  type: string
+                  description: コレクション名
+                  example: app.bsky.feed.post
+                rkey:
+                  type: string
+                  description: レコードキー
+      responses:
+        '200':
+          description: 削除成功
+        '404':
+          description: レコードが見つからない
+
+  # プロフィール操作
+  /xrpc/app.bsky.actor.getProfile:
+    get:
+      summary: プロフィール取得
+      operationId: getProfile
+      tags:
+        - Profiles
+      parameters:
+        - name: actor
+          in: query
+          required: true
+          schema:
+            type: string
+          description: ハンドルまたはDID
+          example: alice.bsky.social
+      security:
+        - accessToken: []
+      responses:
+        '200':
+          description: プロフィール情報
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileView'
+        '404':
+          description: ユーザーが見つからない
+
+  /xrpc/com.atproto.repo.putRecord:
+    post:
+      summary: プロフィール更新
+      operationId: updateProfile
+      tags:
+        - Profiles
+      security:
+        - accessToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - repo
+                - collection
+                - rkey
+                - record
+              properties:
+                repo:
+                  type: string
+                  description: 自分のDID
+                collection:
+                  type: string
+                  enum:
+                    - app.bsky.actor.profile
+                rkey:
+                  type: string
+                  enum:
+                    - self
+                record:
+                  $ref: '#/components/schemas/Profile'
+      responses:
+        '200':
+          description: 更新成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  uri:
+                    type: string
+                  cid:
+                    type: string
+
+  # フォロー操作
+  /xrpc/app.bsky.graph.follow:
+    post:
+      summary: フォロー
+      operationId: follow
+      tags:
+        - Follows
+      security:
+        - accessToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateFollowInput'
+      responses:
+        '200':
+          description: フォロー成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  uri:
+                    type: string
+                    description: フォローレコードURI
+                  cid:
+                    type: string
+
+  /xrpc/app.bsky.graph.getFollows:
+    get:
+      summary: フォローリスト取得
+      operationId: getFollows
+      tags:
+        - Follows
+      parameters:
+        - name: actor
+          in: query
+          required: true
+          schema:
+            type: string
+          description: ハンドルまたはDID
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 50
+        - name: cursor
+          in: query
+          schema:
+            type: string
+          description: ページネーションカーソル
+      security:
+        - accessToken: []
+      responses:
+        '200':
+          description: フォローリスト
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  follows:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProfileView'
+                  cursor:
+                    type: string
+
+  /xrpc/app.bsky.graph.getFollowers:
+    get:
+      summary: フォロワーリスト取得
+      operationId: getFollowers
+      tags:
+        - Follows
+      parameters:
+        - name: actor
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 50
+        - name: cursor
+          in: query
+          schema:
+            type: string
+      security:
+        - accessToken: []
+      responses:
+        '200':
+          description: フォロワーリスト
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  followers:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProfileView'
+                  cursor:
+                    type: string
+
+components:
+  schemas:
+    # 投稿関連
+    CreatePostInput:
+      type: object
+      required:
+        - repo
+        - collection
+        - record
+      properties:
+        repo:
+          type: string
+          description: リポジトリDID（自分のDID）
+        collection:
+          type: string
+          enum:
+            - app.bsky.feed.post
+        record:
+          $ref: '#/components/schemas/Post'
+
+    Post:
+      type: object
+      required:
+        - text
+        - createdAt
+      properties:
+        $type:
+          type: string
+          enum:
+            - app.bsky.feed.post
+        text:
+          type: string
+          minLength: 1
+          maxLength: 300
+          description: 投稿テキスト
+          example: Hello Bluesky!
+        createdAt:
+          type: string
+          format: date-time
+          description: 投稿作成日時（ISO 8601）
+          example: "2026-01-01T00:00:00Z"
+        embed:
+          type: object
+          description: 埋め込みコンテンツ（画像、リンク等）
+        facets:
+          type: array
+          description: テキストアノテーション（メンション、リンク等）
+          items:
+            $ref: '#/components/schemas/Facet'
+        langs:
+          type: array
+          description: 言語コード（ISO 639-1）
+          items:
+            type: string
+            pattern: ^[a-z]{2}$
+          example:
+            - ja
+            - en
+
+    Facet:
+      type: object
+      required:
+        - index
+        - features
+      properties:
+        index:
+          type: object
+          required:
+            - byteStart
+            - byteEnd
+          properties:
+            byteStart:
+              type: integer
+              description: 開始バイト位置
+            byteEnd:
+              type: integer
+              description: 終了バイト位置
+        features:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/FacetMention'
+              - $ref: '#/components/schemas/FacetLink'
+
+    FacetMention:
+      type: object
+      required:
+        - $type
+        - did
+      properties:
+        $type:
+          type: string
+          enum:
+            - app.bsky.richtext.facet#mention
+        did:
+          type: string
+
+    FacetLink:
+      type: object
+      required:
+        - $type
+        - uri
+      properties:
+        $type:
+          type: string
+          enum:
+            - app.bsky.richtext.facet#link
+        uri:
+          type: string
+          format: uri
+
+    CreatePostOutput:
+      type: object
+      required:
+        - uri
+        - cid
+      properties:
+        uri:
+          type: string
+          description: 投稿URI
+          example: at://did:plc:abc123/app.bsky.feed.post/xyz789
+        cid:
+          type: string
+          description: コンテンツID（IPFS CID）
+
+    PostThread:
+      type: object
+      properties:
+        thread:
+          $ref: '#/components/schemas/ThreadViewPost'
+
+    ThreadViewPost:
+      type: object
+      properties:
+        post:
+          $ref: '#/components/schemas/PostView'
+        parent:
+          $ref: '#/components/schemas/ThreadViewPost'
+        replies:
+          type: array
+          items:
+            $ref: '#/components/schemas/ThreadViewPost'
+
+    PostView:
+      type: object
+      properties:
+        uri:
+          type: string
+        cid:
+          type: string
+        author:
+          $ref: '#/components/schemas/ProfileView'
+        record:
+          $ref: '#/components/schemas/Post'
+        indexedAt:
+          type: string
+          format: date-time
+
+    # プロフィール関連
+    Profile:
+      type: object
+      properties:
+        $type:
+          type: string
+          enum:
+            - app.bsky.actor.profile
+        displayName:
+          type: string
+          maxLength: 64
+          description: 表示名
+          example: Alice
+        description:
+          type: string
+          maxLength: 256
+          description: 自己紹介
+          example: Software Developer
+        avatar:
+          $ref: '#/components/schemas/Blob'
+        banner:
+          $ref: '#/components/schemas/Blob'
+
+    ProfileView:
+      type: object
+      required:
+        - did
+        - handle
+      properties:
+        did:
+          type: string
+        handle:
+          type: string
+        displayName:
+          type: string
+        description:
+          type: string
+        avatar:
+          type: string
+          format: uri
+          description: アバター画像URL
+        followersCount:
+          type: integer
+        followsCount:
+          type: integer
+        postsCount:
+          type: integer
+
+    Blob:
+      type: object
+      required:
+        - $type
+        - ref
+        - mimeType
+        - size
+      properties:
+        $type:
+          type: string
+          enum:
+            - blob
+        ref:
+          type: object
+          properties:
+            $link:
+              type: string
+              description: IPFS CID
+        mimeType:
+          type: string
+          enum:
+            - image/png
+            - image/jpeg
+            - image/webp
+        size:
+          type: integer
+          description: バイトサイズ
+
+    # フォロー関連
+    CreateFollowInput:
+      type: object
+      required:
+        - repo
+        - collection
+        - record
+      properties:
+        repo:
+          type: string
+          description: 自分のDID
+        collection:
+          type: string
+          enum:
+            - app.bsky.graph.follow
+        record:
+          $ref: '#/components/schemas/Follow'
+
+    Follow:
+      type: object
+      required:
+        - subject
+        - createdAt
+      properties:
+        $type:
+          type: string
+          enum:
+            - app.bsky.graph.follow
+        subject:
+          type: string
+          description: フォロー対象のDID
+          pattern: ^did:(plc|web):.+$
+        createdAt:
+          type: string
+          format: date-time
+
+  responses:
+    ValidationError:
+      description: バリデーションエラー
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - error
+              - message
+            properties:
+              error:
+                type: string
+                enum:
+                  - InvalidRequest
+              message:
+                type: string
+              fieldErrors:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    type: string
+
+    Unauthorized:
+      description: 未認証
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                enum:
+                  - AuthRequired
+              message:
+                type: string
+
+  securitySchemes:
+    accessToken:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+tags:
+  - name: Posts
+    description: 投稿操作（作成・取得・削除）
+  - name: Profiles
+    description: プロフィール管理
+  - name: Follows
+    description: フォロー関係管理
+
+externalDocs:
+  description: Bluesky Lexicon仕様
+  url: https://github.com/bluesky-social/atproto/tree/main/lexicons/app/bsky
