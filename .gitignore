@@ -1,0 +1,16 @@
+/artifacts/
+bin/
+obj/
+TestResults/
+
+launchSettings.json
+
+*.user
+
+*.log
+*.binlog
+
+.vs/
+.claude/settings.local.json
+
+Temp/
