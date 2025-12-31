@@ -1,0 +1,73 @@
+{
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": "."
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/dotnet:2": {
+      "version": "10.0.100"
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers/features/powershell:1": {},
+    "ghcr.io/devcontainers/features/node:1": {},
+    "ghcr.io/devcontainers/features/python:1": {
+      "installTools": false,
+      "optimize": true
+    },
+    "ghcr.io/jsburckhardt/devcontainer-features/uv:1": {},
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+    "ghcr.io/stuartleeks/dev-container-features/shell-history:0": {}
+  },
+  "remoteUser": "vscode",
+  "containerEnv": {
+    "TZ": "Asia/Tokyo",
+    "CLAUDE_CONFIG_DIR": "/home/vscode/.claude"
+  },
+  "postCreateCommand": "chmod +x .devcontainer/postCreate.sh && .devcontainer/postCreate.sh",
+  "mounts": [
+    {
+      "type": "volume",
+      "source": "claude-code-bashhistory-${devcontainerId}",
+      "target": "/commandhistory"
+    },
+    {
+      "type": "volume",
+      "source": "claude-code-config-${devcontainerId}",
+      "target": "/home/vscode/.claude"
+    },
+    {
+      "type": "bind",
+      "source": "${localEnv:USERPROFILE}/.claude/CLAUDE.md",
+      "target": "/home/vscode/.claude/CLAUDE.md"
+    }
+  ],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "Anthropic.claude-code",
+        "EditorConfig.EditorConfig",
+        "GitHub.codespaces",
+        "GitHub.copilot-chat",
+        "eamodio.gitlens",
+        "ms-dotnettools.csdevkit",
+        "-dbaeumer.vscode-eslint",
+        "-ms-python.python",
+        "-ms-python.vscode-pylance",
+        "-ms-python.autopep8"
+      ],
+      "settings": {
+        "chat.promptFilesRecommendations": {
+          "speckit.constitution": true,
+          "speckit.specify": true,
+          "speckit.plan": true,
+          "speckit.tasks": true,
+          "speckit.implement": true
+        },
+        "chat.tools.terminal.autoApprove": {
+          ".specify/scripts/bash/": true,
+          ".specify/scripts/powershell/": true
+        }
+      }
+    }
+  }
+}
