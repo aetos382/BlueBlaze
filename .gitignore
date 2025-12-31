@@ -11,6 +11,6 @@ launchSettings.json
 *.binlog
 
 .vs/
-.claude/settings.local.json
+.claude/
 
 Temp/
