@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/Analyzers/">
+    <Project Path="Analyzers/BlueBlaze.SourceGenerator/BlueBlaze.SourceGenerator.csproj" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="Tests/BlueBlaze.SourceGenerator.TestConsole/BlueBlaze.SourceGenerator.TestConsole.csproj" Id="70fe2ca6-77b0-4354-99fd-5a0a8e15dc8d" />
+    <Project Path="Tests/BlueBlaze.SourceGenerator.Tests/BlueBlaze.SourceGenerator.Tests.csproj" Id="a821202f-73c5-4a68-96f2-83b343efa79f" />
+  </Folder>
+</Solution>

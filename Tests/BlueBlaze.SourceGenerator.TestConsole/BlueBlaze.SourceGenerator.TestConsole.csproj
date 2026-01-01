@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="../../Analyzers/BlueBlaze.SourceGenerator/build/BlueBlaze.SourceGenerator.props" />
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Analyzers\BlueBlaze.SourceGenerator\BlueBlaze.SourceGenerator.csproj">
+      <OutputItemType>analyzer</OutputItemType>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+  </ItemGroup>
+
+  <Import Project="../../Analyzers/BlueBlaze.SourceGenerator/build/BlueBlaze.SourceGenerator.targets" />
+
+</Project>

@@ -17,4 +17,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Polyfills\**\*.cs" LinkBase="Polyfills" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Using Remove="TUnit.*" />
+  </ItemGroup>
+
 </Project>
