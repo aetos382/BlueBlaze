@@ -2,6 +2,13 @@
   "private": true,
   "devDependencies": {
     "@anthropic-ai/claude-code": "^2.1.152",
-    "@devcontainers/cli": "^0.87.0"
+    "@devcontainers/cli": "^0.87.0",
+    "lint-staged": "^17.0.5"
+  },
+  "lint-staged": {
+    "*.cs": [
+      "dotnet format whitespace --verify-no-changes",
+      "dotnet format style --verify-no-changes"
+    ]
   }
 }
