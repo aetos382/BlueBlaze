@@ -40,7 +40,14 @@
   "customizations": {
     "vscode": {
       "extensions": [
-        "-dbaeumer.vscode-eslint"
+        "-dbaeumer.vscode-eslint",
+        "Anthropic.claude-code",
+        "docker.docker",
+        "eamodio.gitlens",
+        "EditorConfig.EditorConfig",
+        "github.vscode-github-actions",
+        "GitHub.vscode-pull-request-github",
+        "ms-dotnettools.csdevkit"
       ]
     }
   }
