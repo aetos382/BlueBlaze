@@ -1,9 +1,13 @@
 <Project>
   <PropertyGroup>
-    <LangVersion>latest</LangVersion>
+    <LangVersion>14</LangVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
     <UseArtifactsOutput>true</UseArtifactsOutput>
+    <ArtifactsPath>$(MSBuildThisFileDirectory)\artifacts</ArtifactsPath>
+    <Company>aetos</Company>
+    <Copyright>Copyright (c) 2026 aetos</Copyright>
+    <DebugType>portable</DebugType>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AnalysisLevel>latest-all</AnalysisLevel>
@@ -13,16 +17,21 @@
     <DefaultItemExcludesInProjectFolder>
       $(DefaultItemExcludesInProjectFolder);
       packages.lock.json;
-      TestResults\**
+      TestResults\**;
+      *.lscache
     </DefaultItemExcludesInProjectFolder>
     <DefaultItemExcludes>
       $(DefaultItemExcludes);
       *.log;
       *.binlog
     </DefaultItemExcludes>
-    <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
-    <DisableImplicitLibraryPacksFolder>true</DisableImplicitLibraryPacksFolder>
     <IsPackable>false</IsPackable>
     <NuGetAuditMode>all</NuGetAuditMode>
+    <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
+    <DisableImplicitLibraryPacksFolder>true</DisableImplicitLibraryPacksFolder>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(CI)' == 'true'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
   </PropertyGroup>
 </Project>
