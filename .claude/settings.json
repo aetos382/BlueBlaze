@@ -1,8 +1,30 @@
 {
   "permissions": {
     "allow": [
-      "WebFetch"
+      "WebFetch",
+      "Bash(gh issue view *)",
+      "Bash(gh issue list *)"
     ]
+  },
+  "enabledPlugins": {
+    "skill-creator@claude-plugins-official": true,
+    "claude-md-management@claude-plugins-official": true,
+    "feature-dev@claude-plugins-official": true,
+    "commit-commands@claude-plugins-official": true,
+    "claude-code-setup@claude-plugins-official": true,
+    "pr-review-toolkit@claude-plugins-official": true,
+    "microsoft-docs@claude-plugins-official": true,
+    "dotnet@dotnet-agent-skills": true,
+    "dotnet-data@dotnet-agent-skills": true,
+    "dotnet-diag@dotnet-agent-skills": true,
+    "dotnet-msbuild@dotnet-agent-skills": true,
+    "dotnet-nuget@dotnet-agent-skills": true,
+    "dotnet-upgrade@dotnet-agent-skills": true,
+    "dotnet-ai@dotnet-agent-skills": true,
+    "dotnet-test@dotnet-agent-skills": true,
+    "dotnet-aspnet@dotnet-agent-skills": true,
+    "dotnet-blazor@dotnet-agent-skills": true,
+    "github@claude-plugins-official": true
   },
   "language": "Japanese"
 }
