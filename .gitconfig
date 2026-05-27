@@ -1,0 +1,3 @@
+[hook "dotnet-format-verify"]
+  event = pre-commit
+  command = dotnet format whitespace --verify-no-changes && dotnet format style --verify-no-changes

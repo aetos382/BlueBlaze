@@ -14,8 +14,12 @@
   },
   "remoteUser": "vscode",
   "containerEnv": {
+    "LANG": "ja_JP.UTF-8",
     "TZ": "Asia/Tokyo",
-    "CLAUDE_CONFIG_DIR": "/home/vscode/.claude"
+    "CLAUDE_CONFIG_DIR": "/home/vscode/.claude",
+    "DISABLE_AUTOUPDATER": "1",
+    "NUGET_PACKAGES": "/home/vscode/.nuget/packages",
+    "WORKSPACE": "${containerWorkspaceFolder}"
   },
   "updateContentCommand": "bash .devcontainer/updateContent.sh",
   "postCreateCommand": "bash .devcontainer/postCreate.sh",
@@ -24,6 +28,11 @@
       "type": "volume",
       "source": "claude-code-config-${devcontainerId}",
       "target": "/home/vscode/.claude"
+    },
+    {
+      "type": "volume",
+      "source": "nuget-packages-${devcontainerId}",
+      "target": "/home/vscode/.nuget/packages"
     }
   ],
   "customizations": {
