@@ -3,6 +3,7 @@ FROM mcr.microsoft.com/devcontainers/base:3-noble@sha256:405175cbb232701dc27c47a
 
 ARG GO_VERSION=1.26.3
 ARG NODE_VERSION=24.16.0
+ARG GOAT_VERSION=v0.2.3
 
 RUN mkdir /usr/local/go && \
     curl -fqsLS https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz -o go.tar.gz && \
@@ -14,7 +15,7 @@ RUN mkdir /usr/local/node && \
     tar -C /usr/local/node -xJf node.tar.xz --strip-components=1 && \
     rm node.tar.xz
 
-ENV PATH=/usr/local/go/bin:/usr/local/node/bin:$PATH
+ENV PATH=/usr/local/go/bin:/usr/local/node/bin:/home/vscode/go/bin:$PATH
 ENV GOTOOLCHAIN=local
 
 RUN sed -i.bak 's|http://archive.ubuntu.com/ubuntu/|https://ftp.udx.icscoe.jp/Linux/ubuntu/|g' /etc/apt/sources.list.d/ubuntu.sources
@@ -30,5 +31,7 @@ RUN cat >> /home/vscode/.bashrc <<'EOF'
 alias claude='npx claude'
 alias devcontainer='npx devcontainer'
 EOF
+
+RUN go install github.com/bluesky-social/goat@${GOAT_VERSION}
 
 WORKDIR /workspaces
