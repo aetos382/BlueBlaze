@@ -4,4 +4,4 @@ USER vscode
 
 RUN mkdir -p /home/vscode/.claude
 
-WORKDIR /workspace
+WORKDIR /workspaces

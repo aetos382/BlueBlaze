@@ -4,7 +4,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
     <UseArtifactsOutput>true</UseArtifactsOutput>
-    <ArtifactsPath>$(MSBuildThisFileDirectory)\artifacts</ArtifactsPath>
+    <ArtifactsPath>$(MSBuildThisFileDirectory)/artifacts</ArtifactsPath>
     <Company>aetos</Company>
     <Copyright>Copyright (c) 2026 aetos</Copyright>
     <DebugType>portable</DebugType>
@@ -17,7 +17,7 @@
     <DefaultItemExcludesInProjectFolder>
       $(DefaultItemExcludesInProjectFolder);
       packages.lock.json;
-      TestResults\**;
+      TestResults/**;
       *.lscache
     </DefaultItemExcludesInProjectFolder>
     <DefaultItemExcludes>
