@@ -1,24 +1,31 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended", "node:lts"],
+  "extends": ["config:recommended"],
+  "packageRules": [
+    {
+      "matchDepNames": ["node"],
+      "allowedVersions": "/^(\\d*[02468])\\./",
+      "description": "Node.js LTS (even major) only"
+    }
+  ],
   "customManagers": [
     {
       "customType": "regex",
-      "fileMatch": ["^\\.devcontainer/Dockerfile$"],
+      "managerFilePatterns": ["/^\\.devcontainer/Dockerfile$/"],
       "matchStrings": ["ARG GO_VERSION=(?<currentValue>[^\\n]+)"],
       "datasourceTemplate": "golang-version",
       "depNameTemplate": "go"
     },
     {
       "customType": "regex",
-      "fileMatch": ["^\\.devcontainer/Dockerfile$"],
+      "managerFilePatterns": ["/^\\.devcontainer/Dockerfile$/"],
       "matchStrings": ["ARG NODE_VERSION=(?<currentValue>[^\\n]+)"],
       "datasourceTemplate": "node-version",
       "depNameTemplate": "node"
     },
     {
       "customType": "regex",
-      "fileMatch": ["^\\.devcontainer/Dockerfile$"],
+      "managerFilePatterns": ["/^\\.devcontainer/Dockerfile$/"],
       "matchStrings": ["ARG GOAT_VERSION=(?<currentValue>[^\\n]+)"],
       "datasourceTemplate": "github-releases",
       "depNameTemplate": "bluesky-social/goat"
