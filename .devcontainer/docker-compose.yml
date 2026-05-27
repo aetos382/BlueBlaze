@@ -3,6 +3,21 @@ name: blueblaze
 services:
   devcontainer:
     build:
-       context: .
-       dockerfile: Dockerfile
+      context: .
+      dockerfile: Dockerfile
     init: true
+
+  pds:
+    image: ghcr.io/bluesky-social/pds:latest@sha256:e0b756701c924410532c61b546a61810b6a0059bcebb0c21718d161f5b7880db
+    profiles:
+      - pds
+    env_file:
+      - pds.env
+    volumes:
+      - pds-data:/pds
+    ports:
+      - "3000:3000"
+    restart: "no"
+
+volumes:
+  pds-data:

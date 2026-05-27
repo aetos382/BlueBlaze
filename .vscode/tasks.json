@@ -1,0 +1,23 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "PDS: Start",
+      "type": "shell",
+      "command": "docker compose -f ${workspaceFolder}/.devcontainer/docker-compose.yml --profile pds up pds -d",
+      "problemMatcher": []
+    },
+    {
+      "label": "PDS: Stop",
+      "type": "shell",
+      "command": "docker compose -f ${workspaceFolder}/.devcontainer/docker-compose.yml stop pds",
+      "problemMatcher": []
+    },
+    {
+      "label": "PDS: View Logs",
+      "type": "shell",
+      "command": "docker compose -f ${workspaceFolder}/.devcontainer/docker-compose.yml logs -f pds",
+      "problemMatcher": []
+    }
+  ]
+}
