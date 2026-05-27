@@ -24,7 +24,9 @@ USER vscode
 RUN mkdir -p /home/vscode/.nuget/packages && \
     mkdir -p /home/vscode/.claude
 
-RUN cat >> /home/vscode/.bashrc << 'EOF'
+# << と 'EOF' の間に空白を開けない
+# https://github.com/rcjsuen/dockerfile-utils/issues/130
+RUN cat >> /home/vscode/.bashrc <<'EOF'
 alias claude='npx claude'
 alias devcontainer='npx devcontainer'
 EOF
