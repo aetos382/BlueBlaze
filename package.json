@@ -1,6 +1,7 @@
 {
   "private": true,
   "devDependencies": {
+    "@anthropic-ai/claude-code": "^2.1.152",
     "@devcontainers/cli": "^0.87.0"
   }
 }
