@@ -1,0 +1,8 @@
+name: blueblaze
+
+services:
+  devcontainer:
+    build:
+       context: .
+       dockerfile: Dockerfile
+    init: true

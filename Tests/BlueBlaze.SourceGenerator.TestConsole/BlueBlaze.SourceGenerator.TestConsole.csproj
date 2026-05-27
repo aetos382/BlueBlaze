@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="MSTest.Sdk">
 
   <Import Project="../../Analyzers/BlueBlaze.SourceGenerator/build/BlueBlaze.SourceGenerator.props" />
 

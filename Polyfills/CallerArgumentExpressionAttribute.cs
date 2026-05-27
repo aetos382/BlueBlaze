@@ -1,4 +1,4 @@
-﻿#if NETSTANDARD || !NETCOREAPP3_0_OR_GREATER
+#if NETSTANDARD || !NETCOREAPP3_0_OR_GREATER
 
 using Microsoft.CodeAnalysis;
 
