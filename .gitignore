@@ -2,8 +2,8 @@
 bin/
 obj/
 TestResults/
-
 node_modules/
+dotnet/runfile-discovery/
 
 launchSettings.json
 
