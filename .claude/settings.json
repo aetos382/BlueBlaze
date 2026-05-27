@@ -3,8 +3,25 @@
     "allow": [
       "WebFetch",
       "Bash(gh issue view *)",
-      "Bash(gh issue list *)"
+      "Bash(gh issue list *)",
+      "Bash(gh pr view *)",
+      "Bash(gh repo view *)",
+      "mcp__plugin_github_github__get_file_contents"
     ]
+  },
+  "extraKnownMarketplaces": {
+    "claude-plugins-official": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/claude-plugins-official"
+      }
+    },
+    "dotnet-agent-skills": {
+      "source": {
+        "source": "github",
+        "repo": "dotnet/skills"
+      }
+    }
   },
   "enabledPlugins": {
     "skill-creator@claude-plugins-official": true,

@@ -12,13 +12,6 @@
     {
       "customType": "regex",
       "managerFilePatterns": ["/^\\.devcontainer/Dockerfile$/"],
-      "matchStrings": ["ARG GO_VERSION=(?<currentValue>[^\\n]+)"],
-      "datasourceTemplate": "golang-version",
-      "depNameTemplate": "go"
-    },
-    {
-      "customType": "regex",
-      "managerFilePatterns": ["/^\\.devcontainer/Dockerfile$/"],
       "matchStrings": ["ARG NODE_VERSION=(?<currentValue>[^\\n]+)"],
       "datasourceTemplate": "node-version",
       "depNameTemplate": "node"

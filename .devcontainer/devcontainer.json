@@ -41,17 +41,15 @@
   "customizations": {
     "vscode": {
       "extensions": [
-        "-dbaeumer.vscode-eslint",
-        "-golang.go",
         "Anthropic.claude-code",
         "docker.docker",
         "eamodio.gitlens",
         "EditorConfig.EditorConfig",
         "github.vscode-github-actions",
         "GitHub.vscode-pull-request-github",
+        "jimeh.actionlint",
         "ms-dotnettools.csdevkit",
-        "ms-azuretools.vscode-containers",
-        "jimeh.actionlint"
+        "ms-azuretools.vscode-containers"
       ]
     }
   }
