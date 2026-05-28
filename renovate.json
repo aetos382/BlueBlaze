@@ -1,27 +1,37 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended"],
+  "labels": ["dependencies"],
+  "extends": [
+    "config:best-practices",
+    "custom-managers:dockerfileVersions",
+    "group:definitelyTyped",
+    "group:dotNetCore",
+    "helpers:pinGitHubActionDigestsToSemver",
+    "security:openssf-scorecard"
+  ],
+  "git-submodules": {
+    "enabled": true
+  },
   "packageRules": [
     {
       "matchDepNames": ["node"],
       "allowedVersions": "/^(\\d*[02468])\\./",
       "description": "Node.js LTS (even major) only"
-    }
-  ],
-  "customManagers": [
-    {
-      "customType": "regex",
-      "managerFilePatterns": ["/^\\.devcontainer/Dockerfile$/"],
-      "matchStrings": ["ARG NODE_VERSION=(?<currentValue>[^\\n]+)"],
-      "datasourceTemplate": "node-version",
-      "depNameTemplate": "node"
     },
     {
-      "customType": "regex",
-      "managerFilePatterns": ["/^\\.devcontainer/Dockerfile$/"],
-      "matchStrings": ["ARG GOAT_VERSION=(?<currentValue>[^\\n]+)"],
-      "datasourceTemplate": "github-releases",
-      "depNameTemplate": "bluesky-social/goat"
+      "matchDatasources": ["nuget"],
+      "internalChecksFilter": "strict",
+      "minimumReleaseAge": "3 days",
+      "description": "Wait 3 days before updating NuGet packages"
+    },
+    {
+      "matchDatasources": ["nuget"],
+      "matchSourceUrls": [
+        "https://github.com/dotnet/**",
+        "https://github.com/microsoft/**"
+      ],
+      "minimumReleaseAge": "0 days",
+      "description": "Trust NuGet packages sourced from Microsoft GitHub organizations"
     }
   ]
 }

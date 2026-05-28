@@ -1,9 +1,13 @@
 {
   "private": true,
+  "scripts": {
+    "validate:renovate": "echo \"$GITHUB_REPOSITORY\" | renovate-config-validator"
+  },
   "devDependencies": {
     "@anthropic-ai/claude-code": "^2.1.152",
     "@devcontainers/cli": "^0.87.0",
     "@types/node": "^24.1.0",
-    "lint-staged": "^17.0.5"
+    "lint-staged": "^17.0.5",
+    "renovate": "^43.200.1"
   }
 }

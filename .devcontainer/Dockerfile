@@ -1,9 +1,11 @@
 # syntax=docker/dockerfile:latest@sha256:87999aa3d42bdc6bea60565083ee17e86d1f3339802f543c0d03998580f9cb89
 FROM mcr.microsoft.com/devcontainers/base:3-noble@sha256:405175cbb232701dc27c47a2f178da555ea3ad20f85ea4142ad6a24f877af399
 
+# renovate: datasource=node-version depName=node
 ARG NODE_VERSION=24.16.0
 
-# Renovate のgithub-releases データソースは v 付きタグを返すため、GOAT_VERSION も v 付きで指定する
+# Renovate の github-releases データソースは v 付きタグを返すため、GOAT_VERSION も v 付きで指定する
+# renovate: datasource=github-releases depName=bluesky-social/goat
 ARG GOAT_VERSION=v0.2.3
 
 RUN mkdir /usr/local/node && \
