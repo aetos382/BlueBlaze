@@ -7,8 +7,7 @@
   },
   "lint-staged": {
     "*.cs": [
-      "dotnet format whitespace --verify-no-changes",
-      "dotnet format style --verify-no-changes"
+      "pwsh .hooks/dotnet-format.ps1"
     ]
   }
 }

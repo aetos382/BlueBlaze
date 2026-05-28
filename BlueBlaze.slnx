@@ -1,9 +1,13 @@
 <Solution>
-  <Folder Name="/Analyzers/">
-    <Project Path="Analyzers/BlueBlaze.SourceGenerator/BlueBlaze.SourceGenerator.csproj" />
+  <Folder Name="/Generators/">
+    <Project Path="Generators/Generator.Core/Generator.Core.csproj" />
+    <Project Path="Generators/Generator.MSBuild/Generator.MSBuild.csproj" />
+    <Project Path="Generators/Generator.Roslyn/Generator.Roslyn.csproj" />
   </Folder>
-  <Folder Name="/Tests/">
-    <Project Path="Tests/BlueBlaze.SourceGenerator.TestConsole/BlueBlaze.SourceGenerator.TestConsole.csproj" Id="70fe2ca6-77b0-4354-99fd-5a0a8e15dc8d" />
-    <Project Path="Tests/BlueBlaze.SourceGenerator.Tests/BlueBlaze.SourceGenerator.Tests.csproj" Id="a821202f-73c5-4a68-96f2-83b343efa79f" />
+  <Folder Name="/Tests/" />
+  <Folder Name="/Tests/Generators/">
+    <Project Path="Tests/Generators/Generator.Core.Tests/Generator.Core.Tests.csproj" />
+    <Project Path="Tests/Generators/Generator.MSBuild.Tests/Generator.MSBuild.Tests.csproj" />
+    <Project Path="Tests/Generators/Generator.Roslyn.Tests/Generator.Roslyn.Tests.csproj" />
   </Folder>
 </Solution>

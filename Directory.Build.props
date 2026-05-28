@@ -6,7 +6,6 @@
     <UseArtifactsOutput>true</UseArtifactsOutput>
     <ArtifactsPath>$(MSBuildThisFileDirectory)/artifacts</ArtifactsPath>
     <Company>aetos</Company>
-    <Copyright>Copyright (c) 2026 aetos</Copyright>
     <DebugType>portable</DebugType>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -34,4 +33,5 @@
   <PropertyGroup Condition="'$(CI)' == 'true'">
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
   </PropertyGroup>
+
 </Project>

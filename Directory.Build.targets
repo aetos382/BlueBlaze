@@ -17,4 +17,30 @@
     <RestoreLockedMode>true</RestoreLockedMode>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(IsRoslynComponent)' == 'true'">
+    <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+    <DevelopmentDependency>true</DevelopmentDependency>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(IsPackable)' == 'true'">
+    <Copyright>Copyright (c) 2026 aetos</Copyright>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseExpression>BSD-2-Clause-Patent</PackageLicenseExpression>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <GenerateSBOM>true</GenerateSBOM>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <GeneratePackageOnBuild Condition="'$(GeneratePackageOnBuild)' == ''">true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(IsPackable)' == 'true'">
+    <None Include="$(MSBuildThisFileDirectory)README.md">
+      <Pack>true</Pack>
+      <PackagePath>/</PackagePath>
+      <Visible>false</Visible>
+    </None>
+  </ItemGroup>
+
 </Project>
