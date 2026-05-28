@@ -1,12 +1,21 @@
 {
   "permissions": {
     "allow": [
+      "WebSearch",
       "WebFetch",
-      "Bash(gh issue view *)",
-      "Bash(gh issue list *)",
-      "Bash(gh pr view *)",
-      "Bash(gh repo view *)",
+      "Bash(dotnet build *)",
+      "Bash(dotnet test *)",
+      "Bash(gh * list *)",
+      "Bash(gh * view *)",
+      "Bash(gh search *)",
+      "Bash(gh skill search *)",
       "mcp__plugin_github_github__get_file_contents"
+    ],
+    "deny": [
+      "Edit(**/*.lock.json)",
+      "Edit(**/*-lock.json)",
+      "Write(**/*.lock.json)",
+      "Write(**/*-lock.json)"
     ]
   },
   "extraKnownMarketplaces": {
