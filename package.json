@@ -7,7 +7,8 @@
   },
   "lint-staged": {
     "*.cs": [
-      "pwsh -NoLogo -NonInteractive -NoProfile .hooks/dotnet-format.ps1 -ProjectOrSolution BlueBlaze.slnx"
+      "dotnet format style BlueBlaze.slnx --verify-no-changes --include",
+      "dotnet format whitespace BlueBlaze.slnx --verify-no-changes --include"
     ]
   }
 }
