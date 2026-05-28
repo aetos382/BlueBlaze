@@ -10,6 +10,7 @@
       "Bash(gh search *)",
       "Bash(gh skill search *)",
       "mcp__plugin_github_github__get_file_contents",
+      "mcp__plugin_github_github__issue_read",
       "mcp__claude_ai_Microsoft_Learn__microsoft_docs_search"
     ],
     "deny": [

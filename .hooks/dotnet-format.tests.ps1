@@ -141,10 +141,8 @@ class Foo { }
       $solutionPath = Join-Path $workspaceDirectory 'both-err.slnx'
 @'
 <Solution>
-  <Projects>
-    <Project Path="both-err-1/both-err-1.csproj" />
-    <Project Path="both-err-2/both-err-2.csproj" />
-  </Projects>
+  <Project Path="both-err-1/both-err-1.csproj" />
+  <Project Path="both-err-2/both-err-2.csproj" />
 </Solution>
 '@ | Set-Content $solutionPath
 
@@ -185,10 +183,8 @@ namespace ProjErr
       $solutionPath = Join-Path $workspaceDirectory 'proj-mix.slnx'
 @'
 <Solution>
-  <Projects>
-    <Project Path="proj-ok/proj-ok.csproj" />
-    <Project Path="proj-err/proj-err.csproj" />
-  </Projects>
+  <Project Path="proj-ok/proj-ok.csproj" />
+  <Project Path="proj-err/proj-err.csproj" />
 </Solution>
 '@ | Set-Content $solutionPath
 

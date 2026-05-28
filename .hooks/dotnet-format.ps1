@@ -13,23 +13,27 @@ $csFiles = $StagedFiles -like '*.cs'
 if (!$csFiles) { exit 0 }
 
 $solutionPath = (Resolve-Path $ProjectOrSolution).Path
-$solutionDir = Split-Path $solutionPath -Parent
-$relativeFiles = $csFiles | Resolve-Path -Relative -RelativeBasePath $solutionDir
 
 $hasError = $false
 
 try {
   foreach ($type in @('whitespace', 'style')) {
-    $outputRecords = (dotnet format $type $solutionPath --include $relativeFiles --verify-no-changes --verbosity diag) 2>&1
+    # --include を使うと --verify-no-changes で違反が検出されない既知の不具合のため、プロジェクト全体を検査する
+    # dotnet/format#1479
+    $outputRecords = (dotnet format $type $solutionPath --verify-no-changes --verbosity diag) 2>&1
+    $formatExitCode = $LASTEXITCODE
 
     foreach ($outputRecord in $outputRecords) {
       if ($outputRecord -is [System.Management.Automation.ErrorRecord]) {
         Write-Warning -Message $outputRecord.ToString()
-        $hasError = $true
       }
       elseif ($outputRecord -is [string]) {
         Write-Verbose $outputRecord
       }
+    }
+
+    if ($formatExitCode -ne 0) {
+      $hasError = $true
     }
   }
 }
