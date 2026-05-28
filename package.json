@@ -3,12 +3,7 @@
   "devDependencies": {
     "@anthropic-ai/claude-code": "^2.1.152",
     "@devcontainers/cli": "^0.87.0",
+    "@types/node": "^24.1.0",
     "lint-staged": "^17.0.5"
-  },
-  "lint-staged": {
-    "*.cs": [
-      "dotnet format style BlueBlaze.slnx --verify-no-changes --include",
-      "dotnet format whitespace BlueBlaze.slnx --verify-no-changes --include"
-    ]
   }
 }

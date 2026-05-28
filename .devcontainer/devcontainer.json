@@ -42,6 +42,7 @@
     "vscode": {
       "extensions": [
         "Anthropic.claude-code",
+        "dbaeumer.vscode-eslint",
         "docker.docker",
         "eamodio.gitlens",
         "EditorConfig.EditorConfig",
