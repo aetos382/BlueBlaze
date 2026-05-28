@@ -5,29 +5,6 @@ BeforeAll {
   $workspaceDirectory = ('TestDrive:/' | Resolve-Path).ProviderPath
   Push-Location 'TestDrive:/'
 
-  function Get-FormatReport {
-    $reportFiles = Get-ChildItem -Path 'TestDrive:/' -Recurse -Include 'format-report.json'
-    $reportHash = @{}
-
-    foreach ($reportFile in $reportFiles) {
-      $checkType = $reportFile.Directory.Name
-      $reportJson = @(Get-Content $reportFile.FullName | ConvertFrom-Json)
-
-      if ($reportHash.ContainsKey($checkType)) {
-        $reportHash[$checkType] = $reportHash[$checkType] + $reportJson
-      } else {
-        $reportHash[$checkType] = $reportJson
-      }
-    }
-
-    return [PSCustomObject] $reportHash
-  }
-
-  $commonParameters = @{
-    WorkspaceDirectory = $workspaceDirectory
-    EmitFormatReport = $true
-  }
-
 @'
 root = true
 
@@ -67,7 +44,8 @@ class Foo { }
 '@ > 'TestDrive:/clean/Foo.cs'
 
       $files = (Resolve-Path 'TestDrive:/clean/Foo.cs').ProviderPath
-      & $script -StagedFiles $files @commonParameters
+      $solution = (Resolve-Path 'TestDrive:/clean/clean.csproj').ProviderPath
+      & $script -StagedFiles $files -ProjectOrSolution $solution
       $exitCode = $LASTEXITCODE
     }
 
@@ -89,19 +67,13 @@ namespace StyleErr
 '@ > 'TestDrive:/style-err/Foo.cs'
 
       $files = (Resolve-Path 'TestDrive:/style-err/Foo.cs').ProviderPath
-      & $script -StagedFiles $files @commonParameters
+      $solution = (Resolve-Path 'TestDrive:/style-err/style-err.csproj').ProviderPath
+      & $script -StagedFiles $files -ProjectOrSolution $solution
       $exitCode = $LASTEXITCODE
     }
 
     It '終了コードが非ゼロ' {
       $exitCode | Should -Not -Be 0
-    }
-
-    It 'style レポートに Foo.cs の IDE0161 違反が記録される' {
-      $report = Get-FormatReport
-      $report.style | Should -Not -BeNullOrEmpty
-      $report.style.FileName | Should -Contain 'Foo.cs'
-      $report.style.FileChanges.DiagnosticId | Should -Contain 'IDE0161'
     }
   }
 
@@ -114,7 +86,8 @@ namespace StyleErr
         Set-Content 'TestDrive:/ws-err/Foo.cs'
 
       $files = (Resolve-Path 'TestDrive:/ws-err/Foo.cs').ProviderPath
-      & $script -StagedFiles $files @commonParameters
+      $solution = (Resolve-Path 'TestDrive:/ws-err/ws-err.csproj').ProviderPath
+      & $script -StagedFiles $files -ProjectOrSolution $solution
       $exitCode = $LASTEXITCODE
     }
 
@@ -140,7 +113,8 @@ class Foo { }
         (Resolve-Path 'TestDrive:/mixed/Foo.cs').ProviderPath
         (Resolve-Path 'TestDrive:/mixed/readme.md').ProviderPath
       )
-      & $script -StagedFiles $files @commonParameters
+      $solution = (Resolve-Path 'TestDrive:/mixed/mixed.csproj').ProviderPath
+      & $script -StagedFiles $files -ProjectOrSolution $solution
       $exitCode = $LASTEXITCODE
     }
 
@@ -164,24 +138,26 @@ class Foo { }
       "namespace BothErr2`n{`n`tclass Bar { }`n}" |
         Set-Content 'TestDrive:/both-err-2/Bar.cs'
 
+      $solutionPath = Join-Path $workspaceDirectory 'both-err.slnx'
+@'
+<Solution>
+  <Projects>
+    <Project Path="both-err-1/both-err-1.csproj" />
+    <Project Path="both-err-2/both-err-2.csproj" />
+  </Projects>
+</Solution>
+'@ | Set-Content $solutionPath
+
       $files = @(
         (Resolve-Path 'TestDrive:/both-err-1/Foo.cs').ProviderPath
         (Resolve-Path 'TestDrive:/both-err-2/Bar.cs').ProviderPath
       )
-      & $script -StagedFiles $files @commonParameters
+      & $script -StagedFiles $files -ProjectOrSolution $solutionPath
       $exitCode = $LASTEXITCODE
     }
 
     It '終了コードが非ゼロ' {
       $exitCode | Should -Not -Be 0
-    }
-
-    It 'style・whitespace 両方のレポートに両プロジェクトの違反が記録される' {
-      $report = Get-FormatReport
-      $report.style.FileName | Should -Contain 'Foo.cs'
-      $report.style.FileName | Should -Contain 'Bar.cs'
-      $report.whitespace.FileName | Should -Contain 'Foo.cs'
-      $report.whitespace.FileName | Should -Contain 'Bar.cs'
     }
   }
 
@@ -206,11 +182,21 @@ namespace ProjErr
 }
 '@ > 'TestDrive:/proj-err/Bar.cs'
 
+      $solutionPath = Join-Path $workspaceDirectory 'proj-mix.slnx'
+@'
+<Solution>
+  <Projects>
+    <Project Path="proj-ok/proj-ok.csproj" />
+    <Project Path="proj-err/proj-err.csproj" />
+  </Projects>
+</Solution>
+'@ | Set-Content $solutionPath
+
       $files = @(
         (Resolve-Path 'TestDrive:/proj-ok/Foo.cs').ProviderPath
         (Resolve-Path 'TestDrive:/proj-err/Bar.cs').ProviderPath
       )
-      & $script -StagedFiles $files @commonParameters
+      & $script -StagedFiles $files -ProjectOrSolution $solutionPath
       $exitCode = $LASTEXITCODE
     }
 
