@@ -38,7 +38,8 @@
     "dotnet-test@dotnet-agent-skills": true,
     "dotnet-aspnet@dotnet-agent-skills": true,
     "dotnet-blazor@dotnet-agent-skills": true,
-    "github@claude-plugins-official": true
+    "github@claude-plugins-official": true,
+    "context7@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "claude-plugins-official": {
