@@ -68,6 +68,13 @@
       "description": "Allow automerge pin updates"
     },
     {
+      "matchUpdateTypes": ["rollback"],
+      "minimumReleaseAge": null,
+      "automerge": false,
+      "commitMessagePrefix": "[rollback]",
+      "description": "Don't automerge rollback updates"
+    },
+    {
       "matchUpdateTypes": ["major"],
       "automerge": false,
       "description": "Don't automerge major updates"
