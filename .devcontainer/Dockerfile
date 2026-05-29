@@ -9,7 +9,7 @@ ARG NODE_VERSION=24.16.0
 ARG GOAT_VERSION=v0.2.3
 
 # renovate: datasource=npm depName=@anthropic-ai/claude-code
-ARG CLAUDE_CODE_VERSION=2.1.154
+ARG CLAUDE_CODE_VERSION=2.1.156
 
 # renovate: datasource=npm depName=@devcontainers/cli
 ARG DEVCONTAINER_VERSION=0.87.0
