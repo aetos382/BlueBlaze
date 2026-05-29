@@ -25,23 +25,17 @@
     },
     {
       "matchDatasources": ["nuget"],
-      "description": "Strict internal checks for NuGet packages"
-    },
-    {
-      "matchDatasources": ["nuget"],
       "matchSourceUrls": [
         "https://github.com/dotnet/**",
         "https://github.com/microsoft/**"
       ],
       "minimumReleaseAge": null,
-      "matchUpdateTypes": ["minor", "patch"],
       "automerge": true,
       "description": "Auto-merge minor/patch updates from Microsoft GitHub organizations"
     },
     {
       "matchDatasources": ["devcontainer-feature"],
       "minimumReleaseAge": null,
-      "matchUpdateTypes": ["minor", "patch"],
       "automerge": true,
       "description": "Auto-merge minor/patch updates for official devcontainer features",
       "matchDepNames": [
@@ -51,7 +45,6 @@
     {
       "matchDatasources": ["github-tags"],
       "minimumReleaseAge": null,
-      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
       "automerge": true,
       "description": "Auto-merge minor/patch/pin/digest updates for trusted GitHub Actions",
       "matchDepNames": [
@@ -65,9 +58,13 @@
       "matchDatasources": ["docker"],
       "matchRegistryUrls": ["mcr.microsoft.com"],
       "minimumReleaseAge": null,
-      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
       "automerge": true,
       "description": "Auto-merge minor/patch/pin/digest updates for Microsoft Container Registry images"
+    },
+    {
+      "matchUpdateTypes": ["major"],
+      "automerge": false,
+      "description": "Don't automerge major updates"
     }
   ],
   "vulnerabilityAlerts": {
