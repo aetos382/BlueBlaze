@@ -8,7 +8,7 @@ dotnet/runfile-discovery/
 launchSettings.json
 
 *.user
-
+*.local.*
 *.log
 *.binlog
 
