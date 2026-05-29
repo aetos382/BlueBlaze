@@ -4,8 +4,12 @@
     "validate:renovate": "echo \"$GITHUB_REPOSITORY\" | renovate-config-validator"
   },
   "devDependencies": {
+    "@eslint/js": "10.0.1",
     "@types/node": "24.12.4",
     "eslint": "10.4.0",
-    "lint-staged": "17.0.5"
+    "globals": "17.6.0",
+    "jiti": "2.7.0",
+    "lint-staged": "17.0.5",
+    "typescript-eslint": "8.60.0"
   }
 }
