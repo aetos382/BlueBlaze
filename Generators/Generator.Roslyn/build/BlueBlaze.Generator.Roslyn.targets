@@ -1,0 +1,5 @@
+<Project>
+  <PropertyGroup>
+    <BlueBlazeGeneratorRunAsBuildTask Condition="'$(BlueBlazeGeneratorRunAsBuildTask)' == ''">false</BlueBlazeGeneratorRunAsBuildTask>
+  </PropertyGroup>
+</Project>

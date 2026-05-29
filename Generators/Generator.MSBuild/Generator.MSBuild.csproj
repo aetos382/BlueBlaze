@@ -5,14 +5,24 @@
     <RootNamespace>BlueBlaze.Generator.MSBuild</RootNamespace>
     <IsPackable>true</IsPackable>
     <UsePolyfills>true</UsePolyfills>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+    <GenerateDependencyFile>true</GenerateDependencyFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Build.Utilities.Core" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core">
+      <PrivateAssets>all</PrivateAssets>
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Generator.Core\Generator.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalVisibleTo Include="BlueBlaze.Generator.Core.Tests" />
   </ItemGroup>
 
 </Project>

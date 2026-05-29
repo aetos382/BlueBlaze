@@ -11,4 +11,8 @@
     <PackageReference Include="System.Text.Json" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalVisibleTo Include="BlueBlaze.Generator.Core.Tests" />
+  </ItemGroup>
+
 </Project>

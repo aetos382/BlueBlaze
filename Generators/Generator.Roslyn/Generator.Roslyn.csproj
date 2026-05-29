@@ -18,4 +18,8 @@
     <ProjectReference Include="..\Generator.Core\Generator.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalVisibleTo Include="BlueBlaze.Generator.Core.Tests" />
+  </ItemGroup>
+
 </Project>
