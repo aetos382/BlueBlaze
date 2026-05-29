@@ -8,6 +8,15 @@ ARG NODE_VERSION=24.16.0
 # renovate: datasource=github-releases depName=bluesky-social/goat
 ARG GOAT_VERSION=v0.2.3
 
+# renovate: datasource=npm depName=@anthropic-ai/claude-code
+ARG CLAUDE_CODE_VERSION=2.1.154
+
+# renovate: datasource=npm depName=@devcontainers/cli
+ARG DEVCONTAINER_VERSION=0.87.0
+
+# renovate: datasource=npm depName=renovate
+ARG RENOVATE_VERSION=43.200.1
+
 RUN mkdir /usr/local/node && \
     curl -fqsLS https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.xz -o node.tar.xz && \
     tar -C /usr/local/node -xJf node.tar.xz --strip-components=1 && \
@@ -18,20 +27,27 @@ RUN mkdir /usr/local/goat && \
     tar -C /usr/local/goat -xzf goat.tar.gz goat && \
     rm goat.tar.gz
 
-ENV PATH=/usr/local/node/bin:/usr/local/goat:$PATH
-
 RUN sed -i.bak 's|http://archive.ubuntu.com/ubuntu/|https://ftp.udx.icscoe.jp/Linux/ubuntu/|g' /etc/apt/sources.list.d/ubuntu.sources
 
 USER vscode
 
-RUN mkdir -p /home/vscode/.nuget/packages && \
-    mkdir -p /home/vscode/.claude
+WORKDIR /home/vscode
+
+RUN mkdir -p .nuget/packages .npm .npm-global .claude
+
+ENV PATH=/usr/local/node/bin:/usr/local/goat:/home/vscode/.npm-global/bin:$PATH
 
 # << と 'EOF' の間に空白を開けない
 # https://github.com/rcjsuen/dockerfile-utils/issues/130
-RUN cat >> /home/vscode/.bashrc <<'EOF'
-alias claude='npx claude'
-alias devcontainer='npx devcontainer'
+RUN cat >> /home/vscode/.npmrc <<'EOF'
+cache=/home/vscode/.npm
+prefix=/home/vscode/.npm-global
+save-exact=true
 EOF
+
+RUN npm install -g \
+    @anthropic-ai/claude-code@$CLAUDE_CODE_VERSION \
+    @devcontainers/cli@$DEVCONTAINER_VERSION \
+    renovate@$RENOVATE_VERSION
 
 WORKDIR /workspaces

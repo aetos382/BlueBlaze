@@ -36,6 +36,11 @@
       "type": "volume",
       "source": "nuget-packages-${devcontainerId}",
       "target": "/home/vscode/.nuget/packages"
+    },
+    {
+      "type": "volume",
+      "source": "npm-cache-${devcontainerId}",
+      "target": "/home/vscode/.npm"
     }
   ],
   "customizations": {
