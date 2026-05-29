@@ -6,8 +6,7 @@
       "args": [
         "-y",
         "@modelcontextprotocol/server-sequential-thinking@2025.12.18"
-      ],
-      "env": {}
+      ]
     },
     "nuget": {
       "type": "stdio",
@@ -15,8 +14,15 @@
       "args": [
         "NuGet.Mcp.Server@1.4.3",
         "--yes"
-      ],
-      "env": {}
+      ]
+    },
+    "binlog": {
+      "type": "stdio",
+      "command": "dnx",
+      "args": [
+        "baronfel.binlog.mcp",
+        "--yes"
+      ]
     }
   }
 }
