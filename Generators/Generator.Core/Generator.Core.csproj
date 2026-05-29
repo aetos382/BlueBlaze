@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <InternalVisibleTo Include="BlueBlaze.Generator.Core.Tests" />
+    <InternalsVisibleTo Include="BlueBlaze.Generator.Core.Tests" />
   </ItemGroup>
 
 </Project>

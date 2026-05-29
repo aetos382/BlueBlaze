@@ -25,7 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <InternalVisibleTo Include="BlueBlaze.AtProtocol.Client.Tests" />
+    <InternalsVisibleTo Include="BlueBlaze.AtProtocol.Client.Tests" />
   </ItemGroup>
 
   <Import Project="../../Generators/Generator.Roslyn/build/BlueBlaze.Generator.Roslyn.targets" />
