@@ -11,6 +11,8 @@
     "security:openssf-scorecard"
   ],
   "minimumReleaseAge": "3 days",
+  "osvVulnerabilityAlerts": true,
+  "dependencyDashboardOSVVulnerabilitySummary": "all",
   "pinDigests": true,
   "git-submodules": {
     "enabled": true
@@ -23,24 +25,17 @@
     },
     {
       "matchDatasources": ["nuget"],
-      "internalChecksFilter": "strict",
-      "description": "Strict internal checks for NuGet packages"
-    },
-    {
-      "matchDatasources": ["nuget"],
       "matchSourceUrls": [
         "https://github.com/dotnet/**",
         "https://github.com/microsoft/**"
       ],
-      "minimumReleaseAge": "0 days",
-      "matchUpdateTypes": ["minor", "patch"],
+      "minimumReleaseAge": null,
       "automerge": true,
       "description": "Auto-merge minor/patch updates from Microsoft GitHub organizations"
     },
     {
       "matchDatasources": ["devcontainer-feature"],
-      "minimumReleaseAge": "0 days",
-      "matchUpdateTypes": ["minor", "patch"],
+      "minimumReleaseAge": null,
       "automerge": true,
       "description": "Auto-merge minor/patch updates for official devcontainer features",
       "matchDepNames": [
@@ -49,8 +44,7 @@
     },
     {
       "matchDatasources": ["github-tags"],
-      "minimumReleaseAge": "0 days",
-      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "minimumReleaseAge": null,
       "automerge": true,
       "description": "Auto-merge minor/patch/pin/digest updates for trusted GitHub Actions",
       "matchDepNames": [
@@ -63,10 +57,33 @@
     {
       "matchDatasources": ["docker"],
       "matchRegistryUrls": ["mcr.microsoft.com"],
-      "minimumReleaseAge": "0 days",
-      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "minimumReleaseAge": null,
       "automerge": true,
       "description": "Auto-merge minor/patch/pin/digest updates for Microsoft Container Registry images"
+    },
+    {
+      "matchUpdateTypes": ["pin"],
+      "minimumReleaseAge": null,
+      "automerge": true,
+      "description": "Allow automerge pin updates"
+    },
+    {
+      "matchUpdateTypes": ["rollback", "replacement"],
+      "minimumReleaseAge": null,
+      "automerge": false,
+      "commitMessagePrefix": "[cautionable]",
+      "description": "Report cautionable updates"
+    },
+    {
+      "matchUpdateTypes": ["major"],
+      "automerge": false,
+      "description": "Don't automerge major updates"
     }
-  ]
+  ],
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "automerge": true,
+    "minimumReleaseAge": null,
+    "addLabels": ["security"]
+  }
 }
