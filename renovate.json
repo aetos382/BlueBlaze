@@ -68,11 +68,11 @@
       "description": "Allow automerge pin updates"
     },
     {
-      "matchUpdateTypes": ["rollback"],
+      "matchUpdateTypes": ["rollback", "replacement"],
       "minimumReleaseAge": null,
       "automerge": false,
-      "commitMessagePrefix": "[rollback]",
-      "description": "Don't automerge rollback updates"
+      "commitMessagePrefix": "[cautionable]",
+      "description": "Report cautionable updates"
     },
     {
       "matchUpdateTypes": ["major"],
