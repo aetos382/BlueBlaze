@@ -4,7 +4,12 @@
     <Project Path="Generators/Generator.MSBuild/Generator.MSBuild.csproj" />
     <Project Path="Generators/Generator.Roslyn/Generator.Roslyn.csproj" />
   </Folder>
-  <Folder Name="/Tests/" />
+  <Folder Name="/Sources/">
+    <Project Path="Sources/AtProtocol.Client/AtProtocol.Client.csproj" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="Tests/AtProtocol.Client.Tests/AtProtocol.Client.Tests.csproj" />
+  </Folder>
   <Folder Name="/Tests/Generators/">
     <Project Path="Tests/Generators/Generator.Core.Tests/Generator.Core.Tests.csproj" />
     <Project Path="Tests/Generators/Generator.MSBuild.Tests/Generator.MSBuild.Tests.csproj" />
