@@ -1,12 +1,8 @@
 import { relative } from 'node:path';
 import type { Configuration } from 'lint-staged';
 
-/*
- lint-staged は staged ファイルのフルパスを渡してくるが、
- dotnet format は相対パスしか受け付けないため
- 変換してから渡している
-*/
 export default {
+  // lint-staged は staged ファイルのフルパスを渡してくるが、dotnet format は相対パスしか受け付けないので変換する
   '*.cs': (files: readonly string[]) => {
     const relFiles = files.map(f => relative(import.meta.dirname, f)).join(' ');
     return [
