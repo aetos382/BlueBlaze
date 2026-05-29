@@ -5,7 +5,16 @@
       "command": "npx",
       "args": [
         "-y",
-        "@modelcontextprotocol/server-sequential-thinking"
+        "@modelcontextprotocol/server-sequential-thinking@2025.12.18"
+      ],
+      "env": {}
+    },
+    "nuget": {
+      "type": "stdio",
+      "command": "dnx",
+      "args": [
+        "NuGet.Mcp.Server@1.4.3",
+        "--yes"
       ],
       "env": {}
     }

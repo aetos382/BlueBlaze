@@ -80,6 +80,22 @@
       "description": "Don't automerge major updates"
     }
   ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "fileMatch": ["^\\.mcp\\.json$"],
+      "matchStrings": ["\"(?<depName>@[\\w-]+/[\\w-]+)@(?<currentValue>[\\d][\\d.]*)\""],
+      "datasourceTemplate": "npm",
+      "description": "MCP server npm packages"
+    },
+    {
+      "customType": "regex",
+      "fileMatch": ["^\\.mcp\\.json$"],
+      "matchStrings": ["\"(?<depName>[\\w][\\w.]*?)@(?<currentValue>[\\d][\\d.]*)\""],
+      "datasourceTemplate": "nuget",
+      "description": "MCP server NuGet packages"
+    }
+  ],
   "vulnerabilityAlerts": {
     "enabled": true,
     "automerge": true,
