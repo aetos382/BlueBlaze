@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="BlueBlaze.Generator.Core.Tests" />
+    <InternalsVisibleTo Include="Generator.Core.Tests" />
   </ItemGroup>
 
 </Project>
