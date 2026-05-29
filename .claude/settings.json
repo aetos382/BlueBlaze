@@ -5,6 +5,7 @@
       "WebSearch",
       "Bash(dotnet build *)",
       "Bash(dotnet test *)",
+      "Bash(git remote get-url *)",
       "Bash(gh * list *)",
       "Bash(gh * view *)",
       "Bash(gh search *)",
