@@ -62,6 +62,12 @@
       "description": "Auto-merge minor/patch/pin/digest updates for Microsoft Container Registry images"
     },
     {
+      "matchUpdateTypes": ["pin"],
+      "minimumReleaseAge": null,
+      "automerge": true,
+      "description": "Allow automerge pin updates"
+    },
+    {
       "matchUpdateTypes": ["major"],
       "automerge": false,
       "description": "Don't automerge major updates"
