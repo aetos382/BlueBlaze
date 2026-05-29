@@ -10,6 +10,8 @@
     "helpers:pinGitHubActionDigestsToSemver",
     "security:openssf-scorecard"
   ],
+  "minimumReleaseAge": "3 days",
+  "pinDigests": true,
   "git-submodules": {
     "enabled": true
   },
@@ -22,8 +24,7 @@
     {
       "matchDatasources": ["nuget"],
       "internalChecksFilter": "strict",
-      "minimumReleaseAge": "3 days",
-      "description": "Wait 3 days before updating NuGet packages"
+      "description": "Strict internal checks for NuGet packages"
     },
     {
       "matchDatasources": ["nuget"],
@@ -32,7 +33,38 @@
         "https://github.com/microsoft/**"
       ],
       "minimumReleaseAge": "0 days",
-      "description": "Trust NuGet packages sourced from Microsoft GitHub organizations"
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true,
+      "description": "Auto-merge minor/patch updates from Microsoft GitHub organizations"
+    },
+    {
+      "matchDatasources": ["devcontainer-feature"],
+      "matchDepPatterns": ["^ghcr\\.io/devcontainers/"],
+      "minimumReleaseAge": "0 days",
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true,
+      "description": "Auto-merge minor/patch updates for official devcontainer features"
+    },
+    {
+      "matchDatasources": ["github-tags"],
+      "matchDepPatterns": [
+        "^actions/",
+        "^microsoft/",
+        "^github/",
+        "^advanced-security/"
+      ],
+      "minimumReleaseAge": "0 days",
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "automerge": true,
+      "description": "Auto-merge minor/patch/pin/digest updates for trusted GitHub Actions"
+    },
+    {
+      "matchDatasources": ["docker"],
+      "matchRegistryUrls": ["mcr.microsoft.com"],
+      "minimumReleaseAge": "0 days",
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "automerge": true,
+      "description": "Auto-merge minor/patch/pin/digest updates for Microsoft Container Registry images"
     }
   ]
 }
