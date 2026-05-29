@@ -10,6 +10,7 @@
     "helpers:pinGitHubActionDigestsToSemver",
     "security:openssf-scorecard"
   ],
+  "osvVulnerabilityAlerts": true,
   "minimumReleaseAge": "3 days",
   "pinDigests": true,
   "git-submodules": {
