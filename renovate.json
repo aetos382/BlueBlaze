@@ -11,7 +11,6 @@
     "security:openssf-scorecard"
   ],
   "osvVulnerabilityAlerts": true,
-  "minimumReleaseAge": "3 days",
   "pinDigests": true,
   "git-submodules": {
     "enabled": true
@@ -24,8 +23,8 @@
     },
     {
       "matchDatasources": ["nuget"],
-      "internalChecksFilter": "strict",
-      "description": "Strict internal checks for NuGet packages"
+      "description": "Strict internal checks for NuGet packages",
+      "minimumReleaseAge": "3 days"
     },
     {
       "matchDatasources": ["nuget"],
