@@ -10,7 +10,9 @@
     "helpers:pinGitHubActionDigestsToSemver",
     "security:openssf-scorecard"
   ],
+  "minimumReleaseAge": "3 days",
   "osvVulnerabilityAlerts": true,
+  "dependencyDashboardOSVVulnerabilitySummary": "all",
   "pinDigests": true,
   "git-submodules": {
     "enabled": true
@@ -23,8 +25,7 @@
     },
     {
       "matchDatasources": ["nuget"],
-      "description": "Strict internal checks for NuGet packages",
-      "minimumReleaseAge": "3 days"
+      "description": "Strict internal checks for NuGet packages"
     },
     {
       "matchDatasources": ["nuget"],
@@ -32,14 +33,14 @@
         "https://github.com/dotnet/**",
         "https://github.com/microsoft/**"
       ],
-      "minimumReleaseAge": "0 days",
+      "minimumReleaseAge": null,
       "matchUpdateTypes": ["minor", "patch"],
       "automerge": true,
       "description": "Auto-merge minor/patch updates from Microsoft GitHub organizations"
     },
     {
       "matchDatasources": ["devcontainer-feature"],
-      "minimumReleaseAge": "0 days",
+      "minimumReleaseAge": null,
       "matchUpdateTypes": ["minor", "patch"],
       "automerge": true,
       "description": "Auto-merge minor/patch updates for official devcontainer features",
@@ -49,7 +50,7 @@
     },
     {
       "matchDatasources": ["github-tags"],
-      "minimumReleaseAge": "0 days",
+      "minimumReleaseAge": null,
       "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
       "automerge": true,
       "description": "Auto-merge minor/patch/pin/digest updates for trusted GitHub Actions",
@@ -63,10 +64,16 @@
     {
       "matchDatasources": ["docker"],
       "matchRegistryUrls": ["mcr.microsoft.com"],
-      "minimumReleaseAge": "0 days",
+      "minimumReleaseAge": null,
       "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
       "automerge": true,
       "description": "Auto-merge minor/patch/pin/digest updates for Microsoft Container Registry images"
     }
-  ]
+  ],
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "automerge": true,
+    "minimumReleaseAge": null,
+    "addLabels": ["security"]
+  }
 }
