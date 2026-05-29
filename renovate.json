@@ -39,24 +39,26 @@
     },
     {
       "matchDatasources": ["devcontainer-feature"],
-      "matchDepPatterns": ["^ghcr\\.io/devcontainers/"],
       "minimumReleaseAge": "0 days",
       "matchUpdateTypes": ["minor", "patch"],
       "automerge": true,
-      "description": "Auto-merge minor/patch updates for official devcontainer features"
+      "description": "Auto-merge minor/patch updates for official devcontainer features",
+      "matchDepNames": [
+        "/^ghcr\\.io/devcontainers//"
+      ]
     },
     {
       "matchDatasources": ["github-tags"],
-      "matchDepPatterns": [
-        "^actions/",
-        "^microsoft/",
-        "^github/",
-        "^advanced-security/"
-      ],
       "minimumReleaseAge": "0 days",
       "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
       "automerge": true,
-      "description": "Auto-merge minor/patch/pin/digest updates for trusted GitHub Actions"
+      "description": "Auto-merge minor/patch/pin/digest updates for trusted GitHub Actions",
+      "matchDepNames": [
+        "/^actions//",
+        "/^microsoft//",
+        "/^github//",
+        "/^advanced-security//"
+      ]
     },
     {
       "matchDatasources": ["docker"],
