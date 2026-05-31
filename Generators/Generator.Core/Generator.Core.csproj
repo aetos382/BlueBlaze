@@ -1,8 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <RootNamespace>BlueBlaze.Generator.Core</RootNamespace>
     <IsPackable>true</IsPackable>
     <UsePolyfills>true</UsePolyfills>
   </PropertyGroup>
@@ -13,6 +12,10 @@
 
   <ItemGroup>
     <InternalsVisibleTo Include="Generator.Core.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Sources\Lexicon.Models\Lexicon.Models.csproj" />
   </ItemGroup>
 
 </Project>

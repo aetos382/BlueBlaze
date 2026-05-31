@@ -6,6 +6,7 @@
   </Folder>
   <Folder Name="/Sources/">
     <Project Path="Sources/AtProtocol.Client/AtProtocol.Client.csproj" />
+    <Project Path="Sources/Lexicon.Models/Lexicon.Models.csproj" Id="c2ea0f80-3e18-463e-a648-c45c79bd7533" />
   </Folder>
   <Folder Name="/Tests/">
     <Project Path="Tests/AtProtocol.Client.Tests/AtProtocol.Client.Tests.csproj" />
