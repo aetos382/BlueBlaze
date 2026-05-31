@@ -35,7 +35,7 @@
     <IncludeSymbols Condition="'$(IncludeSymbols)' == ''">true</IncludeSymbols>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(IncludeSymbols)' == 'true">
+  <PropertyGroup Condition="'$(IncludeSymbols)' == 'true'">
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
   </PropertyGroup>
