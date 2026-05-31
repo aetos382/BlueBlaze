@@ -4,7 +4,10 @@ import type { Configuration } from 'lint-staged';
 export default {
   '*': (files: readonly string[]) => {
     const fileList = files.join(' ');
-    return [`bash .hooks/check-encoding.sh ${fileList}`];
+    return [
+      'bash .hooks/check-protected-branch.sh',
+      `bash .hooks/check-encoding.sh ${fileList}`,
+    ];
   },
   // lint-staged は staged ファイルのフルパスを渡してくるが、dotnet format は相対パスしか受け付けないので変換する
   '*.cs': (files: readonly string[]) => {
