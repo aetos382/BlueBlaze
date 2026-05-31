@@ -4,21 +4,21 @@ set -euo pipefail
 fail=0
 
 for f in "$@"; do
-    # バイナリファイルはスキップ
+    # Skip binary files
     if ! grep -Iq . "$f" 2>/dev/null; then
         continue
     fi
 
-    # UTF-8 BOM (EF BB BF) チェック
+    # Check for UTF-8 BOM (EF BB BF)
     bom=$(od -An -tx1 -N3 "$f" | tr -d ' \n')
     if [[ "$bom" == efbbbf* ]]; then
-        echo "error: UTF-8 BOM が検出されました: $f" >&2
+        echo "error: UTF-8 BOM detected: $f" >&2
         fail=1
     fi
 
-    # CRLF チェック
-    if grep -q $'\r' "$f" 2>/dev/null; then
-        echo "error: CRLF 改行が検出されました: $f" >&2
+    # Check for CRLF (-U: prevent Windows grep from stripping CR in text mode)
+    if grep -qU $'\r' "$f" 2>/dev/null; then
+        echo "error: CRLF line endings detected: $f" >&2
         fail=1
     fi
 done
