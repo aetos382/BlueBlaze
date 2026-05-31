@@ -20,8 +20,11 @@
       "type": "stdio",
       "command": "dnx",
       "args": [
-        "baronfel.binlog.mcp",
-        "--yes"
+        "Microsoft.AITools.BinlogMcp",
+        "--source",
+        "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json",
+        "--yes",
+        "--prerelease"
       ]
     }
   }

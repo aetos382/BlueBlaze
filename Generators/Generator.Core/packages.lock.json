@@ -103,6 +103,9 @@
         "dependencies": {
           "System.Runtime.CompilerServices.Unsafe": "6.1.2"
         }
+      },
+      "lexicon.models": {
+        "type": "Project"
       }
     }
   }

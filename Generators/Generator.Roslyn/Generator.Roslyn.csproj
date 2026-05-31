@@ -2,10 +2,10 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <RootNamespace>BlueBlaze.Generator.Roslyn</RootNamespace>
     <IsRoslynComponent>true</IsRoslynComponent>
     <IsPackable>true</IsPackable>
     <UsePolyfills>true</UsePolyfills>
+    <IncludeSymbols>false</IncludeSymbols>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,6 +17,24 @@
   <ItemGroup>
     <ProjectReference Include="..\Generator.Core\Generator.Core.csproj" />
   </ItemGroup>
+
+  <PropertyGroup>
+    <TargetsForTfmSpecificContentInPackage>
+      $(TargetsForTfmSpecificContentInPackage);
+      GetAnalyzerFilesForPackaging
+    </TargetsForTfmSpecificContentInPackage>
+  </PropertyGroup>
+
+  <Target Name="GetAnalyzerFilesForPackaging">
+    <PropertyGroup>
+      <AnalyzerPackagePath>analyzers/dotnet/roslyn5.0/cs</AnalyzerPackagePath>
+    </PropertyGroup>
+    <ItemGroup>
+      <TfmSpecificPackageFile Include="$(TargetPath)">
+        <PackagePath>$(AnalyzerPackagePath)</PackagePath>
+      </TfmSpecificPackageFile>
+    </ItemGroup>
+  </Target>
 
   <ItemGroup>
     <InternalsVisibleTo Include="Generator.Core.Tests" />

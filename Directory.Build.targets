@@ -1,6 +1,7 @@
 <Project>
   <PropertyGroup>
     <IsAotCompatible Condition="'$(IsAotCompatible)' == '' and $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">true</IsAotCompatible>
+    <RootNamespace Condition="!$(MSBuildProjectName.StartsWith('BlueBlaze.'))">BlueBlaze.$(MSBuildProjectName)</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(CLSCompliant)' != ''">
@@ -30,9 +31,13 @@
     <PackageLicenseExpression>BSD-2-Clause-Patent</PackageLicenseExpression>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <GenerateSBOM>true</GenerateSBOM>
-    <IncludeSymbols>true</IncludeSymbols>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <IncludeSymbols Condition="'$(IncludeSymbols)' == ''">true</IncludeSymbols>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(IncludeSymbols)' == 'true">
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <GeneratePackageOnBuild Condition="'$(GeneratePackageOnBuild)' == ''">true</GeneratePackageOnBuild>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(IsPackable)' == 'true'">
