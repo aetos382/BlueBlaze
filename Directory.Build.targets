@@ -31,9 +31,13 @@
     <PackageLicenseExpression>BSD-2-Clause-Patent</PackageLicenseExpression>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <GenerateSBOM>true</GenerateSBOM>
-    <IncludeSymbols Condition="'$(IncludeSymbols)' == ''">true</IncludeSymbols>
-    <SymbolPackageFormat Condition="'$(IncludeSymbols)' == 'true' and '$(SymbolPackageFormat)' == ''">snupkg</SymbolPackageFormat>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <IncludeSymbols Condition="'$(IncludeSymbols)' == ''">true</IncludeSymbols>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(IncludeSymbols)' == 'true">
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(IsPackable)' == 'true'">

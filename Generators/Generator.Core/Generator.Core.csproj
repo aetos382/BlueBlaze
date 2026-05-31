@@ -11,11 +11,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="Generator.Core.Tests" />
+    <ProjectReference Include="..\..\Sources\Lexicon.Models\Lexicon.Models.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Sources\Lexicon.Models\Lexicon.Models.csproj" />
+    <InternalsVisibleTo Include="Generator.Core.Tests" />
   </ItemGroup>
 
 </Project>

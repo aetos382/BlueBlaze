@@ -18,10 +18,6 @@
     <ProjectReference Include="..\Generator.Core\Generator.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <InternalsVisibleTo Include="Generator.Core.Tests" />
-  </ItemGroup>
-
   <PropertyGroup>
     <TargetsForTfmSpecificContentInPackage>
       $(TargetsForTfmSpecificContentInPackage);
@@ -39,5 +35,9 @@
       </TfmSpecificPackageFile>
     </ItemGroup>
   </Target>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Generator.Core.Tests" />
+  </ItemGroup>
 
 </Project>
