@@ -122,12 +122,6 @@
         "contentHash": "dxOZt8/LWuiox7rugInJoIa5Mmu3pBmXdfaoZOx/mxx8+sUFFpjBXPlWXQXGeWzpkVPNC3x1Jf7rt2h2Zjyvvg=="
       },
       "clients.atprotocol": {
-        "type": "Project",
-        "dependencies": {
-          "Models.AtProtocol": "[1.0.0, )"
-        }
-      },
-      "models.atprotocol": {
         "type": "Project"
       }
     }
