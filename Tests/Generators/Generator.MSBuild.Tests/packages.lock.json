@@ -121,19 +121,7 @@
         "resolved": "4.2.3",
         "contentHash": "dxOZt8/LWuiox7rugInJoIa5Mmu3pBmXdfaoZOx/mxx8+sUFFpjBXPlWXQXGeWzpkVPNC3x1Jf7rt2h2Zjyvvg=="
       },
-      "generator.core": {
-        "type": "Project",
-        "dependencies": {
-          "Lexicon.Models": "[1.0.0, )"
-        }
-      },
       "generator.msbuild": {
-        "type": "Project",
-        "dependencies": {
-          "Generator.Core": "[1.0.0, )"
-        }
-      },
-      "lexicon.models": {
         "type": "Project"
       }
     }
