@@ -22,6 +22,7 @@ jobs:
         uses: actions/setup-dotnet@9a946fdbd5fb07b82b2f5a4466058b876ab72bb2 # v5.3.0
         with:
           dotnet-version: |
+            8.0.x
             9.0.x
             10.0.x
           cache: true
@@ -32,7 +33,7 @@ jobs:
           output-directory: analysis-results
           output-filename: devskim.sarif
 
-      - uses: microsoft/ApplicationInspector-action@fdca296050e9f56db6e950168ff268f0b0b0cfe6 # v1.0.1
+      - uses: microsoft/ApplicationInspector-action@687538ee305a6bcd9379aa70ed03ec348ede6e09 # main
         with:
           output-format: sarif
           output-path: analysis-results
