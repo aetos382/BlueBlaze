@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Sources\AtProtocol.Client\AtProtocol.Client.csproj" />
+    <ProjectReference Include="../../../Sources/Clients/Clients.AtProtocol/Clients.AtProtocol.csproj" />
   </ItemGroup>
 
   <ItemGroup>
