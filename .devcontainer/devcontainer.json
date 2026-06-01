@@ -55,7 +55,9 @@
         "GitHub.vscode-pull-request-github",
         "jimeh.actionlint",
         "ms-dotnettools.csdevkit",
-        "ms-azuretools.vscode-containers"
+        "ms-azuretools.vscode-containers",
+        "redhat.vscode-xml",
+        "redhat.vscode-yaml"
       ]
     }
   }
