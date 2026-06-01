@@ -1,4 +1,4 @@
-﻿<Project Sdk="MSTest.Sdk">
+<Project Sdk="MSTest.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Generators\Generator.Roslyn\Generator.Roslyn.csproj" />
+    <ProjectReference Include="..\..\..\Generators\Generators.Roslyn\Generators.Roslyn.csproj" />
   </ItemGroup>
 
   <ItemGroup>

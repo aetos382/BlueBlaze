@@ -1,0 +1,2 @@
+namespace BlueBlaze.Generators.Core;
+

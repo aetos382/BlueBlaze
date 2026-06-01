@@ -1,8 +1,8 @@
 <Solution>
   <Folder Name="/Generators/">
-    <Project Path="Generators/Generator.Core/Generator.Core.csproj" />
-    <Project Path="Generators/Generator.MSBuild/Generator.MSBuild.csproj" />
-    <Project Path="Generators/Generator.Roslyn/Generator.Roslyn.csproj" />
+    <Project Path="Generators/Generators.Core/Generators.Core.csproj" />
+    <Project Path="Generators/Generators.MSBuild/Generators.MSBuild.csproj" />
+    <Project Path="Generators/Generators.Roslyn/Generators.Roslyn.csproj" />
   </Folder>
   <Folder Name="/Sources/" />
   <Folder Name="/Sources/Clients/">
@@ -19,8 +19,8 @@
     <Project Path="Tests/Clients/Clients.Bluesky.Tests/Clients.Bluesky.Tests.csproj" />
   </Folder>
   <Folder Name="/Tests/Generators/">
-    <Project Path="Tests/Generators/Generator.Core.Tests/Generator.Core.Tests.csproj" />
-    <Project Path="Tests/Generators/Generator.MSBuild.Tests/Generator.MSBuild.Tests.csproj" />
-    <Project Path="Tests/Generators/Generator.Roslyn.Tests/Generator.Roslyn.Tests.csproj" />
+    <Project Path="Tests/Generators/Generators.Core.Tests/Generators.Core.Tests.csproj" />
+    <Project Path="Tests/Generators/Generators.MSBuild.Tests/Generators.MSBuild.Tests.csproj" />
+    <Project Path="Tests/Generators/Generators.Roslyn.Tests/Generators.Roslyn.Tests.csproj" />
   </Folder>
 </Solution>

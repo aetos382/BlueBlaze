@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="Generator.Core.Tests" />
+    <InternalsVisibleTo Include="Generators.Core.Tests" />
   </ItemGroup>
 
 </Project>

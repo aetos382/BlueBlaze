@@ -1,7 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="../../../Generators/Generator.Roslyn/build/BlueBlaze.Generator.Roslyn.props" />
-
   <PropertyGroup>
     <TargetFrameworks>net10.0;netstandard2.0</TargetFrameworks>
     <IsPackable>true</IsPackable>
@@ -17,17 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../../../Generators/Generator.Roslyn/Generator.Roslyn.csproj">
-      <OutputItemType>analyzer</OutputItemType>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
-    <ProjectReference Include="../../Models/Models.AtProtocol/Models.AtProtocol.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <InternalsVisibleTo Include="BlueBlaze.Clients.AtProtocol.Tests" />
   </ItemGroup>
-
-  <Import Project="../../../Generators/Generator.Roslyn/build/BlueBlaze.Generator.Roslyn.targets" />
 
 </Project>
