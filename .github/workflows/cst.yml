@@ -1,6 +1,8 @@
 name: CST
 
 on:
+  push:
+    branches: [actions]
   workflow_dispatch:
 
 permissions:
