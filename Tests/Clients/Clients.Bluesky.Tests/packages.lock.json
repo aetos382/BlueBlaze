@@ -122,10 +122,7 @@
         "contentHash": "dxOZt8/LWuiox7rugInJoIa5Mmu3pBmXdfaoZOx/mxx8+sUFFpjBXPlWXQXGeWzpkVPNC3x1Jf7rt2h2Zjyvvg=="
       },
       "clients.atprotocol": {
-        "type": "Project",
-        "dependencies": {
-          "Models.AtProtocol": "[1.0.0, )"
-        }
+        "type": "Project"
       },
       "clients.bluesky": {
         "type": "Project",
@@ -133,9 +130,6 @@
           "Clients.AtProtocol": "[1.0.0, )",
           "Models.Bluesky": "[1.0.0, )"
         }
-      },
-      "models.atprotocol": {
-        "type": "Project"
       },
       "models.bluesky": {
         "type": "Project"
