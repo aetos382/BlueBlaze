@@ -2,6 +2,38 @@
   "version": "2.0.0",
   "tasks": [
     {
+      "label": "Build: Solution",
+      "type": "process",
+      "command": "dotnet",
+      "args": [ "build", "${workspaceFolder}/BlueBlaze.slnx" ],
+      "problemMatcher": "$msCompile",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "Rebuild: Solution",
+      "type": "process",
+      "command": "dotnet",
+      "args": [ "build", "${workspaceFolder}/BlueBlaze.slnx", "--no-incremental" ],
+      "problemMatcher": "$msCompile",
+      "group": {
+        "kind": "build"
+      }
+    },
+    {
+      "label": "Test: Solution",
+      "type": "process",
+      "command": "dotnet",
+      "args": [ "test", "${workspaceFolder}/BlueBlaze.slnx" ],
+      "problemMatcher": "$msCompile",
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      }
+    },
+    {
       "label": "PDS: Start",
       "type": "shell",
       "command": "docker compose -f ${workspaceFolder}/.devcontainer/docker-compose.yml --profile pds up pds -d",
