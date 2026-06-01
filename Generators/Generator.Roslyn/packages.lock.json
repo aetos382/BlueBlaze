@@ -158,12 +158,8 @@
       "generator.core": {
         "type": "Project",
         "dependencies": {
-          "Lexicon.Models": "[1.0.0, )",
           "System.Text.Json": "[10.0.8, )"
         }
-      },
-      "lexicon.models": {
-        "type": "Project"
       },
       "System.Text.Json": {
         "type": "CentralTransitive",

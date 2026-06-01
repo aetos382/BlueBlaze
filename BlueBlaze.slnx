@@ -4,12 +4,19 @@
     <Project Path="Generators/Generator.MSBuild/Generator.MSBuild.csproj" />
     <Project Path="Generators/Generator.Roslyn/Generator.Roslyn.csproj" />
   </Folder>
-  <Folder Name="/Sources/">
-    <Project Path="Sources/AtProtocol.Client/AtProtocol.Client.csproj" />
-    <Project Path="Sources/Lexicon.Models/Lexicon.Models.csproj" Id="c2ea0f80-3e18-463e-a648-c45c79bd7533" />
+  <Folder Name="/Sources/" />
+  <Folder Name="/Sources/Clients/">
+    <Project Path="Sources/Clients/Clients.AtProtocol/Clients.AtProtocol.csproj" />
+    <Project Path="Sources/Clients/Clients.Bluesky/Clients.Bluesky.csproj" />
   </Folder>
-  <Folder Name="/Tests/">
-    <Project Path="Tests/AtProtocol.Client.Tests/AtProtocol.Client.Tests.csproj" />
+  <Folder Name="/Sources/Models/">
+    <Project Path="Sources/Models/Models.AtProtocol/Models.AtProtocol.csproj" />
+    <Project Path="Sources/Models/Models.Bluesky/Models.Bluesky.csproj" />
+  </Folder>
+  <Folder Name="/Tests/" />
+  <Folder Name="/Tests/Clients/">
+    <Project Path="Tests/Clients/Clients.AtProtocol.Tests/Clients.AtProtocol.Tests.csproj" />
+    <Project Path="Tests/Clients/Clients.Bluesky.Tests/Clients.Bluesky.Tests.csproj" />
   </Folder>
   <Folder Name="/Tests/Generators/">
     <Project Path="Tests/Generators/Generator.Core.Tests/Generator.Core.Tests.csproj" />
