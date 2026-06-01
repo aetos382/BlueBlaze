@@ -39,7 +39,7 @@ jobs:
       - uses: microsoft/ApplicationInspector-action@687538ee305a6bcd9379aa70ed03ec348ede6e09 # main
         with:
           output-format: sarif
-          output-path: analysis-results
+          output-path: analysis-results/appinspector.sarif
 
       - uses: github/codeql-action/upload-sarif@7211b7c8077ea37d8641b6271f6a365a22a5fbfa # v4.36.0
         with:
