@@ -17,13 +17,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Generator.Core\Generator.Core.csproj">
+    <ProjectReference Include="..\Generators.Core\Generators.Core.csproj">
       <PrivateAssets>all</PrivateAssets>
     </ProjectReference>
   </ItemGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="Generator.Core.Tests" />
+    <InternalsVisibleTo Include="Generators.Core.Tests" />
   </ItemGroup>
 
 </Project>
