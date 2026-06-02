@@ -1,0 +1,66 @@
+<Project Sdk="Microsoft.Build.NoTargets">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <IsPackable>true</IsPackable>
+    <PackageId>BlueBlaze.Generator</PackageId>
+    <DevelopmentDependency>true</DevelopmentDependency>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+    <IncludeSymbols>false</IncludeSymbols>
+    <NoWarn>$(NoWarn);NU5100</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Generators.MSBuild\Generators.MSBuild.csproj">
+      <PrivateAssets>all</PrivateAssets>
+      <Pack>true</Pack>
+      <PackagePath>tasks/</PackagePath>
+    </ProjectReference>
+    <ProjectReference Include="..\Generators.Roslyn\Generators.Roslyn.csproj">
+      <PrivateAssets>all</PrivateAssets>
+      <Pack>true</Pack>
+      <PackagePath>analyzers/dotnet/roslyn5.0/cs</PackagePath>
+    </ProjectReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="build/*">
+      <Pack>true</Pack>
+      <PackagePath>build/</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetsForTfmSpecificContentInPackage>
+      $(TargetsForTfmSpecificContentInPackage);
+      GetBuildOutputForPackaging
+    </TargetsForTfmSpecificContentInPackage>
+  </PropertyGroup>
+
+  <Target Name="GetBuildOutputForPackaging" AfterTargets="ResolveProjectReferences">
+
+    <ItemGroup>
+      <_ReferencedProject Include="@(ProjectReference)" Condition="'%(ProjectReference.Pack)' == 'true'">
+        <ProjectFullPath>%(FullPath)</ProjectFullPath>
+      </_ReferencedProject>
+    </ItemGroup>
+
+    <MSBuild
+      Projects="@(_ReferencedProject)"
+      Targets="GetTargetPath"
+      Properties="Configuration=$(Configuration);Platform=$(Platform)">
+
+      <Output TaskParameter="TargetOutputs" ItemName="_BuildOutputFiles" />
+
+    </MSBuild>
+
+    <ItemGroup>
+      <TfmSpecificPackageFile Include="@(_BuildOutputFiles)">
+        <PackagePath>%(PackagePath)</PackagePath>
+      </TfmSpecificPackageFile>
+    </ItemGroup>
+
+  </Target>
+
+</Project>
