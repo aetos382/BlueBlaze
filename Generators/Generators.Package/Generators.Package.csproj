@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.Build.NoTargets">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>net481;net10.0;netstandard2.0</TargetFrameworks>
     <IsPackable>true</IsPackable>
     <PackageId>BlueBlaze.Generator</PackageId>
     <DevelopmentDependency>true</DevelopmentDependency>
@@ -12,15 +12,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Generators.Roslyn\Generators.Roslyn.csproj">
+      <PrivateAssets>all</PrivateAssets>
+      <Pack>true</Pack>
+      <PackagePath>analyzers/dotnet/roslyn5.0/cs</PackagePath>
+    </ProjectReference>
     <ProjectReference Include="..\Generators.MSBuild\Generators.MSBuild.csproj">
       <PrivateAssets>all</PrivateAssets>
       <Pack>true</Pack>
       <PackagePath>tasks/</PackagePath>
     </ProjectReference>
-    <ProjectReference Include="..\Generators.Roslyn\Generators.Roslyn.csproj">
-      <PrivateAssets>all</PrivateAssets>
-      <Pack>true</Pack>
-      <PackagePath>analyzers/dotnet/roslyn5.0/cs</PackagePath>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Update="@(ProjectReference)">
+      <SkipGetTargetFrameworkProperties>false</SkipGetTargetFrameworkProperties>
     </ProjectReference>
   </ItemGroup>
 
@@ -31,6 +37,7 @@
     </None>
   </ItemGroup>
 
+  <!--
   <PropertyGroup>
     <TargetsForTfmSpecificContentInPackage>
       $(TargetsForTfmSpecificContentInPackage);
@@ -48,8 +55,7 @@
 
     <MSBuild
       Projects="@(_ReferencedProject)"
-      Targets="GetTargetPath"
-      Properties="Configuration=$(Configuration);Platform=$(Platform)">
+      Properties="TargetFramework=$(TargetFramework);InnerTargets=GetTargetPath;Configuration=$(Configuration);Platform=$(Platform)">
 
       <Output TaskParameter="TargetOutputs" ItemName="_BuildOutputFiles" />
 
@@ -62,5 +68,6 @@
     </ItemGroup>
 
   </Target>
+  -->
 
 </Project>
