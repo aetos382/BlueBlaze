@@ -1,0 +1,99 @@
+name: linters
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    env:
+      # renovate: datasource=github-releases depName=rhysd/actionlint
+      ACTIONLINT_VERSION: v1.7.12
+
+      # renovate: datasource=github-releases depName=koalaman/shellcheck
+      SHELLCHECK_VERSION: v0.11.0
+
+      # renovate: datasource=github-releases depName=suzuki-shunsuke/ghalint
+      GHALINT_VERSION: v1.5.6
+
+      # renovate: datasource=github-releases depName=zizmorcore/zizmor
+      ZIZMOR_VERSION: v1.25.2
+
+      # renovate: datasource=github-releases depName=koki-develop/ghasec
+      GHASEC_VERSION: v0.14.0
+
+      # renovate: datasource=github-releases depName=hadolint/hadolint
+      HADOLINT_VERSION: v2.14.0
+
+    steps:
+
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+
+      - name: Install actionlint
+        run: |
+          mkdir -p /usr/local/actionlint
+          curl -fqsLS "https://github.com/rhysd/actionlint/releases/download/${{ env.ACTIONLINT_VERSION }}/actionlint_${ACTIONLINT_VERSION#v}_linux_amd64.tar.gz" -o actionlint.tar.gz
+          tar -xzf actionlint.tar.gz -C /usr/local/actionlint
+          echo '/usr/local/actionlint' >> "$GITHUB_PATH"
+          rm actionlint.tar.gz
+
+      - name: Install shellcheck
+        run: |
+          mkdir -p /usr/local/shellcheck
+          curl -fqsLS "https://github.com/koalaman/shellcheck/releases/download/${{ env.SHELLCHECK_VERSION }}/shellcheck-${{ env.SHELLCHECK_VERSION }}.linux.x86_64.tar.gz" -o shellcheck.tar.gz
+          tar -xzf shellcheck.tar.gz -C /usr/local/shellcheck --strip-components=1
+          echo '/usr/local/shellcheck' >> "$GITHUB_PATH"
+          rm shellcheck.tar.gz
+
+      - name: Install ghalint
+        run: |
+          mkdir -p /usr/local/ghalint
+          curl -fqsLS "https://github.com/suzuki-shunsuke/ghalint/releases/download/${{ env.GHALINT_VERSION }}/ghalint_${GHALINT_VERSION#v}_linux_amd64.tar.gz" -o ghalint.tar.gz
+          tar -xzf ghalint.tar.gz -C /usr/local/ghalint
+          echo '/usr/local/ghalint' >> "$GITHUB_PATH"
+          rm ghalint.tar.gz
+
+      - name: Install zizmor
+        run: |
+          mkdir -p /usr/local/zizmor
+          curl -fqsLS "https://github.com/zizmorcore/zizmor/releases/download/${{ env.ZIZMOR_VERSION }}/zizmor-x86_64-unknown-linux-gnu.tar.gz" -o zizmor.tar.gz
+          tar -xzf zizmor.tar.gz -C /usr/local/zizmor
+          echo '/usr/local/zizmor' >> "$GITHUB_PATH"
+          rm zizmor.tar.gz
+
+      - name: Install ghasec
+        run: |
+          mkdir -p /usr/local/ghasec
+          curl -fqsLS "https://github.com/koki-develop/ghasec/releases/download/${{ env.GHASEC_VERSION }}/ghasec_Linux_x86_64.tar.gz" -o ghasec.tar.gz
+          tar -xzf ghasec.tar.gz -C /usr/local/ghasec
+          echo '/usr/local/ghasec' >> "$GITHUB_PATH"
+          rm ghasec.tar.gz
+
+      - name: Install hadolint
+        run: |
+          mkdir -p /usr/local/hadolint
+          curl -fqsLS "https://github.com/hadolint/hadolint/releases/download/${{ env.HADOLINT_VERSION }}/hadolint-linux-x86_64" -o /usr/local/hadolint/hadolint
+          chmod +x /usr/local/hadolint/hadolint
+          echo '/usr/local/hadolint' >> "$GITHUB_PATH"
+
+      - name: Run actionlint
+        run: actionlint --verbose
+
+      - name: Run shellcheck
+        run: find . -name '*.sh' -not -path './submodules/*' -print0 | xargs -r -0 shellcheck
+
+      - name: Run ghalint
+        run: ghalint run
+
+      - name: Run zizmor
+        run: zizmor --pedantic --no-progress --gh-token ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run ghasec
+        run: GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} ghasec --online
+
+      - name: Run hadolint
+        run: find . -name 'Dockerfile*' -not -path './submodules/*' -print0 | xargs -r -0 hadolint
