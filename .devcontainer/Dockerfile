@@ -21,7 +21,7 @@ ARG CLAUDE_CODE_VERSION=2.1.158
 ARG DEVCONTAINER_VERSION=0.87.0
 
 # renovate: datasource=npm depName=renovate
-ARG RENOVATE_VERSION=43.204.1
+ARG RENOVATE_VERSION=43.205.1
 
 # renovate: datasource=github-releases depName=microsoft/apm
 ARG APM_VERSION=v0.16.1
