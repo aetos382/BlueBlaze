@@ -4,7 +4,8 @@ using System.Text.Json.Serialization;
 
 namespace BlueBlaze.Generators.Core;
 
-public sealed class LexiconDefinitionConverter : JsonConverter<LexiconDefinition>
+public sealed class LexiconDefinitionConverter :
+    JsonConverter<LexiconDefinition>
 {
     public override LexiconDefinition? Read(
         ref Utf8JsonReader reader,
@@ -25,28 +26,54 @@ public sealed class LexiconDefinitionConverter : JsonConverter<LexiconDefinition
 
         var originalReader = reader;
 
-        if (!reader.Read() || reader.TokenType != JsonTokenType.PropertyName)
+        while (reader.Read())
         {
-            throw new JsonException("Unexpected end of JSON.");
-        }
+            if (reader.TokenType != JsonTokenType.PropertyName)
+            {
+                break;
+            }
 
-        var propertyName = reader.GetString();
-        if (propertyName != "type")
-        {
-            throw new JsonException($"Expected property 'type', but got '{propertyName}'.");
-        }
+            var isTypeProperty = reader.HasValueSequence
+                ? reader.GetString() == "type"
+                : reader.ValueSpan.SequenceEqual("type"u8);
 
-        if (!reader.Read() || reader.TokenType != JsonTokenType.String)
-        {
-            throw new JsonException("Unexpected end of JSON.");
+            if (!isTypeProperty)
+            {
+                reader.Skip();
+                continue;
+            }
+
+            if (!reader.Read() || reader.TokenType != JsonTokenType.String)
+            {
+                throw new JsonException("Invalid schema.");
+            }
+
+            break;
         }
 
         var type = JsonSerializer.Deserialize(ref reader, LexiconSerializerContext.Default.LexiconType);
         LexiconDefinition result = type switch
         {
+            LexiconType.Record => JsonSerializer.Deserialize(ref originalReader, LexiconSerializerContext.Default.RecordDefinition)!,
+            LexiconType.Query => JsonSerializer.Deserialize(ref originalReader, LexiconSerializerContext.Default.QueryDefinition)!,
+            LexiconType.Procedure => JsonSerializer.Deserialize(ref originalReader, LexiconSerializerContext.Default.ProcedureDefinition)!,
+            LexiconType.Subscription => JsonSerializer.Deserialize(ref originalReader, LexiconSerializerContext.Default.SubscriptionDefinition)!,
+            LexiconType.PermissionSet => JsonSerializer.Deserialize(ref originalReader, LexiconSerializerContext.Default.PermissionSetDefinition)!,
+            LexiconType.Boolean => JsonSerializer.Deserialize(ref originalReader, LexiconSerializerContext.Default.BooleanDefinition)!,
+            LexiconType.Integer => JsonSerializer.Deserialize(ref originalReader, LexiconSerializerContext.Default.IntegerDefinition)!,
             LexiconType.String => JsonSerializer.Deserialize(ref originalReader, LexiconSerializerContext.Default.StringDefinition)!,
+            LexiconType.Bytes => JsonSerializer.Deserialize(ref originalReader, LexiconSerializerContext.Default.BytesDefinition)!,
+            LexiconType.CidLink => JsonSerializer.Deserialize(ref originalReader, LexiconSerializerContext.Default.CidLinkDefinition)!,
+            LexiconType.Blob => JsonSerializer.Deserialize(ref originalReader, LexiconSerializerContext.Default.BlobDefinition)!,
+            LexiconType.Array => JsonSerializer.Deserialize(ref originalReader, LexiconSerializerContext.Default.ArrayDefinition)!,
             LexiconType.Object => JsonSerializer.Deserialize(ref originalReader, LexiconSerializerContext.Default.ObjectDefinition)!,
-            _ => throw new NotSupportedException($"Unsupported LexiconType: {type}")
+            LexiconType.Parameters => JsonSerializer.Deserialize(ref originalReader, LexiconSerializerContext.Default.ParametersDefinition)!,
+            LexiconType.Permission => JsonSerializer.Deserialize(ref originalReader, LexiconSerializerContext.Default.PermissionDefinition)!,
+            LexiconType.Token => JsonSerializer.Deserialize(ref originalReader, LexiconSerializerContext.Default.TokenDefinition)!,
+            LexiconType.Reference => JsonSerializer.Deserialize(ref originalReader, LexiconSerializerContext.Default.ReferenceDefinition)!,
+            LexiconType.Union => JsonSerializer.Deserialize(ref originalReader, LexiconSerializerContext.Default.UnionDefinition)!,
+            LexiconType.Unknown => JsonSerializer.Deserialize(ref originalReader, LexiconSerializerContext.Default.UnknownDefinition)!,
+            _ => throw new JsonException($"Unsupported LexiconType: {type}")
         };
 
         reader = originalReader;

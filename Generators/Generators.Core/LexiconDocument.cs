@@ -249,27 +249,9 @@ public sealed class ParametersDefinition : LexiconDefinition
     public string[]? Required { get; set; }
 }
 
-public abstract class PermissionDefinition : LexiconDefinition
+public sealed class PermissionDefinition : LexiconDefinition
 {
     public required string Resource { get; set; }
-}
-
-public sealed class RepositoryPermissionDefinition : PermissionDefinition
-{
-    public required string[] Collection { get; set; }
-
-    public string[]? Action { get; set; }
-}
-
-public sealed class RpcPermissionDefinition : PermissionDefinition
-{
-    public required string[] Lxm { get; set; }
-
-    [JsonPropertyName("aud")]
-    public string? Audience { get; set; }
-
-    [JsonPropertyName("inheritAud")]
-    public bool? InheritAudience { get; set; }
 }
 
 public sealed class TokenDefinition : LexiconDefinition;
@@ -332,6 +314,23 @@ public enum StringFormat
     UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow,
     UseStringEnumConverter = true)]
 [JsonSerializable(typeof(LexiconDocument))]
+[JsonSerializable(typeof(RecordDefinition))]
+[JsonSerializable(typeof(QueryDefinition))]
+[JsonSerializable(typeof(ProcedureDefinition))]
+[JsonSerializable(typeof(SubscriptionDefinition))]
+[JsonSerializable(typeof(PermissionSetDefinition))]
+[JsonSerializable(typeof(BooleanDefinition))]
+[JsonSerializable(typeof(IntegerDefinition))]
 [JsonSerializable(typeof(StringDefinition))]
+[JsonSerializable(typeof(BytesDefinition))]
+[JsonSerializable(typeof(CidLinkDefinition))]
+[JsonSerializable(typeof(BlobDefinition))]
+[JsonSerializable(typeof(ArrayDefinition))]
 [JsonSerializable(typeof(ObjectDefinition))]
+[JsonSerializable(typeof(ParametersDefinition))]
+[JsonSerializable(typeof(PermissionDefinition))]
+[JsonSerializable(typeof(TokenDefinition))]
+[JsonSerializable(typeof(ReferenceDefinition))]
+[JsonSerializable(typeof(UnionDefinition))]
+[JsonSerializable(typeof(UnknownDefinition))]
 internal sealed partial class LexiconSerializerContext : JsonSerializerContext;
