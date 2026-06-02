@@ -18,24 +18,6 @@
     </ProjectReference>
   </ItemGroup>
 
-  <PropertyGroup>
-    <TargetsForTfmSpecificContentInPackage>
-      $(TargetsForTfmSpecificContentInPackage);
-      GetAnalyzerFilesForPackaging
-    </TargetsForTfmSpecificContentInPackage>
-  </PropertyGroup>
-
-  <Target Name="GetAnalyzerFilesForPackaging">
-    <PropertyGroup>
-      <AnalyzerPackagePath>analyzers/dotnet/roslyn5.0/cs</AnalyzerPackagePath>
-    </PropertyGroup>
-    <ItemGroup>
-      <TfmSpecificPackageFile Include="$(TargetPath)">
-        <PackagePath>$(AnalyzerPackagePath)</PackagePath>
-      </TfmSpecificPackageFile>
-    </ItemGroup>
-  </Target>
-
   <ItemGroup>
     <InternalsVisibleTo Include="BlueBlaze.Generators.Roslyn.Tests" />
   </ItemGroup>
