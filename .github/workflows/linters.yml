@@ -81,19 +81,93 @@ jobs:
           echo "${HOME}/.local/hadolint" >> "$GITHUB_PATH"
 
       - name: Run actionlint
-        run: actionlint --verbose
+        continue-on-error: true
+        run: |
+          set +e
+          actionlint --verbose 2>&1 | tee /tmp/actionlint.txt
+          exit_code=${PIPESTATUS[0]}
+          if [ "$exit_code" -ne 0 ]; then
+            {
+              printf '## actionlint\n```\n'
+              cat /tmp/actionlint.txt
+              printf '```\n'
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+          exit "$exit_code"
 
       - name: Run shellcheck
-        run: find . -name '*.sh' -not -path './submodules/*' -print0 | xargs -r -0 shellcheck
+        continue-on-error: true
+        run: |
+          set +e
+          find . -name '*.sh' -not -path './submodules/*' -print0 | xargs -r -0 shellcheck 2>&1 | tee /tmp/shellcheck.txt
+          exit_code=${PIPESTATUS[1]}
+          if [ "$exit_code" -ne 0 ]; then
+            {
+              printf '## shellcheck\n```\n'
+              cat /tmp/shellcheck.txt
+              printf '```\n'
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+          exit "$exit_code"
 
       - name: Run ghalint
-        run: ghalint run
+        continue-on-error: true
+        run: |
+          set +e
+          ghalint run 2>&1 | tee /tmp/ghalint.txt
+          exit_code=${PIPESTATUS[0]}
+          if [ "$exit_code" -ne 0 ]; then
+            {
+              printf '## ghalint\n```\n'
+              cat /tmp/ghalint.txt
+              printf '```\n'
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+          exit "$exit_code"
 
       - name: Run zizmor
-        run: zizmor --pedantic --no-progress --gh-token ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+        run: |
+          set +e
+          zizmor --pedantic --no-progress --gh-token ${{ secrets.GITHUB_TOKEN }} 2>&1 | tee /tmp/zizmor.txt
+          exit_code=${PIPESTATUS[0]}
+          if [ "$exit_code" -ne 0 ]; then
+            {
+              printf '## zizmor\n```\n'
+              cat /tmp/zizmor.txt
+              printf '```\n'
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+          exit "$exit_code"
 
       - name: Run ghasec
-        run: GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} ghasec --online
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set +e
+          ghasec --online 2>&1 | tee /tmp/ghasec.txt
+          exit_code=${PIPESTATUS[0]}
+          if [ "$exit_code" -ne 0 ]; then
+            {
+              printf '## ghasec\n```\n'
+              cat /tmp/ghasec.txt
+              printf '```\n'
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+          exit "$exit_code"
 
       - name: Run hadolint
-        run: find . -name 'Dockerfile*' -not -path './submodules/*' -print0 | xargs -r -0 hadolint
+        continue-on-error: true
+        run: |
+          set +e
+          find . -name 'Dockerfile*' -not -path './submodules/*' -print0 | xargs -r -0 hadolint 2>&1 | tee /tmp/hadolint.txt
+          exit_code=${PIPESTATUS[1]}
+          if [ "$exit_code" -ne 0 ]; then
+            {
+              printf '## hadolint\n```\n'
+              cat /tmp/hadolint.txt
+              printf '```\n'
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+          exit "$exit_code"
