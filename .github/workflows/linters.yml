@@ -35,50 +35,50 @@ jobs:
 
       - name: Install actionlint
         run: |
-          mkdir -p /usr/local/actionlint
+          mkdir -p "${HOME}/.local/actionlint"
           curl -fqsLS "https://github.com/rhysd/actionlint/releases/download/${{ env.ACTIONLINT_VERSION }}/actionlint_${ACTIONLINT_VERSION#v}_linux_amd64.tar.gz" -o actionlint.tar.gz
-          tar -xzf actionlint.tar.gz -C /usr/local/actionlint
-          echo '/usr/local/actionlint' >> "$GITHUB_PATH"
+          tar -xzf actionlint.tar.gz -C "${HOME}/.local/actionlint"
+          echo "${HOME}/.local/actionlint" >> "$GITHUB_PATH"
           rm actionlint.tar.gz
 
       - name: Install shellcheck
         run: |
-          mkdir -p /usr/local/shellcheck
+          mkdir -p "${HOME}/.local/shellcheck"
           curl -fqsLS "https://github.com/koalaman/shellcheck/releases/download/${{ env.SHELLCHECK_VERSION }}/shellcheck-${{ env.SHELLCHECK_VERSION }}.linux.x86_64.tar.gz" -o shellcheck.tar.gz
-          tar -xzf shellcheck.tar.gz -C /usr/local/shellcheck --strip-components=1
-          echo '/usr/local/shellcheck' >> "$GITHUB_PATH"
+          tar -xzf shellcheck.tar.gz -C "${HOME}/.local/shellcheck" --strip-components=1
+          echo "${HOME}/.local/shellcheck" >> "$GITHUB_PATH"
           rm shellcheck.tar.gz
 
       - name: Install ghalint
         run: |
-          mkdir -p /usr/local/ghalint
+          mkdir -p "${HOME}/.local/ghalint"
           curl -fqsLS "https://github.com/suzuki-shunsuke/ghalint/releases/download/${{ env.GHALINT_VERSION }}/ghalint_${GHALINT_VERSION#v}_linux_amd64.tar.gz" -o ghalint.tar.gz
-          tar -xzf ghalint.tar.gz -C /usr/local/ghalint
-          echo '/usr/local/ghalint' >> "$GITHUB_PATH"
+          tar -xzf ghalint.tar.gz -C "${HOME}/.local/ghalint"
+          echo "${HOME}/.local/ghalint" >> "$GITHUB_PATH"
           rm ghalint.tar.gz
 
       - name: Install zizmor
         run: |
-          mkdir -p /usr/local/zizmor
+          mkdir -p "${HOME}/.local/zizmor"
           curl -fqsLS "https://github.com/zizmorcore/zizmor/releases/download/${{ env.ZIZMOR_VERSION }}/zizmor-x86_64-unknown-linux-gnu.tar.gz" -o zizmor.tar.gz
-          tar -xzf zizmor.tar.gz -C /usr/local/zizmor
-          echo '/usr/local/zizmor' >> "$GITHUB_PATH"
+          tar -xzf zizmor.tar.gz -C "${HOME}/.local/zizmor"
+          echo "${HOME}/.local/zizmor" >> "$GITHUB_PATH"
           rm zizmor.tar.gz
 
       - name: Install ghasec
         run: |
-          mkdir -p /usr/local/ghasec
+          mkdir -p "${HOME}/.local/ghasec"
           curl -fqsLS "https://github.com/koki-develop/ghasec/releases/download/${{ env.GHASEC_VERSION }}/ghasec_Linux_x86_64.tar.gz" -o ghasec.tar.gz
-          tar -xzf ghasec.tar.gz -C /usr/local/ghasec
-          echo '/usr/local/ghasec' >> "$GITHUB_PATH"
+          tar -xzf ghasec.tar.gz -C "${HOME}/.local/ghasec"
+          echo "${HOME}/.local/ghasec" >> "$GITHUB_PATH"
           rm ghasec.tar.gz
 
       - name: Install hadolint
         run: |
-          mkdir -p /usr/local/hadolint
-          curl -fqsLS "https://github.com/hadolint/hadolint/releases/download/${{ env.HADOLINT_VERSION }}/hadolint-linux-x86_64" -o /usr/local/hadolint/hadolint
-          chmod +x /usr/local/hadolint/hadolint
-          echo '/usr/local/hadolint' >> "$GITHUB_PATH"
+          mkdir -p "${HOME}/.local/hadolint"
+          curl -fqsLS "https://github.com/hadolint/hadolint/releases/download/${{ env.HADOLINT_VERSION }}/hadolint-linux-x86_64" -o "${HOME}/.local/hadolint/hadolint"
+          chmod +x "${HOME}/.local/hadolint/hadolint"
+          echo "${HOME}/.local/hadolint" >> "$GITHUB_PATH"
 
       - name: Run actionlint
         run: actionlint --verbose
