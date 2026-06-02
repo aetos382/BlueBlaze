@@ -86,7 +86,6 @@ public enum LexiconType
 [JsonConverter(typeof(LexiconDefinitionConverter))]
 public abstract class LexiconDefinition
 {
-    [JsonConverter(typeof(JsonStringEnumConverter<LexiconType>))]
     public required LexiconType Type { get; set; }
 
     public string? Description { get; set; }
@@ -188,7 +187,6 @@ public sealed class IntegerDefinition : LexiconDefinition
 
 public sealed class StringDefinition : LexiconDefinition
 {
-    [JsonConverter(typeof(JsonStringEnumConverter<StringFormat>))]
     public StringFormat? Format { get; set; }
 
     public int? MinLength { get; set; }
