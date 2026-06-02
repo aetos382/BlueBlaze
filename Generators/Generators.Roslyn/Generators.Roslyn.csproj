@@ -37,7 +37,7 @@
   </Target>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="Generators.Core.Tests" />
+    <InternalsVisibleTo Include="BlueBlaze.Generators.Roslyn.Tests" />
   </ItemGroup>
 
 </Project>
