@@ -121,17 +121,17 @@
         "resolved": "4.2.3",
         "contentHash": "dxOZt8/LWuiox7rugInJoIa5Mmu3pBmXdfaoZOx/mxx8+sUFFpjBXPlWXQXGeWzpkVPNC3x1Jf7rt2h2Zjyvvg=="
       },
-      "clients.atprotocol": {
+      "BlueBlaze.Clients.AtProtocol": {
         "type": "Project"
       },
-      "clients.bluesky": {
+      "BlueBlaze.Clients.Bluesky": {
         "type": "Project",
         "dependencies": {
-          "Clients.AtProtocol": "[1.0.0, )",
-          "Models.Bluesky": "[1.0.0, )"
+          "BlueBlaze.Clients.AtProtocol": "[1.0.0, )",
+          "BlueBlaze.Models.Bluesky": "[1.0.0, )"
         }
       },
-      "models.bluesky": {
+      "BlueBlaze.Models.Bluesky": {
         "type": "Project"
       }
     }

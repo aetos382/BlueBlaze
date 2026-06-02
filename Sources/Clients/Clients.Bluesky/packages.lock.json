@@ -116,14 +116,14 @@
           "System.Runtime.CompilerServices.Unsafe": "6.1.2"
         }
       },
-      "clients.atprotocol": {
+      "BlueBlaze.Clients.AtProtocol": {
         "type": "Project",
         "dependencies": {
           "System.Net.Http.Json": "[10.0.8, )",
           "System.Text.Json": "[10.0.8, )"
         }
       },
-      "models.bluesky": {
+      "BlueBlaze.Models.Bluesky": {
         "type": "Project"
       }
     },
@@ -146,10 +146,10 @@
         "resolved": "4.1.5",
         "contentHash": "i5z+cNu/cOcdO0AgFB8aXk8w6In2H+haaDfSgd9ImvQIK+rSHavHZIogVoAZLL8jLwYx4bAcs5b7EyuMMG4mQQ=="
       },
-      "clients.atprotocol": {
+      "BlueBlaze.Clients.AtProtocol": {
         "type": "Project"
       },
-      "models.bluesky": {
+      "BlueBlaze.Models.Bluesky": {
         "type": "Project"
       }
     }
