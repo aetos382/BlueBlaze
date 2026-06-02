@@ -1,6 +1,8 @@
 # syntax=docker/dockerfile:latest@sha256:87999aa3d42bdc6bea60565083ee17e86d1f3339802f543c0d03998580f9cb89
 FROM mcr.microsoft.com/devcontainers/base:3-noble@sha256:405175cbb232701dc27c47a2f178da555ea3ad20f85ea4142ad6a24f877af399
 
+RUN sed -i.bak 's|http://archive.ubuntu.com/ubuntu/|https://ftp.udx.icscoe.jp/Linux/ubuntu/|g' /etc/apt/sources.list.d/ubuntu.sources
+
 # datasource=github-releases のものはバージョン番号に v をつける
 
 # renovate: datasource=node-version depName=node
@@ -39,15 +41,13 @@ RUN mkdir /usr/local/apm && \
     tar -C /usr/local/apm -xzf apm.tar.gz --strip-components=1 && \
     rm apm.tar.gz
 
-RUN sed -i.bak 's|http://archive.ubuntu.com/ubuntu/|https://ftp.udx.icscoe.jp/Linux/ubuntu/|g' /etc/apt/sources.list.d/ubuntu.sources
-
 USER vscode
 
 WORKDIR /home/vscode
 
 RUN mkdir -p .nuget/packages .npm .npm-global .claude
 
-ENV PATH=/usr/local/node/bin:/usr/local/goat:/usr/local/apm/bin:/home/vscode/.npm-global/bin:$PATH
+ENV PATH=/usr/local/node/bin:/usr/local/goat:/usr/local/apm:/home/vscode/.npm-global/bin:$PATH
 
 # << と 'EOF' の間に空白を開けない
 # https://github.com/rcjsuen/dockerfile-utils/issues/130
