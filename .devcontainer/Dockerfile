@@ -19,7 +19,7 @@ ARG CLAUDE_CODE_VERSION=2.1.157
 ARG DEVCONTAINER_VERSION=0.87.0
 
 # renovate: datasource=npm depName=renovate
-ARG RENOVATE_VERSION=43.204.0
+ARG RENOVATE_VERSION=43.204.1
 
 RUN mkdir /usr/local/node && \
     curl -fqsLS https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.xz -o node.tar.xz && \
