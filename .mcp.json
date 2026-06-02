@@ -23,8 +23,7 @@
         "Microsoft.AITools.BinlogMcp@1.0.0-preview.26276.2",
         "--source",
         "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json",
-        "--yes",
-        "--prerelease"
+        "--yes"
       ],
       "env": {
         "BINLOG_MCP_TELEMETRY_NO_VS_COLLECTOR": "1"
