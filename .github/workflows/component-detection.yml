@@ -7,15 +7,20 @@ on:
     - cron: '0 0 * * 2'
   workflow_dispatch:
 
-permissions:
-  contents: write
-  id-token: write
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   dependency-submission:
     name: Dependency Submission
     runs-on: ubuntu-slim
     timeout-minutes: 30
+    permissions:
+      contents: write  # dependency graph への書き込みに必要
+      id-token: write  # OIDC トークン取得に必要
 
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3

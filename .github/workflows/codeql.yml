@@ -7,15 +7,20 @@ on:
     - cron: '0 0 * * 1'
   workflow_dispatch:
 
-permissions:
-  contents: read
-  security-events: write
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   analyze:
     name: Analyze
     runs-on: ubuntu-slim
     timeout-minutes: 30
+    permissions:
+      contents: read
+      security-events: write  # CodeQL 解析結果のアップロードに必要
     strategy:
       matrix:
         include:

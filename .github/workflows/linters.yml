@@ -5,8 +5,15 @@ on:
   pull_request:
   workflow_dispatch:
 
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   lint:
+    name: Lint
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
@@ -40,7 +47,7 @@ jobs:
       - name: Install actionlint
         run: |
           mkdir -p "${HOME}/.local/actionlint"
-          curl -fqsLS "https://github.com/rhysd/actionlint/releases/download/${{ env.ACTIONLINT_VERSION }}/actionlint_${ACTIONLINT_VERSION#v}_linux_amd64.tar.gz" -o actionlint.tar.gz
+          curl -fqsLS "https://github.com/rhysd/actionlint/releases/download/${ACTIONLINT_VERSION}/actionlint_${ACTIONLINT_VERSION#v}_linux_amd64.tar.gz" -o actionlint.tar.gz
           tar -xzf actionlint.tar.gz -C "${HOME}/.local/actionlint"
           echo "${HOME}/.local/actionlint" >> "$GITHUB_PATH"
           rm actionlint.tar.gz
@@ -48,7 +55,7 @@ jobs:
       - name: Install shellcheck
         run: |
           mkdir -p "${HOME}/.local/shellcheck"
-          curl -fqsLS "https://github.com/koalaman/shellcheck/releases/download/${{ env.SHELLCHECK_VERSION }}/shellcheck-${{ env.SHELLCHECK_VERSION }}.linux.x86_64.tar.gz" -o shellcheck.tar.gz
+          curl -fqsLS "https://github.com/koalaman/shellcheck/releases/download/${SHELLCHECK_VERSION}/shellcheck-${SHELLCHECK_VERSION}.linux.x86_64.tar.gz" -o shellcheck.tar.gz
           tar -xzf shellcheck.tar.gz -C "${HOME}/.local/shellcheck" --strip-components=1
           echo "${HOME}/.local/shellcheck" >> "$GITHUB_PATH"
           rm shellcheck.tar.gz
@@ -56,7 +63,7 @@ jobs:
       - name: Install ghalint
         run: |
           mkdir -p "${HOME}/.local/ghalint"
-          curl -fqsLS "https://github.com/suzuki-shunsuke/ghalint/releases/download/${{ env.GHALINT_VERSION }}/ghalint_${GHALINT_VERSION#v}_linux_amd64.tar.gz" -o ghalint.tar.gz
+          curl -fqsLS "https://github.com/suzuki-shunsuke/ghalint/releases/download/${GHALINT_VERSION}/ghalint_${GHALINT_VERSION#v}_linux_amd64.tar.gz" -o ghalint.tar.gz
           tar -xzf ghalint.tar.gz -C "${HOME}/.local/ghalint"
           echo "${HOME}/.local/ghalint" >> "$GITHUB_PATH"
           rm ghalint.tar.gz
@@ -64,7 +71,7 @@ jobs:
       - name: Install zizmor
         run: |
           mkdir -p "${HOME}/.local/zizmor"
-          curl -fqsLS "https://github.com/zizmorcore/zizmor/releases/download/${{ env.ZIZMOR_VERSION }}/zizmor-x86_64-unknown-linux-gnu.tar.gz" -o zizmor.tar.gz
+          curl -fqsLS "https://github.com/zizmorcore/zizmor/releases/download/${ZIZMOR_VERSION}/zizmor-x86_64-unknown-linux-gnu.tar.gz" -o zizmor.tar.gz
           tar -xzf zizmor.tar.gz -C "${HOME}/.local/zizmor"
           echo "${HOME}/.local/zizmor" >> "$GITHUB_PATH"
           rm zizmor.tar.gz
@@ -72,7 +79,7 @@ jobs:
       - name: Install ghasec
         run: |
           mkdir -p "${HOME}/.local/ghasec"
-          curl -fqsLS "https://github.com/koki-develop/ghasec/releases/download/${{ env.GHASEC_VERSION }}/ghasec_Linux_x86_64.tar.gz" -o ghasec.tar.gz
+          curl -fqsLS "https://github.com/koki-develop/ghasec/releases/download/${GHASEC_VERSION}/ghasec_Linux_x86_64.tar.gz" -o ghasec.tar.gz
           tar -xzf ghasec.tar.gz -C "${HOME}/.local/ghasec"
           echo "${HOME}/.local/ghasec" >> "$GITHUB_PATH"
           rm ghasec.tar.gz
@@ -80,7 +87,7 @@ jobs:
       - name: Install hadolint
         run: |
           mkdir -p "${HOME}/.local/hadolint"
-          curl -fqsLS "https://github.com/hadolint/hadolint/releases/download/${{ env.HADOLINT_VERSION }}/hadolint-linux-x86_64" -o "${HOME}/.local/hadolint/hadolint"
+          curl -fqsLS "https://github.com/hadolint/hadolint/releases/download/${HADOLINT_VERSION}/hadolint-linux-x86_64" -o "${HOME}/.local/hadolint/hadolint"
           chmod +x "${HOME}/.local/hadolint/hadolint"
           echo "${HOME}/.local/hadolint" >> "$GITHUB_PATH"
 
@@ -131,9 +138,11 @@ jobs:
 
       - name: Run zizmor
         continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set +e
-          zizmor --pedantic --no-progress --gh-token ${{ secrets.GITHUB_TOKEN }} .github/workflows/ 2>&1 | tee /tmp/zizmor.txt
+          zizmor --pedantic --no-progress --gh-token "$GH_TOKEN" .github/workflows/ 2>&1 | tee /tmp/zizmor.txt
           exit_code=${PIPESTATUS[0]}
           if [ "$exit_code" -ne 0 ]; then
             {
