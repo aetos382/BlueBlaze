@@ -12,6 +12,7 @@ jobs:
     permissions:
       contents: read
     env:
+      NO_COLOR: "1"
       # renovate: datasource=github-releases depName=rhysd/actionlint
       ACTIONLINT_VERSION: v1.7.12
 
