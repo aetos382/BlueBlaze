@@ -1,8 +1,10 @@
-/artifacts/
+artifacts/
 bin/
 obj/
 TestResults/
+
 node_modules/
+apm_modules/
 
 launchSettings.json
 
@@ -14,3 +16,9 @@ launchSettings.json
 .vs/
 
 [Tt]emp/
+
+/.claude/
+!/.claude/CLAUDE.md
+!/.claude/settings.json
+
+/.mcp.json

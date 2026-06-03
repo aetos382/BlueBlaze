@@ -1,0 +1,50 @@
+name: BlueBlaze
+version: 0.0.0
+description: APM project for BlueBlaze
+author: aetos
+targets:
+- claude
+dependencies:
+  apm: []
+  mcp: []
+includes: auto
+scripts: {}
+devDependencies:
+  apm:
+  - anthropics/claude-plugins-official/plugins/claude-code-setup
+  - anthropics/claude-plugins-official/plugins/claude-md-management
+  - anthropics/claude-plugins-official/plugins/commit-commands
+  - anthropics/claude-plugins-official/plugins/feature-dev
+  - anthropics/claude-plugins-official/plugins/pr-review-toolkit
+  - anthropics/claude-plugins-official/plugins/skill-creator
+  - dotnet/skills/plugins/dotnet-ai#cb7c10bd32b250459632df9e6fa1350cdaf00b18
+  - dotnet/skills/plugins/dotnet-aspnet#cb7c10bd32b250459632df9e6fa1350cdaf00b18
+  - dotnet/skills/plugins/dotnet-data#cb7c10bd32b250459632df9e6fa1350cdaf00b18
+  - dotnet/skills/plugins/dotnet-diag#cb7c10bd32b250459632df9e6fa1350cdaf00b18
+  - dotnet/skills/plugins/dotnet-msbuild#cb7c10bd32b250459632df9e6fa1350cdaf00b18
+  - dotnet/skills/plugins/dotnet-nuget#cb7c10bd32b250459632df9e6fa1350cdaf00b18
+  - dotnet/skills/plugins/dotnet-test#cb7c10bd32b250459632df9e6fa1350cdaf00b18
+  - dotnet/skills/plugins/dotnet-upgrade#cb7c10bd32b250459632df9e6fa1350cdaf00b18
+  - dotnet/skills/plugins/dotnet#cb7c10bd32b250459632df9e6fa1350cdaf00b18
+  mcp:
+  - name: sequential-thinking
+    registry: false
+    transport: stdio
+    command: npx
+    args:
+    - '@modelcontextprotocol/server-sequential-thinking@2025.12.18'
+  - name: binlog
+    registry: false
+    transport: stdio
+    command: dnx
+    args:
+    - Microsoft.AITools.BinlogMcp@1.0.0-preview.26276.2
+    - --source
+    - https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json
+    - --yes
+    env:
+      BINLOG_MCP_TELEMETRY_NO_VS_COLLECTOR: '1'
+  - microsoftdocs/mcp
+  - com.microsoft/nuget
+  - name: io.github.github/github-mcp-server
+    transport: streamable-http
