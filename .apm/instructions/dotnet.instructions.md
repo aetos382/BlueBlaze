@@ -1,7 +1,6 @@
 ---
-paths:
-  - '**/*.csproj'
-  - '/Directory.Packages.props'
+description: .csproj ファイルに関するルール
+applyTo: '**/*.csproj,Directory.Packages.props'
 ---
 
 # .csproj ファイルに関するルール

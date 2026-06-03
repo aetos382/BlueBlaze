@@ -24,6 +24,7 @@
     "NUGET_PACKAGES": "/home/vscode/.nuget/packages",
     "WORKSPACE": "${containerWorkspaceFolder}"
   },
+  "onCreateCommand": "bash .devcontainer/onCreate.sh",
   "updateContentCommand": "bash .devcontainer/updateContent.sh",
   "postCreateCommand": "bash .devcontainer/postCreate.sh",
   "mounts": [
