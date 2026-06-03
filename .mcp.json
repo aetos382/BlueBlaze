@@ -1,0 +1,33 @@
+{
+  "mcpServers": {
+    "sequential-thinking": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-sequential-thinking@2025.12.18"
+      ]
+    },
+    "nuget": {
+      "type": "stdio",
+      "command": "dnx",
+      "args": [
+        "NuGet.Mcp.Server@1.4.3",
+        "--yes"
+      ]
+    },
+    "binlog": {
+      "type": "stdio",
+      "command": "dnx",
+      "args": [
+        "Microsoft.AITools.BinlogMcp@1.0.0-preview.26276.2",
+        "--source",
+        "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json",
+        "--yes"
+      ],
+      "env": {
+        "BINLOG_MCP_TELEMETRY_NO_VS_COLLECTOR": "1"
+      }
+    }
+  }
+}
