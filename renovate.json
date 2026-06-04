@@ -8,7 +8,8 @@
     "group:definitelyTyped",
     "group:dotNetCore",
     "helpers:pinGitHubActionDigestsToSemver",
-    "security:openssf-scorecard"
+    "security:openssf-scorecard",
+    "schedule:automergeDaily"
   ],
   "timezone": "Asia/Tokyo",
   "minimumReleaseAge": "3 days",
@@ -31,7 +32,6 @@
         "https://github.com/microsoft/**"
       ],
       "groupName": "nuget microsoft",
-      "schedule": ["* 15 * * 1"],
       "minimumReleaseAge": null,
       "automerge": true,
       "description": "Auto-merge minor/patch updates from Microsoft GitHub organizations"
@@ -61,7 +61,6 @@
       "matchDatasources": ["docker"],
       "matchRegistryUrls": ["mcr.microsoft.com"],
       "groupName": "docker mcr.microsoft.com",
-      "schedule": ["* 15 * * 1"],
       "minimumReleaseAge": null,
       "automerge": true,
       "description": "Auto-merge minor/patch/pin/digest updates for Microsoft Container Registry images"
