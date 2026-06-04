@@ -66,19 +66,6 @@
       "description": "Auto-merge minor/patch/pin/digest updates for Microsoft Container Registry images"
     },
     {
-      "matchUpdateTypes": ["pin"],
-      "minimumReleaseAge": null,
-      "automerge": true,
-      "description": "Allow automerge pin updates"
-    },
-    {
-      "matchUpdateTypes": ["rollback", "replacement"],
-      "minimumReleaseAge": null,
-      "automerge": false,
-      "commitMessagePrefix": "[cautionable]",
-      "description": "Report cautionable updates"
-    },
-    {
       "matchDatasources": ["npm"],
       "matchDepNames": ["renovate"],
       "schedule": ["* * * * 1"],
@@ -90,6 +77,19 @@
       "minimumReleaseAge": null,
       "automerge": true,
       "description": "Auto-merge atproto submodule updates"
+    },
+    {
+      "matchUpdateTypes": ["pin"],
+      "minimumReleaseAge": null,
+      "automerge": true,
+      "description": "Allow automerge pin updates"
+    },
+    {
+      "matchUpdateTypes": ["rollback", "replacement"],
+      "minimumReleaseAge": null,
+      "automerge": false,
+      "commitMessagePrefix": "[cautionable]",
+      "description": "Report cautionable updates"
     },
     {
       "matchUpdateTypes": ["major"],
