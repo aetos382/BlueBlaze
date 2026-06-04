@@ -85,6 +85,13 @@
       "description": "Reduce renovate update frequency to weekly"
     },
     {
+      "matchDepNames": ["atproto"],
+      "matchDatasources": ["git-refs"],
+      "minimumReleaseAge": null,
+      "automerge": true,
+      "description": "Auto-merge atproto submodule updates"
+    },
+    {
       "matchUpdateTypes": ["major"],
       "automerge": false,
       "description": "Don't automerge major updates"
