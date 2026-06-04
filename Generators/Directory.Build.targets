@@ -1,0 +1,17 @@
+<Project>
+
+  <Target Name="GetProjectPurpose" Returns="@(_ProjectFullPathWithPurpose)">
+    <PropertyGroup>
+      <ProjectPurpose Condition="'$(ProjectPurpose)' == '' and '$(IsRoslynComponent)' == 'true'">RoslynAnalyzer</ProjectPurpose>
+      <ProjectPurpose Condition="'$(ProjectPurpose)' == '' and '$(IsMSBuildTask)' == 'true'">MSBuildTask</ProjectPurpose>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <_ProjectFullPathWithPurpose Include="$(MSBuildProjectFullPath)">
+        <ProjectPurpose>$(ProjectPurpose)</ProjectPurpose>
+      </_ProjectFullPathWithPurpose>
+    </ItemGroup>
+  </Target>
+
+  <Import Project="../Directory.Build.targets" />
+</Project>

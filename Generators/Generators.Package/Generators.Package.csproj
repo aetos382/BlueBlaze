@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.Build.NoTargets">
 
   <PropertyGroup>
-    <TargetFrameworks>net481;net10.0;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net481;net10.0</TargetFrameworks>
     <IsPackable>true</IsPackable>
     <PackageId>BlueBlaze.Generator</PackageId>
     <DevelopmentDependency>true</DevelopmentDependency>
@@ -20,7 +20,8 @@
     <ProjectReference Include="..\Generators.MSBuild\Generators.MSBuild.csproj">
       <PrivateAssets>all</PrivateAssets>
       <Pack>true</Pack>
-      <PackagePath>tasks/</PackagePath>
+      <PackagePath Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">tasks/full</PackagePath>
+      <PackagePath Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp'">tasks/core</PackagePath>
     </ProjectReference>
   </ItemGroup>
 
@@ -37,7 +38,6 @@
     </None>
   </ItemGroup>
 
-  <!--
   <PropertyGroup>
     <TargetsForTfmSpecificContentInPackage>
       $(TargetsForTfmSpecificContentInPackage);
@@ -48,14 +48,29 @@
   <Target Name="GetBuildOutputForPackaging" AfterTargets="ResolveProjectReferences">
 
     <ItemGroup>
-      <_ReferencedProject Include="@(ProjectReference)" Condition="'%(ProjectReference.Pack)' == 'true'">
+      <_ReferencedProject Include="@(ProjectReference)" Condition="'%(Pack)' == 'true'">
         <ProjectFullPath>%(FullPath)</ProjectFullPath>
       </_ReferencedProject>
     </ItemGroup>
 
+    <MSBuild Projects="@(_ReferencedProject)"
+             Targets="GetProjectPurpose"
+             BuildInParallel="true"
+             RemoveProperties="TargetFramework">
+
+      <Output TaskParameter="TargetOutputs" ItemName="_ProjectFullPathWithPurpose" />
+
+    </MSBuild>
+
+    <ItemGroup>
+      <_NonMSBuildTask Include="%(_ProjectFullPathWithPurpose.OriginalItemSpec)" Condition="'%(_ProjectFullPathWithPurpose.ProjectPurpose)' != 'MSBuildTask'" />
+      <_MSBuildTaskProject Include="@(_ReferencedProject)" Exclude="@(_NonMSBuildTask)"/>
+    </ItemGroup>
+
     <MSBuild
-      Projects="@(_ReferencedProject)"
-      Properties="TargetFramework=$(TargetFramework);InnerTargets=GetTargetPath;Configuration=$(Configuration);Platform=$(Platform)">
+      Projects="@(_MSBuildTaskProject)"
+      Properties="TargetFramework=$(TargetFramework);InnerTargets=GetTargetPath;Configuration=$(Configuration);Platform=$(Platform)"
+      Condition="'@(_MSBuildTaskProject)' != ''">
 
       <Output TaskParameter="TargetOutputs" ItemName="_BuildOutputFiles" />
 
@@ -68,6 +83,5 @@
     </ItemGroup>
 
   </Target>
-  -->
 
 </Project>
