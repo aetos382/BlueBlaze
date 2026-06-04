@@ -10,6 +10,7 @@
     "helpers:pinGitHubActionDigestsToSemver",
     "security:openssf-scorecard"
   ],
+  "timezone": "Asia/Tokyo",
   "minimumReleaseAge": "3 days",
   "osvVulnerabilityAlerts": true,
   "dependencyDashboardOSVVulnerabilitySummary": "all",
@@ -29,6 +30,8 @@
         "https://github.com/dotnet/**",
         "https://github.com/microsoft/**"
       ],
+      "groupName": "nuget microsoft",
+      "schedule": ["after 3pm on monday"],
       "minimumReleaseAge": null,
       "automerge": true,
       "description": "Auto-merge minor/patch updates from Microsoft GitHub organizations"
@@ -57,6 +60,8 @@
     {
       "matchDatasources": ["docker"],
       "matchRegistryUrls": ["mcr.microsoft.com"],
+      "groupName": "docker mcr.microsoft.com",
+      "schedule": ["after 3pm on monday"],
       "minimumReleaseAge": null,
       "automerge": true,
       "description": "Auto-merge minor/patch/pin/digest updates for Microsoft Container Registry images"
@@ -73,6 +78,12 @@
       "automerge": false,
       "commitMessagePrefix": "[cautionable]",
       "description": "Report cautionable updates"
+    },
+    {
+      "matchDatasources": ["npm"],
+      "matchDepNames": ["renovate"],
+      "schedule": ["on monday"],
+      "description": "Reduce renovate update frequency to weekly"
     },
     {
       "matchUpdateTypes": ["major"],
