@@ -4,4 +4,10 @@
   <PropertyGroup>
     <NoWarn>$(NoWarn);CA1515</NoWarn>
   </PropertyGroup>
+
+  <PropertyGroup>
+    <_OriginalBeforeMicrosoftNETSdkTargets>$(BeforeMicrosoftNETSdkTargets.Trim())</_OriginalBeforeMicrosoftNETSdkTargets>
+    <BeforeMicrosoftNETSdkTargets>$(MSBuildThisFileDirectory)BeforeMicrosoftNETSdkTargets.targets</BeforeMicrosoftNETSdkTargets>
+  </PropertyGroup>
+
 </Project>
