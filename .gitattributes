@@ -6,6 +6,6 @@
 *.cs text diff=csharp
 *.sh text diff=bash
 
-**/packages.lock.json linguist-generated -text
-**/package-lock.json linguist-generated -text
-**/devcontainer-lock.json linguist-generated -text
+**/packages.lock.json linguist-generated
+**/package-lock.json linguist-generated
+**/devcontainer-lock.json linguist-generated
