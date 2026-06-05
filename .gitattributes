@@ -5,3 +5,7 @@
 *.md text diff=markdown
 *.cs text diff=csharp
 *.sh text diff=bash
+
+**/packages.lock.json linguist-generated -text
+**/package-lock.json linguist-generated -text
+**/devcontainer-lock.json linguist-generated -text
