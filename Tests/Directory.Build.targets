@@ -2,8 +2,9 @@
 
   <Import Project="../Directory.Build.targets" />
 
-  <PropertyGroup>
-    <RuntimeIdentifiers Condition="'$(OutputType)' == 'Exe'">win-x64;linux-x64</RuntimeIdentifiers>
+  <PropertyGroup Condition="'$(OutputType)' == 'Exe'">
+    <RuntimeIdentifiers>win-x64;linux-x64</RuntimeIdentifiers>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
 
 </Project>
