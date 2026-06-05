@@ -20,8 +20,6 @@
     <ProjectReference Include="..\Generators.MSBuild\Generators.MSBuild.csproj">
       <PrivateAssets>all</PrivateAssets>
       <Pack>true</Pack>
-      <PackagePath Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">tasks/full</PackagePath>
-      <PackagePath Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp'">tasks/core</PackagePath>
     </ProjectReference>
   </ItemGroup>
 
@@ -59,11 +57,20 @@
     </MSBuild>
 
     <ItemGroup>
-      <None Include="@(_BuildOutputs)">
+      <None Include="@(_BuildOutputs->WithMetadataValue('TargetFrameworkIdentifier', '.NETFramework'))">
+        <Pack>true</Pack>
+        <PackagePath>tasks/full</PackagePath>
+      </None>
+      <None Include="@(_BuildOutputs->WithMetadataValue('TargetFrameworkIdentifier', '.NETCoreApp'))">
+        <Pack>true</Pack>
+        <PackagePath>tasks/core</PackagePath>
+      </None>
+      <None Include="@(_BuildOutputs)" Condition="'%(_BuildOutputs.PackagePath)' != ''">
         <Pack>true</Pack>
         <PackagePath>%(_BuildOutputs.PackagePath)</PackagePath>
       </None>
     </ItemGroup>
+
   </Target>
 
 </Project>

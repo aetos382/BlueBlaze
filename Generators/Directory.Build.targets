@@ -3,29 +3,19 @@
 
   <Target Name="_GetOwnTfmOutputs" Returns="@(_OwnTfmOutputs)">
 
-    <GetProjectTargetFrameworksTask
-      ProjectPath="$(MSBuildProjectFullPath)"
-      TargetFrameworks="$(TargetFrameworks)"
-      TargetFramework="$(TargetFramework)"
-      TargetFrameworkMoniker="$(TargetFrameworkMoniker)"
-      TargetPlatformIdentifier="$(TargetPlatformIdentifier)"
-      TargetPlatformVersion="$(TargetPlatformVersion)"
-      TargetPlatformMinVersion="$(TargetPlatformMinVersion)">
+    <ItemGroup Condition="'$(TargetFrameworks)' != ''">
+      <_OwnProjectFramework Include="$(TargetFrameworks)" />
+    </ItemGroup>
 
-      <Output
-        TaskParameter="ProjectTargetFrameworks"
-        PropertyName="_OwnProjectFrameworks" />
-    </GetProjectTargetFrameworksTask>
-
-    <ItemGroup>
-      <_OwnProjectFramework Include="$([MSBuild]::Unescape($(_OwnProjectFrameworks)))" />
+    <ItemGroup Condition="'$(TargetFrameworks)' == '' and '$(TargetFramework)' != ''">
+      <_OwnProjectFramework Include="$(TargetFramework)" />
     </ItemGroup>
 
     <MSBuild
       Projects="$(MSBuildProjectFullPath)"
       Targets="_CollectTfmBuildOutput"
       Properties="TargetFramework=%(_OwnProjectFramework.Identity);Configuration=$(Configuration);Platform=$(Platform)"
-      RemoveProperties="TargetFrameworks;TargetFramework;TargetFrameworkMoniker;TargetPlatformIdentifier;TargetPlatformVersion;TargetPlatformMinVersion"
+      RemoveProperties="TargetFrameworks"
       BuildInParallel="true">
 
       <Output TaskParameter="TargetOutputs" ItemName="_OwnTfmOutputs" />
