@@ -6,7 +6,6 @@
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <GenerateDependencyFile>true</GenerateDependencyFile>
     <IncludeSymbols>false</IncludeSymbols>
-    <IsMSBuildTask>true</IsMSBuildTask>
   </PropertyGroup>
 
   <ItemGroup>

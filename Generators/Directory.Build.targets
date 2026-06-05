@@ -1,17 +1,37 @@
 <Project>
+  <Import Project="../Directory.Build.targets" />
 
-  <Target Name="GetProjectPurpose" Returns="@(_ProjectFullPathWithPurpose)">
-    <PropertyGroup>
-      <ProjectPurpose Condition="'$(ProjectPurpose)' == '' and '$(IsRoslynComponent)' == 'true'">RoslynAnalyzer</ProjectPurpose>
-      <ProjectPurpose Condition="'$(ProjectPurpose)' == '' and '$(IsMSBuildTask)' == 'true'">MSBuildTask</ProjectPurpose>
-    </PropertyGroup>
+  <Target Name="_GetOwnTfmOutputs" Returns="@(_OwnTfmOutputs)">
+
+    <GetProjectTargetFrameworksTask
+      ProjectPath="$(MSBuildProjectFullPath)"
+      TargetFrameworks="$(TargetFrameworks)"
+      TargetFramework="$(TargetFramework)"
+      TargetFrameworkMoniker="$(TargetFrameworkMoniker)"
+      TargetPlatformIdentifier="$(TargetPlatformIdentifier)"
+      TargetPlatformVersion="$(TargetPlatformVersion)"
+      TargetPlatformMinVersion="$(TargetPlatformMinVersion)">
+
+      <Output
+        TaskParameter="ProjectTargetFrameworks"
+        PropertyName="_OwnProjectFrameworks" />
+    </GetProjectTargetFrameworksTask>
 
     <ItemGroup>
-      <_ProjectFullPathWithPurpose Include="$(MSBuildProjectFullPath)">
-        <ProjectPurpose>$(ProjectPurpose)</ProjectPurpose>
-      </_ProjectFullPathWithPurpose>
+      <_OwnProjectFramework Include="$([MSBuild]::Unescape($(_OwnProjectFrameworks)))" />
     </ItemGroup>
+
+    <MSBuild
+      Projects="$(MSBuildProjectFullPath)"
+      Targets="Build"
+      Properties="TargetFramework=%(_OwnProjectFramework.Identity);Configuration=$(Configuration);Platform=$(Platform)"
+      RemoveProperties="TargetFrameworks"
+      BuildInParallel="true">
+
+      <Output TaskParameter="TargetOutputs" ItemName="_OwnTfmOutputs" />
+
+    </MSBuild>
+
   </Target>
 
-  <Import Project="../Directory.Build.targets" />
 </Project>

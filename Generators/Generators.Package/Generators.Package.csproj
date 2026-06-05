@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.Build.NoTargets">
 
   <PropertyGroup>
-    <TargetFrameworks>net481;net10.0</TargetFrameworks>
+    <TargetFramework>net10.0</TargetFramework>
     <IsPackable>true</IsPackable>
     <PackageId>BlueBlaze.Generator</PackageId>
     <DevelopmentDependency>true</DevelopmentDependency>
@@ -39,80 +39,31 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <TargetsForTfmSpecificContentInPackage>
-      $(TargetsForTfmSpecificContentInPackage);
-      GetBuildOutputForPackaging
-    </TargetsForTfmSpecificContentInPackage>
     <BeforePack>
       $(BeforePack);
-      FooBar
+      _BuildReferencedProjectsForPack
     </BeforePack>
   </PropertyGroup>
 
-  <Target Name="FooBar" Returns="@(_ProjectWithTFM)">
-
-    <GetProjectTargetFrameworksTask
-      ProjectPath="$(MSBuildProjectFullPath)"
-      TargetFrameworks="$(TargetFrameworks)"
-      TargetFramework="$(TargetFramework)"
-      TargetFrameworkMoniker="$(TargetFrameworkMoniker)"
-      TargetPlatformIdentifier="$(TargetPlatformIdentifier)"
-      TargetPlatformVersion="$(TargetPlatformVersion)"
-      TargetPlatformMinVersion="$(TargetPlatformMinVersion)">
-
-      <Output
-        TaskParameter="ProjectTargetFrameworks"
-        PropertyName="_ProjectFrameworks" />
-    </GetProjectTargetFrameworksTask>
-
-    <ItemGroup>
-      <_ProjectFramework Include="$([MSBuild]::Unescape($(_ProjectFrameworks)))" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <_ProjectWithTFM
-        Include="$(MSBuildProjectFullPath)"
-        AdditionalProperties="TargetFramework=%(_ProjectFramework.Identity)"/>
-    </ItemGroup>
-  </Target>
-
-  <Target Name="GetBuildOutputForPackaging" AfterTargets="ResolveProjectReferences">
-
-    <ItemGroup>
-      <_ReferencedProject Include="@(ProjectReference)" Condition="'%(Pack)' == 'true'">
-        <ProjectFullPath>%(FullPath)</ProjectFullPath>
-      </_ReferencedProject>
-    </ItemGroup>
-
-    <MSBuild Projects="@(_ReferencedProject)"
-             Targets="GetProjectPurpose"
-             BuildInParallel="true"
-             RemoveProperties="TargetFramework">
-
-      <Output TaskParameter="TargetOutputs" ItemName="_ProjectFullPathWithPurpose" />
-
-    </MSBuild>
-
-    <ItemGroup>
-      <_NonMSBuildTask Include="%(_ProjectFullPathWithPurpose.OriginalItemSpec)" Condition="'%(_ProjectFullPathWithPurpose.ProjectPurpose)' != 'MSBuildTask'" />
-      <_MSBuildTaskProject Include="@(_ReferencedProject)" Exclude="@(_NonMSBuildTask)"/>
-    </ItemGroup>
+  <Target Name="_BuildReferencedProjectsForPack">
 
     <MSBuild
-      Projects="@(_MSBuildTaskProject)"
-      Properties="TargetFramework=$(TargetFramework);InnerTargets=GetTargetPath;Configuration=$(Configuration);Platform=$(Platform)"
-      Condition="'@(_MSBuildTaskProject)' != ''">
+      Projects="@(ProjectReference)"
+      Condition="'%(Pack)' == 'true'"
+      Targets="_GetOwnTfmOutputs"
+      RemoveProperties="TargetFramework;TargetFrameworks"
+      BuildInParallel="true">
 
-      <Output TaskParameter="TargetOutputs" ItemName="_BuildOutputFiles" />
+      <Output TaskParameter="TargetOutputs" ItemName="_BuildOutputs" />
 
     </MSBuild>
 
     <ItemGroup>
-      <TfmSpecificPackageFile Include="@(_BuildOutputFiles)">
-        <PackagePath>%(PackagePath)</PackagePath>
-      </TfmSpecificPackageFile>
+      <None Include="@(_BuildOutputs)">
+        <Pack>true</Pack>
+        <PackagePath>%(_BuildOutputs.PackagePath)</PackagePath>
+      </None>
     </ItemGroup>
-
   </Target>
 
 </Project>
