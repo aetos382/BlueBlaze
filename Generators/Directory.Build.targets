@@ -23,14 +23,24 @@
 
     <MSBuild
       Projects="$(MSBuildProjectFullPath)"
-      Targets="Build"
+      Targets="_CollectTfmBuildOutput"
       Properties="TargetFramework=%(_OwnProjectFramework.Identity);Configuration=$(Configuration);Platform=$(Platform)"
-      RemoveProperties="TargetFrameworks"
+      RemoveProperties="TargetFrameworks;TargetFramework;TargetFrameworkMoniker;TargetPlatformIdentifier;TargetPlatformVersion;TargetPlatformMinVersion"
       BuildInParallel="true">
 
       <Output TaskParameter="TargetOutputs" ItemName="_OwnTfmOutputs" />
 
     </MSBuild>
+
+  </Target>
+
+  <Target Name="_CollectTfmBuildOutput" DependsOnTargets="Build" Returns="@(_CollectedOutput)">
+
+    <ItemGroup>
+      <_CollectedOutput Include="$(TargetPath)">
+        <TargetFrameworkIdentifier>$(TargetFrameworkIdentifier)</TargetFrameworkIdentifier>
+      </_CollectedOutput>
+    </ItemGroup>
 
   </Target>
 
