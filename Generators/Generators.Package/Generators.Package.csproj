@@ -43,7 +43,38 @@
       $(TargetsForTfmSpecificContentInPackage);
       GetBuildOutputForPackaging
     </TargetsForTfmSpecificContentInPackage>
+    <BeforePack>
+      $(BeforePack);
+      FooBar
+    </BeforePack>
   </PropertyGroup>
+
+  <Target Name="FooBar" Returns="@(_ProjectWithTFM)">
+
+    <GetProjectTargetFrameworksTask
+      ProjectPath="$(MSBuildProjectFullPath)"
+      TargetFrameworks="$(TargetFrameworks)"
+      TargetFramework="$(TargetFramework)"
+      TargetFrameworkMoniker="$(TargetFrameworkMoniker)"
+      TargetPlatformIdentifier="$(TargetPlatformIdentifier)"
+      TargetPlatformVersion="$(TargetPlatformVersion)"
+      TargetPlatformMinVersion="$(TargetPlatformMinVersion)">
+
+      <Output
+        TaskParameter="ProjectTargetFrameworks"
+        PropertyName="_ProjectFrameworks" />
+    </GetProjectTargetFrameworksTask>
+
+    <ItemGroup>
+      <_ProjectFramework Include="$([MSBuild]::Unescape($(_ProjectFrameworks)))" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ProjectWithTFM
+        Include="$(MSBuildProjectFullPath)"
+        AdditionalProperties="TargetFramework=%(_ProjectFramework.Identity)"/>
+    </ItemGroup>
+  </Target>
 
   <Target Name="GetBuildOutputForPackaging" AfterTargets="ResolveProjectReferences">
 
