@@ -38,9 +38,25 @@
   <PropertyGroup>
     <BeforePack>
       $(BeforePack);
+      _CreateLibPlaceholder;
       _BuildReferencedProjectsForPack
     </BeforePack>
   </PropertyGroup>
+
+  <Target Name="_CreateLibPlaceholder">
+    <PropertyGroup>
+      <_LibPlaceholderDirectory>$(IntermediateOutputPath)</_LibPlaceholderDirectory>
+      <_LibPlaceholderFile>$([System.IO.Path]::Combine('$(_LibPlaceholderDirectory)', '_._'))</_LibPlaceholderFile>
+    </PropertyGroup>
+    <MakeDir Directories="$(_LibPlaceholderDirectory)" />
+    <Touch Files="$(_LibPlaceholderFile)" AlwaysCreate="true" />
+    <ItemGroup>
+      <None Include="$(_LibPlaceholderFile)">
+        <Pack>true</Pack>
+        <PackagePath>lib/net10.0/</PackagePath>
+      </None>
+    </ItemGroup>
+  </Target>
 
   <Target Name="_BuildReferencedProjectsForPack">
 
