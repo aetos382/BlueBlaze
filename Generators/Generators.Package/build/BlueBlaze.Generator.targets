@@ -4,16 +4,9 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(BlueBlazeGeneratorRunAsBuildTask)' == 'true'">
-
-    <_BlueBlazeGeneratorBuildTaskAssemblyFileDirectoryBase>$(MSBuildThisFileDirectory)..</_BlueBlazeGeneratorBuildTaskAssemblyFileDirectoryBase>
-    <_BlueBlazeGeneratorBuildTaskAssemblyFileRuntimeDirectoryName Condition="'$(MSBuildRuntimeType)' == 'Full'">full</_BlueBlazeGeneratorBuildTaskAssemblyFileRuntimeDirectoryName>
-    <_BlueBlazeGeneratorBuildTaskAssemblyFileRuntimeDirectoryName Condition="'$(MSBuildRuntimeType)' == 'Core'">core</_BlueBlazeGeneratorBuildTaskAssemblyFileRuntimeDirectoryName>
-    <_BlueBlazeGeneratorBuildTaskAssemblyFileName>BlueBlaze.Generators.MSBuild.dll</_BlueBlazeGeneratorBuildTaskAssemblyFileName>
-    <_BlueBlazeGeneratorBuildTaskAssemblyFilePath Condition="'$(_BlueBlazeGeneratorBuildTaskAssemblyFilePath)' == ''">$([System.IO.Path]::GetFullPath($([System.IO.Path]::Combine('$(_BlueBlazeGeneratorBuildTaskAssemblyFileDirectoryBase)', 'tasks', '$(_BlueBlazeGeneratorBuildTaskAssemblyFileRuntimeDirectoryName)', '$(_BlueBlazeGeneratorBuildTaskAssemblyFileName)'))))</_BlueBlazeGeneratorBuildTaskAssemblyFilePath>
-
+    <_BlueBlazeGeneratorBuildTaskAssemblyFilePath Condition="'$(_BlueBlazeGeneratorBuildTaskAssemblyFilePath)' == ''">$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)', '..', 'tasks', '$(TargetFramework)', 'BlueBlaze.Generators.MSBuild.dll'))</_BlueBlazeGeneratorBuildTaskAssemblyFilePath>
     <_BlueBlazeGeneratorBuildTaskRuntime>CurrentRuntime</_BlueBlazeGeneratorBuildTaskRuntime>
     <_BlueBlazeGeneratorBuildTaskRuntime Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(MSBuildVersion)', '18.0'))">NET</_BlueBlazeGeneratorBuildTaskRuntime>
-
   </PropertyGroup>
 
   <UsingTask TaskName="BlueBlazeGenerateSourceCode"
