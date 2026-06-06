@@ -11,7 +11,9 @@
     <Project Path="Sources/Clients/Clients.Bluesky/Clients.Bluesky.csproj" />
   </Folder>
   <Folder Name="/Sources/Models/">
-    <Project Path="Sources/Models/Models.AtProtocol/Models.AtProtocol.csproj" />
+    <Project Path="Sources/Models/Models.AtProtocol/Models.AtProtocol.csproj">
+      <BuildDependency Project="Generators/Generators.MSBuild/Generators.MSBuild.csproj" />
+    </Project>
     <Project Path="Sources/Models/Models.Bluesky/Models.Bluesky.csproj" />
   </Folder>
   <Folder Name="/Tests/" />
