@@ -30,7 +30,7 @@ public sealed class LexiconDefinitionConverterTest
     }
 
     [TestMethod]
-    public void type属性が先頭にない要素のデシリアライズ()
+    public void Type属性が先頭にない要素のデシリアライズ()
     {
         ReadOnlySpan<byte> json = /*lang=json,strict*/ """
                                                        {

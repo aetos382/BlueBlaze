@@ -1,12 +1,11 @@
 <Project Sdk="Microsoft.Build.NoTargets">
 
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFrameworks>net10.0;net481;netstandard2.0</TargetFrameworks>
     <IsPackable>true</IsPackable>
     <PackageId>BlueBlaze.Generator</PackageId>
     <DevelopmentDependency>true</DevelopmentDependency>
     <IncludeBuildOutput>false</IncludeBuildOutput>
-    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
     <IncludeSymbols>false</IncludeSymbols>
     <NoWarn>$(NoWarn);NU5100</NoWarn>
   </PropertyGroup>
@@ -19,6 +18,12 @@
     <ProjectReference Include="..\Generators.MSBuild\Generators.MSBuild.csproj">
       <PrivateAssets>all</PrivateAssets>
       <Pack>true</Pack>
+    </ProjectReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Update="@(ProjectReference)">
+      <SkipGetTargetFrameworkProperties>false</SkipGetTargetFrameworkProperties>
     </ProjectReference>
   </ItemGroup>
 
@@ -39,15 +44,20 @@
 
   <Target Name="_CreateLibPlaceholder">
     <PropertyGroup>
-      <_LibPlaceholderDirectory>$(IntermediateOutputPath)</_LibPlaceholderDirectory>
-      <_LibPlaceholderFile>$([System.IO.Path]::Combine('$(_LibPlaceholderDirectory)', '_._'))</_LibPlaceholderFile>
+      <_PlaceholderFile>$([MSBuild]::NormalizePath('$(IntermediateOutputPath)', '_._'))</_PlaceholderFile>
     </PropertyGroup>
-    <MakeDir Directories="$(_LibPlaceholderDirectory)" />
-    <Touch Files="$(_LibPlaceholderFile)" AlwaysCreate="true" />
+    <MakeDir Directories="$([System.IO.Path]::GetDirectoryName('$(_PlaceholderFile)'))" />
+    <Touch Files="$(_PlaceholderFile)" AlwaysCreate="true">
+      <Output TaskParameter="TouchedFiles" ItemName="_PlaceholderFile" />
+    </Touch>
     <ItemGroup>
-      <None Include="$(_LibPlaceholderFile)">
+      <_PlaceholderTfm Include="$(TargetFramework)" Condition="'$(TargetFramework)' != ''" />
+      <_PlaceholderTfm Include="$(TargetFrameworks)" Condition="'$(TargetFramework)' == '' and '$(TargetFrameworks)' != ''" />
+    </ItemGroup>
+    <ItemGroup>
+      <None Include="@(_PlaceholderFile)">
         <Pack>true</Pack>
-        <PackagePath>lib/net10.0/</PackagePath>
+        <PackagePath>lib/%(_PlaceholderTfm.Identity)/</PackagePath>
       </None>
     </ItemGroup>
   </Target>
@@ -70,13 +80,9 @@
         <Pack>true</Pack>
         <PackagePath>analyzers/dotnet/roslyn5.0/cs/%(_BuildOutputs.DestinationSubDirectory)</PackagePath>
       </None>
-      <None Include="@(_BuildOutputs)" Condition="'%(_BuildOutputs.ComponentType)' == 'MSBuildTasks' and '%(_BuildOutputs.TargetFrameworkIdentifier)' == '.NETFramework'">
+      <None Include="@(_BuildOutputs)" Condition="'%(_BuildOutputs.ComponentType)' == 'MSBuildTasks'">
         <Pack>true</Pack>
-        <PackagePath>tasks/full/%(_BuildOutputs.DestinationSubDirectory)</PackagePath>
-      </None>
-      <None Include="@(_BuildOutputs)" Condition="'%(_BuildOutputs.ComponentType)' == 'MSBuildTasks' and '%(_BuildOutputs.TargetFrameworkIdentifier)' == '.NETCoreApp'">
-        <Pack>true</Pack>
-        <PackagePath>tasks/core/%(_BuildOutputs.DestinationSubDirectory)</PackagePath>
+        <PackagePath>tasks/%(_BuildOutputs.TargetFramework)/%(_BuildOutputs.DestinationSubDirectory)</PackagePath>
       </None>
     </ItemGroup>
 
