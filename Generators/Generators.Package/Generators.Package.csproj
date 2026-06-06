@@ -23,12 +23,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Update="@(ProjectReference)">
-      <SkipGetTargetFrameworkProperties>false</SkipGetTargetFrameworkProperties>
-    </ProjectReference>
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="build/*">
       <Pack>true</Pack>
       <PackagePath>build/</PackagePath>
