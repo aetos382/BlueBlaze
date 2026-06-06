@@ -1,0 +1,26 @@
+<Project>
+  <PropertyGroup>
+    <_BlueBlazeGeneratorBuildTaskAssemblyFilePath Condition="'$(_BlueBlazeGeneratorBuildTaskAssemblyFilePath)' == ''">$([MSBuild]::NormalizePath('$(ArtifactsPath)', 'bin', 'Generators.MSBuild', '$(Configuration)_$(TargetFramework)', '$(_BlueBlazeGeneratorBuildTaskAssemblyFileName)'))</_BlueBlazeGeneratorBuildTaskAssemblyFilePath>
+
+    <_BlueBlazeGeneratorBuildTaskAssemblyFileShadowCopySourcePath>$(_BlueBlazeGeneratorBuildTaskAssemblyFilePath)</_BlueBlazeGeneratorBuildTaskAssemblyFileShadowCopySourcePath>
+    <_BlueBlazeGeneratorBuildTaskShadowDirectory Condition="'$(_BlueBlazeGeneratorBuildTaskShadowDirectory)' == ''">$([MSBuild]::NormalizePath('$(BaseIntermediateOutputPath)', 'generator-task'))</_BlueBlazeGeneratorBuildTaskShadowDirectory>
+    <_BlueBlazeGeneratorBuildTaskAssemblyFilePath>$([MSBuild]::NormalizePath('$(_BlueBlazeGeneratorBuildTaskShadowDirectory)', '$(_BlueBlazeGeneratorBuildTaskAssemblyFileName)'))</_BlueBlazeGeneratorBuildTaskAssemblyFilePath>
+  </PropertyGroup>
+
+  <Target Name="_ShadowCopyBlueBlazeGeneratorTaskAssembly"
+          BeforeTargets="BlueBlazeGenerateLexiconSourceCode">
+
+    <MakeDir Directories="$(_BlueBlazeGeneratorBuildTaskShadowDirectory)"/>
+
+    <Copy SourceFiles="$(_BlueBlazeGeneratorBuildTaskAssemblyFileShadowCopySourcePath)"
+          DestinationFolder="$(_BlueBlazeGeneratorBuildTaskShadowDirectory)"
+          Retries="3"
+          RetryDelayMilliseconds="500" />
+
+  </Target>
+
+  <PropertyGroup>
+    <BlueBlazeGenerateLexiconSourceCodeTaskDebugBreakOnExecute>true</BlueBlazeGenerateLexiconSourceCodeTaskDebugBreakOnExecute>
+  </PropertyGroup>
+
+</Project>

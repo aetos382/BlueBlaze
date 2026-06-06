@@ -1,0 +1,39 @@
+<Project>
+  <PropertyGroup>
+    <_BlueBlazeGeneratorBuildTaskRuntime>CurrentRuntime</_BlueBlazeGeneratorBuildTaskRuntime>
+    <_BlueBlazeGeneratorBuildTaskRuntime Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(MSBuildVersion)', '18.0'))">NET</_BlueBlazeGeneratorBuildTaskRuntime>
+
+    <_BlueBlazeGeneratorBuildTaskAssemblyFileName>BlueBlaze.Generators.MSBuild.dll</_BlueBlazeGeneratorBuildTaskAssemblyFileName>
+    <_BlueBlazeGeneratorBuildTaskAssemblyFilePath Condition="'$(BlueBlazeGeneratorDevMode)' != 'true' and '$(_BlueBlazeGeneratorBuildTaskAssemblyFilePath)' == ''">$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)', '..', 'tasks', '$(TargetFramework)', '$(_BlueBlazeGeneratorBuildTaskAssemblyFileName)'))</_BlueBlazeGeneratorBuildTaskAssemblyFilePath>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <BlueBlazeGenerateLexiconSourceCodeTaskDebugBreakOnExecute>false</BlueBlazeGenerateLexiconSourceCodeTaskDebugBreakOnExecute>
+  </PropertyGroup>
+
+  <Import Project="BlueBlaze.Generator.MSBuild.DevMode.targets" Condition="'$(BlueBlazeGeneratorDevMode)' == 'true' and Exists('BlueBlaze.Generator.MSBuild.DevMode.targets')" />
+
+  <UsingTask TaskName="BlueBlazeGenerateSourceCode"
+             AssemblyFile="$(_BlueBlazeGeneratorBuildTaskAssemblyFilePath)"
+             Runtime="$(_BlueBlazeGeneratorBuildTaskRuntime)"
+             TaskFactory="TaskHostFactory"/>
+
+  <Target Name="BlueBlazeGenerateLexiconSourceCode"
+          DependsOnTargets="$(BlueBlazeGenerateLexiconSourceCodeDependsOn)"
+          BeforeTargets="CoreCompile">
+
+    <BlueBlazeGenerateSourceCode
+      LexiconDocuments="@(LexiconDocument)"
+      OutputPath="$(IntermediateOutputPath)GeneratedSources/BlueBlaze.Generator/"
+      DebugBreakOnExecute="$(BlueBlazeGenerateLexiconSourceCodeTaskDebugBreakOnExecute)">
+
+      <Output TaskParameter="GeneratedFiles" ItemName="GeneratedLexiconSources" />
+
+    </BlueBlazeGenerateSourceCode>
+
+    <ItemGroup>
+      <Compile Include="@(GeneratedLexiconSources)" />
+    </ItemGroup>
+  </Target>
+
+</Project>

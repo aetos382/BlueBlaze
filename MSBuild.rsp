@@ -1,0 +1,3 @@
+/nodeReuse:false
+/p:UseSharedCompilation=false
+/p:BlueBlazeGeneratorDevMode=true

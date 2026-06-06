@@ -1,35 +1,5 @@
 <Project>
-  <PropertyGroup>
-    <BlueBlazeGeneratorRunAsBuildTask Condition="'$(BlueBlazeGeneratorRunAsBuildTask)' == ''">false</BlueBlazeGeneratorRunAsBuildTask>
-  </PropertyGroup>
 
-  <PropertyGroup Condition="'$(BlueBlazeGeneratorRunAsBuildTask)' == 'true'">
-    <_BlueBlazeGeneratorBuildTaskAssemblyFilePath Condition="'$(_BlueBlazeGeneratorBuildTaskAssemblyFilePath)' == ''">$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)', '..', 'tasks', '$(TargetFramework)', 'BlueBlaze.Generators.MSBuild.dll'))</_BlueBlazeGeneratorBuildTaskAssemblyFilePath>
-    <_BlueBlazeGeneratorBuildTaskRuntime>CurrentRuntime</_BlueBlazeGeneratorBuildTaskRuntime>
-    <_BlueBlazeGeneratorBuildTaskRuntime Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(MSBuildVersion)', '18.0'))">NET</_BlueBlazeGeneratorBuildTaskRuntime>
-  </PropertyGroup>
-
-  <UsingTask TaskName="BlueBlazeGenerateSourceCode"
-             AssemblyFile="$(_BlueBlazeGeneratorBuildTaskAssemblyFilePath)"
-             Runtime="$(_BlueBlazeGeneratorBuildTaskRuntime)"
-             TaskFactory="TaskHostFactory"
-             Condition="'$(BlueBlazeGeneratorRunAsBuildTask)' == 'true'"/>
-
-  <Target Name="GenerateLexiconSourceCode"
-          BeforeTargets="CoreCompile"
-          Condition="'$(BlueBlazeGeneratorRunAsBuildTask)' == 'true'">
-
-    <BlueBlazeGenerateSourceCode
-      LexiconDocuments="@(LexiconDocument)"
-      OutputPath="$(IntermediateOutputPath)GeneratedSources/BlueBlaze.Generator/">
-
-      <Output TaskParameter="GeneratedFiles" ItemName="GeneratedLexiconSources" />
-
-    </BlueBlazeGenerateSourceCode>
-
-    <ItemGroup>
-      <Compile Include="@(GeneratedLexiconSources)" />
-    </ItemGroup>
-  </Target>
+  <Import Project="BlueBlaze.Generator.MSBuild.targets" Condition="'$(BlueBlazeGeneratorRunAsBuildTask)' == 'true'" />
 
 </Project>
