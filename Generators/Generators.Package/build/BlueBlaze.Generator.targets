@@ -15,4 +15,21 @@
              TaskFactory="TaskHostFactory"
              Condition="'$(BlueBlazeGeneratorRunAsBuildTask)' == 'true'"/>
 
+  <Target Name="GenerateLexiconSourceCode"
+          BeforeTargets="CoreCompile"
+          Condition="'$(BlueBlazeGeneratorRunAsBuildTask)' == 'true'">
+
+    <BlueBlazeGenerateSourceCode
+      LexiconDocuments="@(LexiconDocument)"
+      OutputPath="$(IntermediateOutputPath)GeneratedSources/BlueBlaze.Generator/">
+
+      <Output TaskParameter="GeneratedFiles" ItemName="GeneratedLexiconSources" />
+
+    </BlueBlazeGenerateSourceCode>
+
+    <ItemGroup>
+      <Compile Include="@(GeneratedLexiconSources)" />
+    </ItemGroup>
+  </Target>
+
 </Project>
