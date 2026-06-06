@@ -28,6 +28,8 @@
 
     <ItemGroup>
       <_CollectedOutput Include="$(TargetPath)">
+        <ComponentType>$(ComponentType)</ComponentType>
+        <TargetFramework>$(TargetFramework)</TargetFramework>
         <TargetFrameworkIdentifier>$(TargetFrameworkIdentifier)</TargetFrameworkIdentifier>
       </_CollectedOutput>
     </ItemGroup>

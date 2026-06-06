@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <IsRoslynComponent>true</IsRoslynComponent>
+    <ComponentType>RoslynComponent</ComponentType>
     <UsePolyfills>true</UsePolyfills>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <IncludeSymbols>false</IncludeSymbols>

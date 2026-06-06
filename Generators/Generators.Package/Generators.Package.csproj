@@ -15,7 +15,6 @@
     <ProjectReference Include="..\Generators.Roslyn\Generators.Roslyn.csproj">
       <PrivateAssets>all</PrivateAssets>
       <Pack>true</Pack>
-      <PackagePath>analyzers/dotnet/roslyn5.0/cs</PackagePath>
     </ProjectReference>
     <ProjectReference Include="..\Generators.MSBuild\Generators.MSBuild.csproj">
       <PrivateAssets>all</PrivateAssets>
@@ -57,17 +56,20 @@
     </MSBuild>
 
     <ItemGroup>
-      <None Include="@(_BuildOutputs->WithMetadataValue('TargetFrameworkIdentifier', '.NETFramework'))">
+      <None Include="@(_BuildOutputs)"
+            Condition="'%(_BuildOutputs.ComponentType)' == 'RoslynComponent'">
+        <Pack>true</Pack>
+        <PackagePath>analyzers/dotnet/roslyn5.0/cs</PackagePath>
+      </None>
+      <None Include="@(_BuildOutputs)"
+            Condition="'%(_BuildOutputs.ComponentType)' == 'MSBuildTasks' and '%(_BuildOutputs.TargetFrameworkIdentifier)' == '.NETFramework'">
         <Pack>true</Pack>
         <PackagePath>tasks/full</PackagePath>
       </None>
-      <None Include="@(_BuildOutputs->WithMetadataValue('TargetFrameworkIdentifier', '.NETCoreApp'))">
+      <None Include="@(_BuildOutputs)"
+            Condition="'%(_BuildOutputs.ComponentType)' == 'MSBuildTasks' and '%(_BuildOutputs.TargetFrameworkIdentifier)' == '.NETCoreApp'">
         <Pack>true</Pack>
         <PackagePath>tasks/core</PackagePath>
-      </None>
-      <None Include="@(_BuildOutputs)" Condition="'%(_BuildOutputs.PackagePath)' != ''">
-        <Pack>true</Pack>
-        <PackagePath>%(_BuildOutputs.PackagePath)</PackagePath>
       </None>
     </ItemGroup>
 

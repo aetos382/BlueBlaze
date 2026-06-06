@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net481;net10.0</TargetFrameworks>
+    <ComponentType>MSBuildTasks</ComponentType>
     <UsePolyfills>true</UsePolyfills>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <GenerateDependencyFile>true</GenerateDependencyFile>
