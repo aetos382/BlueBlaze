@@ -9,11 +9,10 @@
 
   <PropertyGroup>
     <BlueBlazeGeneratorRunAsBuildTask>true</BlueBlazeGeneratorRunAsBuildTask>
-    <_BlueBlazeGeneratorBuildTaskAssemblyFilePath>$([MSBuild]::NormalizePath('$(ArtifactsPath)', 'bin', 'Generators.MSBuild', '$(Configuration)_$(TargetFramework)', 'BlueBlaze.Generators.MSBuild.dll'))</_BlueBlazeGeneratorBuildTaskAssemblyFilePath>
   </PropertyGroup>
 
   <ItemGroup>
-    <LexiconDocument Include="../../../submodules/atproto/lexicons/com/atproto/**/*.json"/>
+    <LexiconDocument Include="../../../submodules/atproto/lexicons/com/atproto/**/*.json" />
   </ItemGroup>
 
   <Import Project="../../../Generators/Generators.Package/build/BlueBlaze.Generator.targets" />

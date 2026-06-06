@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
@@ -12,6 +14,8 @@ public sealed class BlueBlazeGenerateSourceCode : Task
 
     public string? OutputPath { get; set; }
 
+    public bool DebugBreakOnExecute { get; set; }
+
     [Output]
     public ITaskItem[] GeneratedFiles { get; set; } = [];
 
@@ -19,9 +23,21 @@ public sealed class BlueBlazeGenerateSourceCode : Task
 
     public override bool Execute()
     {
+        if (this.DebugBreakOnExecute)
+        {
+            Debugger.Launch();
+        }
+
         foreach (var lexiconDocument in this.LexiconDocuments)
         {
-            this.Log.LogMessage(lexiconDocument.ItemSpec);
+            if (!bool.TryParse(lexiconDocument.GetMetadata("IsLexiconDocument"), out var isLexiconDocument) ||
+                !isLexiconDocument)
+            {
+                continue;
+            }
+
+            var fullPath = lexiconDocument.GetMetadata("FullPath");
+            this.Log.LogMessage(fullPath);
         }
 
         return true;
