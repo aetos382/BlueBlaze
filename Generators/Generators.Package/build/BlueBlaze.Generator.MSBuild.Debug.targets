@@ -1,8 +1,6 @@
 <Project>
   <PropertyGroup>
-    <_BlueBlazeGeneratorBuildTaskAssemblyFilePath Condition="'$(_BlueBlazeGeneratorBuildTaskAssemblyFilePath)' == ''">$([MSBuild]::NormalizePath('$(ArtifactsPath)', 'bin', 'Generators.MSBuild', '$(Configuration)_$(TargetFramework)', '$(_BlueBlazeGeneratorBuildTaskAssemblyFileName)'))</_BlueBlazeGeneratorBuildTaskAssemblyFilePath>
-
-    <_BlueBlazeGeneratorBuildTaskAssemblyFileShadowCopySourcePath>$(_BlueBlazeGeneratorBuildTaskAssemblyFilePath)</_BlueBlazeGeneratorBuildTaskAssemblyFileShadowCopySourcePath>
+    <_BlueBlazeGeneratorBuildTaskAssemblyFileShadowCopySourcePath>$([MSBuild]::NormalizePath('$(ArtifactsPath)', 'bin', 'Generators.MSBuild', '$(Configuration)_$(TargetFramework)', '$(_BlueBlazeGeneratorBuildTaskAssemblyFileName)'))</_BlueBlazeGeneratorBuildTaskAssemblyFileShadowCopySourcePath>
     <_BlueBlazeGeneratorBuildTaskShadowDirectory Condition="'$(_BlueBlazeGeneratorBuildTaskShadowDirectory)' == ''">$([MSBuild]::NormalizePath('$(BaseIntermediateOutputPath)', 'generator-task'))</_BlueBlazeGeneratorBuildTaskShadowDirectory>
     <_BlueBlazeGeneratorBuildTaskAssemblyFilePath>$([MSBuild]::NormalizePath('$(_BlueBlazeGeneratorBuildTaskShadowDirectory)', '$(_BlueBlazeGeneratorBuildTaskAssemblyFileName)'))</_BlueBlazeGeneratorBuildTaskAssemblyFilePath>
   </PropertyGroup>
