@@ -27,11 +27,15 @@
   <Target Name="_CollectTfmBuildOutput" DependsOnTargets="Build" Returns="@(_CollectedOutput)">
 
     <ItemGroup>
-      <_CollectedOutput Include="$(TargetPath)">
+      <_CollectedOutput Include="$(TargetPath);@(ReferenceCopyLocalPaths)" />
+      <_CollectedOutput Include="$(ProjectDepsFilePath)" Condition="Exists('$(ProjectDepsFilePath)')" />
+
+      <_CollectedOutput Update="@(_CollectedOutput)">
         <ComponentType>$(ComponentType)</ComponentType>
         <TargetFramework>$(TargetFramework)</TargetFramework>
         <TargetFrameworkIdentifier>$(TargetFrameworkIdentifier)</TargetFrameworkIdentifier>
       </_CollectedOutput>
+
     </ItemGroup>
 
   </Target>

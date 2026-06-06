@@ -56,18 +56,15 @@
     </MSBuild>
 
     <ItemGroup>
-      <None Include="@(_BuildOutputs)"
-            Condition="'%(_BuildOutputs.ComponentType)' == 'RoslynComponent'">
+      <None Include="@(_BuildOutputs)" Condition="'%(_BuildOutputs.ComponentType)' == 'RoslynComponent'">
         <Pack>true</Pack>
         <PackagePath>analyzers/dotnet/roslyn5.0/cs</PackagePath>
       </None>
-      <None Include="@(_BuildOutputs)"
-            Condition="'%(_BuildOutputs.ComponentType)' == 'MSBuildTasks' and '%(_BuildOutputs.TargetFrameworkIdentifier)' == '.NETFramework'">
+      <None Include="@(_BuildOutputs)" Condition="'%(_BuildOutputs.ComponentType)' == 'MSBuildTasks' and '%(_BuildOutputs.TargetFrameworkIdentifier)' == '.NETFramework'">
         <Pack>true</Pack>
         <PackagePath>tasks/full</PackagePath>
       </None>
-      <None Include="@(_BuildOutputs)"
-            Condition="'%(_BuildOutputs.ComponentType)' == 'MSBuildTasks' and '%(_BuildOutputs.TargetFrameworkIdentifier)' == '.NETCoreApp'">
+      <None Include="@(_BuildOutputs)" Condition="'%(_BuildOutputs.ComponentType)' == 'MSBuildTasks' and '%(_BuildOutputs.TargetFrameworkIdentifier)' == '.NETCoreApp'">
         <Pack>true</Pack>
         <PackagePath>tasks/core</PackagePath>
       </None>
