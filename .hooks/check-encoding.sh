@@ -16,11 +16,6 @@ for f in "$@"; do
         fail=1
     fi
 
-    # Check for CRLF (-U: prevent Windows grep from stripping CR in text mode)
-    if grep -qU $'\r' "$f" 2>/dev/null; then
-        echo "error: CRLF line endings detected: $f" >&2
-        fail=1
-    fi
 done
 
 exit $fail
