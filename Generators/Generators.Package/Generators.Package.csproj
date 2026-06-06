@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.Build.NoTargets">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <IsPackable>true</IsPackable>
     <PackageId>BlueBlaze.Generator</PackageId>
     <DevelopmentDependency>true</DevelopmentDependency>
@@ -12,15 +12,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Generators.MSBuild\Generators.MSBuild.csproj">
-      <PrivateAssets>all</PrivateAssets>
-      <Pack>true</Pack>
-      <PackagePath>tasks/</PackagePath>
-    </ProjectReference>
     <ProjectReference Include="..\Generators.Roslyn\Generators.Roslyn.csproj">
       <PrivateAssets>all</PrivateAssets>
       <Pack>true</Pack>
-      <PackagePath>analyzers/dotnet/roslyn5.0/cs</PackagePath>
+    </ProjectReference>
+    <ProjectReference Include="..\Generators.MSBuild\Generators.MSBuild.csproj">
+      <PrivateAssets>all</PrivateAssets>
+      <Pack>true</Pack>
     </ProjectReference>
   </ItemGroup>
 
@@ -32,33 +30,54 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <TargetsForTfmSpecificContentInPackage>
-      $(TargetsForTfmSpecificContentInPackage);
-      GetBuildOutputForPackaging
-    </TargetsForTfmSpecificContentInPackage>
+    <BeforePack>
+      $(BeforePack);
+      _CreateLibPlaceholder;
+      _BuildReferencedProjectsForPack
+    </BeforePack>
   </PropertyGroup>
 
-  <Target Name="GetBuildOutputForPackaging" AfterTargets="ResolveProjectReferences">
-
+  <Target Name="_CreateLibPlaceholder">
+    <PropertyGroup>
+      <_LibPlaceholderDirectory>$(IntermediateOutputPath)</_LibPlaceholderDirectory>
+      <_LibPlaceholderFile>$([System.IO.Path]::Combine('$(_LibPlaceholderDirectory)', '_._'))</_LibPlaceholderFile>
+    </PropertyGroup>
+    <MakeDir Directories="$(_LibPlaceholderDirectory)" />
+    <Touch Files="$(_LibPlaceholderFile)" AlwaysCreate="true" />
     <ItemGroup>
-      <_ReferencedProject Include="@(ProjectReference)" Condition="'%(ProjectReference.Pack)' == 'true'">
-        <ProjectFullPath>%(FullPath)</ProjectFullPath>
-      </_ReferencedProject>
+      <None Include="$(_LibPlaceholderFile)">
+        <Pack>true</Pack>
+        <PackagePath>lib/net10.0/</PackagePath>
+      </None>
     </ItemGroup>
+  </Target>
+
+  <Target Name="_BuildReferencedProjectsForPack">
 
     <MSBuild
-      Projects="@(_ReferencedProject)"
-      Targets="GetTargetPath"
-      Properties="Configuration=$(Configuration);Platform=$(Platform)">
+      Projects="@(ProjectReference)"
+      Condition="'%(Pack)' == 'true'"
+      Targets="_GetOwnTfmOutputs"
+      RemoveProperties="TargetFramework;TargetFrameworks"
+      BuildInParallel="true">
 
-      <Output TaskParameter="TargetOutputs" ItemName="_BuildOutputFiles" />
+      <Output TaskParameter="TargetOutputs" ItemName="_BuildOutputs" />
 
     </MSBuild>
 
     <ItemGroup>
-      <TfmSpecificPackageFile Include="@(_BuildOutputFiles)">
-        <PackagePath>%(PackagePath)</PackagePath>
-      </TfmSpecificPackageFile>
+      <None Include="@(_BuildOutputs)" Condition="'%(_BuildOutputs.ComponentType)' == 'RoslynComponent'">
+        <Pack>true</Pack>
+        <PackagePath>analyzers/dotnet/roslyn5.0/cs/%(_BuildOutputs.DestinationSubDirectory)</PackagePath>
+      </None>
+      <None Include="@(_BuildOutputs)" Condition="'%(_BuildOutputs.ComponentType)' == 'MSBuildTasks' and '%(_BuildOutputs.TargetFrameworkIdentifier)' == '.NETFramework'">
+        <Pack>true</Pack>
+        <PackagePath>tasks/full/%(_BuildOutputs.DestinationSubDirectory)</PackagePath>
+      </None>
+      <None Include="@(_BuildOutputs)" Condition="'%(_BuildOutputs.ComponentType)' == 'MSBuildTasks' and '%(_BuildOutputs.TargetFrameworkIdentifier)' == '.NETCoreApp'">
+        <Pack>true</Pack>
+        <PackagePath>tasks/core/%(_BuildOutputs.DestinationSubDirectory)</PackagePath>
+      </None>
     </ItemGroup>
 
   </Target>

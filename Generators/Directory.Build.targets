@@ -1,0 +1,43 @@
+<Project>
+  <Import Project="../Directory.Build.targets" />
+
+  <Target Name="_GetOwnTfmOutputs" Returns="@(_OwnTfmOutputs)">
+
+    <ItemGroup Condition="'$(TargetFrameworks)' != ''">
+      <_OwnProjectFramework Include="$(TargetFrameworks)" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(TargetFrameworks)' == '' and '$(TargetFramework)' != ''">
+      <_OwnProjectFramework Include="$(TargetFramework)" />
+    </ItemGroup>
+
+    <MSBuild
+      Projects="$(MSBuildProjectFullPath)"
+      Targets="_CollectTfmBuildOutput"
+      Properties="TargetFramework=%(_OwnProjectFramework.Identity);Configuration=$(Configuration);Platform=$(Platform)"
+      RemoveProperties="TargetFrameworks"
+      BuildInParallel="true">
+
+      <Output TaskParameter="TargetOutputs" ItemName="_OwnTfmOutputs" />
+
+    </MSBuild>
+
+  </Target>
+
+  <Target Name="_CollectTfmBuildOutput" DependsOnTargets="Build" Returns="@(_CollectedOutput)">
+
+    <ItemGroup>
+      <_CollectedOutput Include="$(TargetPath);@(ReferenceCopyLocalPaths)" />
+      <_CollectedOutput Include="$(ProjectDepsFilePath)" Condition="Exists('$(ProjectDepsFilePath)')" />
+
+      <_CollectedOutput Update="@(_CollectedOutput)">
+        <ComponentType>$(ComponentType)</ComponentType>
+        <TargetFramework>$(TargetFramework)</TargetFramework>
+        <TargetFrameworkIdentifier>$(TargetFrameworkIdentifier)</TargetFrameworkIdentifier>
+      </_CollectedOutput>
+
+    </ItemGroup>
+
+  </Target>
+
+</Project>
