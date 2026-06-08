@@ -8,6 +8,7 @@
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <IncludeSymbols>false</IncludeSymbols>
     <NoWarn>$(NoWarn);NU5100</NoWarn>
+    <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -50,14 +51,17 @@
     <PropertyGroup>
       <_PlaceholderFile>$([MSBuild]::NormalizePath('$(IntermediateOutputPath)', '_._'))</_PlaceholderFile>
     </PropertyGroup>
+
     <MakeDir Directories="$([System.IO.Path]::GetDirectoryName('$(_PlaceholderFile)'))" />
     <Touch Files="$(_PlaceholderFile)" AlwaysCreate="true">
       <Output TaskParameter="TouchedFiles" ItemName="_PlaceholderFile" />
     </Touch>
+
     <ItemGroup>
       <_PlaceholderTfm Include="$(TargetFramework)" Condition="'$(TargetFramework)' != ''" />
       <_PlaceholderTfm Include="$(TargetFrameworks)" Condition="'$(TargetFramework)' == '' and '$(TargetFrameworks)' != ''" />
     </ItemGroup>
+    
     <ItemGroup>
       <None Include="@(_PlaceholderFile)">
         <Pack>true</Pack>
