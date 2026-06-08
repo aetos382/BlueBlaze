@@ -2,6 +2,7 @@
 paths:
   - '**/*.csproj'
   - '/Directory.Packages.props'
+  - '**/.config/dotnet-tools.json'
 ---
 
 # .csproj ファイルに関するルール
@@ -12,6 +13,14 @@ paths:
   - プロジェクトへの NuGet パッケージ参照の追加は `dotnet package add` コマンド、削除は `dotnet package remove` コマンドを使用する。
   - プロジェクトへのプロジェクト参照の追加は `dotnet reference add` コマンド、削除は `dotnet reference remove` コマンドを使用する。
 - これらのコマンドを使用することで達成できる目標については、*.csproj ファイルや Directory.Packages.props ファイルを直接編集してはならない。
+
+## ローカルツールマニフェスト（`.config/dotnet-tools.json`）に関するルール
+
+- `.config/dotnet-tools.json` は手書きしない。以下のコマンドを使用する。
+  - マニフェストの新規作成: `dotnet new tool-manifest -o .config`
+  - ツールの追加: `dotnet tool install --local <パッケージ名> --version <バージョン>`
+  - ツールの削除: `dotnet tool uninstall --local <パッケージ名>`
+  - ツールのバージョン更新: `dotnet tool update --local <パッケージ名> --version <バージョン>`
 
 ## `dotnet` コマンドで達成できない目標
 
