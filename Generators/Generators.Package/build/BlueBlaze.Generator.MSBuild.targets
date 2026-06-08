@@ -7,9 +7,20 @@
 
     <!-- NuGet パッケージからインストールされた場合 -->
     <_BlueBlazeGeneratorBuildTaskAssemblyFilePath Condition="'$(_BlueBlazeGeneratorBuildTaskAssemblyFilePath)' == '' and Exists('$(MSBuildThisFileDirectory)../tasks/$(TargetFramework)/$(_BlueBlazeGeneratorBuildTaskAssemblyFileName)')">$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)', '..', 'tasks', '$(TargetFramework)', '$(_BlueBlazeGeneratorBuildTaskAssemblyFileName)'))</_BlueBlazeGeneratorBuildTaskAssemblyFilePath>
+  </PropertyGroup>
 
-    <!-- ローカルビルド / CI (UseArtifactsOutput) の場合 -->
-    <_BlueBlazeGeneratorBuildTaskAssemblyFilePath Condition="'$(_BlueBlazeGeneratorBuildTaskAssemblyFilePath)' == ''">$([MSBuild]::NormalizePath('$(ArtifactsPath)', 'bin', 'Generators.MSBuild', '$(ArtifactsPivots)', '$(_BlueBlazeGeneratorBuildTaskAssemblyFileName)'))</_BlueBlazeGeneratorBuildTaskAssemblyFilePath>
+  <!--
+    ローカルビルド / CI (UseArtifactsOutput) の場合。
+    $(ArtifactsPivots) は Sdk.targets 側（Microsoft.NET.DefaultOutputPaths.targets）で設定されるが、
+    このファイルは Sdk.props と Sdk.targets の間（プロジェクト本体）でインポートされるため、
+    インポート時点では $(ArtifactsPivots) が未定義。
+    代わりに $(Configuration) と $(TargetFramework) から直接 Pivots を構築する。
+    Generators.MSBuild は常にマルチターゲットなので消費側の $(TargetFramework) をそのまま使う。
+  -->
+  <PropertyGroup Condition="'$(_BlueBlazeGeneratorBuildTaskAssemblyFilePath)' == ''">
+    <_BlueBlazeGeneratorBuildTaskArtifactsPivots>$(Configuration.ToLowerInvariant())</_BlueBlazeGeneratorBuildTaskArtifactsPivots>
+    <_BlueBlazeGeneratorBuildTaskArtifactsPivots Condition="'$(TargetFramework)' != ''">$(_BlueBlazeGeneratorBuildTaskArtifactsPivots)_$(TargetFramework.ToLowerInvariant())</_BlueBlazeGeneratorBuildTaskArtifactsPivots>
+    <_BlueBlazeGeneratorBuildTaskAssemblyFilePath>$([MSBuild]::NormalizePath('$(ArtifactsPath)', 'bin', 'Generators.MSBuild', '$(_BlueBlazeGeneratorBuildTaskArtifactsPivots)', '$(_BlueBlazeGeneratorBuildTaskAssemblyFileName)'))</_BlueBlazeGeneratorBuildTaskAssemblyFilePath>
   </PropertyGroup>
 
   <PropertyGroup>
