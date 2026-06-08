@@ -13,6 +13,9 @@ This file provides guidance to Claude Code when working with code in this reposi
 この設定は git 2.54 で追加された [config based hook](https://git-scm.com/docs/git-hook/2.54.0) です。
 未対応の形式ではなくて、ちゃんと動いていますので、この設定自体は疑わないでください。
 
+# PR について
+- Renovate が作成した issue や PR を `close #xx` / `fix #xx` 等のキーワードで参照しないこと。
+
 # 即時実行コマンドについて
 Python はインストールされていません。
 スクリプトを生成して実行する場合は、シェルスクリプト、JavaScript、C#、PowerShell のいずれかを使用してください。
