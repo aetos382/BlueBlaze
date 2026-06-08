@@ -26,7 +26,6 @@
     </DefaultItemExcludes>
     <IsPackable>false</IsPackable>
     <NuGetAuditMode>all</NuGetAuditMode>
-    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
     <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
     <DisableImplicitLibraryPacksFolder>true</DisableImplicitLibraryPacksFolder>
     <AutomaticallyUseReferenceAssemblyPackages>false</AutomaticallyUseReferenceAssemblyPackages>

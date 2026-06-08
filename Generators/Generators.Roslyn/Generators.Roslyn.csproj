@@ -6,7 +6,6 @@
     <ComponentType>RoslynComponent</ComponentType>
     <UsePolyfills>true</UsePolyfills>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-    <IncludeSymbols>false</IncludeSymbols>
   </PropertyGroup>
 
   <ItemGroup>
