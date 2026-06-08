@@ -111,7 +111,7 @@ public sealed class ProcedureDefinition : LexiconDefinition
 {
     public ParametersDefinition? Parameters { get; set; }
 
-    public ObjectDefinition? Input { get; set; }
+    public InputDefinition? Input { get; set; }
 
     public OutputDefinition? Output { get; set; }
 
@@ -146,7 +146,16 @@ public sealed class MessageDefinition
 {
     public string? Description { get; set; }
 
-    public required ObjectDefinition Schema { get; set; }
+    public required LexiconDefinition Schema { get; set; }
+}
+
+public sealed class InputDefinition
+{
+    public string? Description { get; set; }
+
+    public required string Encoding { get; set; }
+
+    public LexiconDefinition? Schema { get; set; }
 }
 
 public sealed class OutputDefinition
@@ -317,6 +326,8 @@ public enum StringFormat
 [JsonSerializable(typeof(ProcedureDefinition))]
 [JsonSerializable(typeof(SubscriptionDefinition))]
 [JsonSerializable(typeof(PermissionSetDefinition))]
+[JsonSerializable(typeof(InputDefinition))]
+[JsonSerializable(typeof(OutputDefinition))]
 [JsonSerializable(typeof(BooleanDefinition))]
 [JsonSerializable(typeof(IntegerDefinition))]
 [JsonSerializable(typeof(StringDefinition))]
