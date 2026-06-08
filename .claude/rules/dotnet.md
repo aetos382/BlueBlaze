@@ -5,7 +5,7 @@ paths:
   - '/.config/dotnet-tools.json'
 ---
 
-# .csproj ファイルに関するルール
+# .NET に関するルール
 
 ## `dotnet` コマンドの使用
 - プロジェクトの操作は可能な限り適切な `dotnet` コマンドを通じて行う。
