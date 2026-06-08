@@ -19,6 +19,9 @@
   "git-submodules": {
     "enabled": true
   },
+  "ignorePaths": [
+    "PackageTest/**"
+  ],
   "packageRules": [
     {
       "matchDepNames": ["node"],
