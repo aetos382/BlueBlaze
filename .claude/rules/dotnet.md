@@ -2,7 +2,7 @@
 paths:
   - '**/*.csproj'
   - '/Directory.Packages.props'
-  - '**/.config/dotnet-tools.json'
+  - '/.config/dotnet-tools.json'
 ---
 
 # .csproj ファイルに関するルール
