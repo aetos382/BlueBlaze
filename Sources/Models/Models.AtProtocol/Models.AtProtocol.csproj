@@ -13,6 +13,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="../../../Generators/Generators.MSBuild/Generators.MSBuild.csproj">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+  </ItemGroup>
+
+  <ItemGroup>
     <LexiconDocument Include="../../../submodules/atproto/lexicons/com/atproto/**/*.json" />
   </ItemGroup>
 
