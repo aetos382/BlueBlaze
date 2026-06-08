@@ -1,5 +1,5 @@
 <Project>
 
-  <Import Project="BlueBlaze.Generator.MSBuild.targets" Condition="'$(BlueBlazeGeneratorRunAsBuildTask)' == 'true'" />
+  <Import Project="BlueBlaze.Generators.MSBuild.targets" Condition="'$(BlueBlazeGeneratorRunAsBuildTask)' == 'true'" />
 
 </Project>
