@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "isRoot": true,
+  "tools": {
+    "jtechjapan.intentsystem.cli": {
+      "version": "0.3.6",
+      "commands": [
+        "intent-cli"
+      ],
+      "rollForward": false
+    }
+  }
+}
