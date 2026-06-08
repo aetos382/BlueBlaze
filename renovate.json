@@ -22,6 +22,14 @@
   "ignorePaths": [
     "PackageTest/**"
   ],
+  "nuget": {
+    "ignorePaths": [
+      "PackageTest/**",
+      "Generators/Generators.Core/**",
+      "Generators/Generators.MSBuild/**",
+      "Generators/Generators.Roslyn/**"
+    ]
+  },
   "packageRules": [
     {
       "matchDepNames": ["node"],
