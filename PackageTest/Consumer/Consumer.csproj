@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFrameworks>net10.0;net481</TargetFrameworks>
-    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
     <BlueBlazeGeneratorRunAsBuildTask>true</BlueBlazeGeneratorRunAsBuildTask>
   </PropertyGroup>
 
