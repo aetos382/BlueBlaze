@@ -1,4 +1,4 @@
 {
   "js/ts.tsdk.path": "node_modules/typescript/lib",
-  "git.detectWorktrees": true
+  "dotnet.defaultSolution": "BlueBlaze.slnx",
 }
