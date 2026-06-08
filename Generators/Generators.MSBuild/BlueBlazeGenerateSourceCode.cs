@@ -1,4 +1,8 @@
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+
+using BlueBlaze.Generators.Core;
 
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
@@ -28,18 +32,27 @@ public sealed class BlueBlazeGenerateSourceCode : Task
             Debugger.Launch();
         }
 
+        var items = new List<LexiconDocumentWithInfo>();
+
         foreach (var lexiconDocument in this.LexiconDocuments)
         {
-            if (!bool.TryParse(lexiconDocument.GetMetadata("IsLexiconDocument"), out var isLexiconDocument) ||
-                !isLexiconDocument)
+            if (!IsLexiconDocument(lexiconDocument))
             {
                 continue;
             }
 
             var fullPath = lexiconDocument.GetMetadata("FullPath");
-            this.Log.LogMessage(fullPath);
+            var text = File.ReadAllText(fullPath);
+
+            var item = LexiconGenerator.Parse(text, fullPath);
+            items.Add(item);
         }
 
         return true;
+    }
+
+    private static bool IsLexiconDocument(ITaskItem item)
+    {
+        return bool.TryParse(item.GetMetadata("IsLexiconDocument"), out var value) && value;
     }
 }

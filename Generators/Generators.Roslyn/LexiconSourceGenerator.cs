@@ -1,9 +1,11 @@
+using BlueBlaze.Generators.Core;
+
 using Microsoft.CodeAnalysis;
 
 namespace BlueBlaze.Generators.Roslyn;
 
 [Generator(LanguageNames.CSharp)]
-public sealed class LexiconGenerator :
+public sealed class LexiconSourceGenerator :
     IIncrementalGenerator
 {
     /// <inheritdoc />
@@ -18,13 +20,13 @@ public sealed class LexiconGenerator :
         var lexiconDocumentsProvider = context.AdditionalTextsProvider
             .Combine(context.AnalyzerConfigOptionsProvider)
             .Combine(generatorRunAsBuildTaskProvider)
-            .Select(static (input, _) =>
+            .Select(static (input, cancellationToken) =>
             {
                 var ((additionalText, optionsProvider), runAsBuildTask) = input;
 
                 if (runAsBuildTask)
                 {
-                    return 0;
+                    return default;
                 }
 
                 var options = optionsProvider.GetOptions(additionalText);
@@ -32,10 +34,22 @@ public sealed class LexiconGenerator :
                     !bool.TryParse(stringValue, out var boolValue) ||
                     !boolValue)
                 {
-                    return 0;
+                    return default;
                 }
 
-                return 1;
-            });
+                var sourceText = additionalText.GetText(cancellationToken);
+                if (sourceText is null)
+                {
+                    return default;
+                }
+
+                var text = sourceText.ToString();
+                var result = (IsValidText: true, Text: text, Path: additionalText.Path);
+
+                return result;
+            })
+            .Where(static item => item.IsValidText)
+            .Select(static (input, _) =>
+                LexiconGenerator.Parse(input.Text, input.Path));
     }
 }
