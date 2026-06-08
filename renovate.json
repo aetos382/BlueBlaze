@@ -26,6 +26,11 @@
       "description": "Node.js LTS (even major) only"
     },
     {
+      "matchDepNames": ["/^BlueBlaze\\./"],
+      "enabled": false,
+      "description": "Exclude self-produced packages from Renovate management"
+    },
+    {
       "matchDatasources": ["nuget"],
       "matchSourceUrls": [
         "https://github.com/dotnet/**",
