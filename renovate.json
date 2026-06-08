@@ -37,6 +37,11 @@
       "description": "Auto-merge minor/patch updates from Microsoft GitHub organizations"
     },
     {
+      "matchDepNames": ["Microsoft.NETFramework.ReferenceAssemblies"],
+      "abandonmentThreshold": null,
+      "description": "Suppress abandonment alert - finished legacy package, not truly abandoned"
+    },
+    {
       "matchDatasources": ["devcontainer-feature"],
       "minimumReleaseAge": null,
       "automerge": true,
