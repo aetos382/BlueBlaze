@@ -4,7 +4,12 @@
     <_BlueBlazeGeneratorBuildTaskRuntime Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(MSBuildVersion)', '18.0'))">NET</_BlueBlazeGeneratorBuildTaskRuntime>
 
     <_BlueBlazeGeneratorBuildTaskAssemblyFileName>BlueBlaze.Generators.MSBuild.dll</_BlueBlazeGeneratorBuildTaskAssemblyFileName>
-    <_BlueBlazeGeneratorBuildTaskAssemblyFilePath>$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)', '..', 'tasks', '$(TargetFramework)', '$(_BlueBlazeGeneratorBuildTaskAssemblyFileName)'))</_BlueBlazeGeneratorBuildTaskAssemblyFilePath>
+
+    <!-- NuGet パッケージからインストールされた場合 -->
+    <_BlueBlazeGeneratorBuildTaskAssemblyFilePath Condition="'$(_BlueBlazeGeneratorBuildTaskAssemblyFilePath)' == '' and Exists('$(MSBuildThisFileDirectory)../tasks/$(TargetFramework)/$(_BlueBlazeGeneratorBuildTaskAssemblyFileName)')">$([MSBuild]::NormalizePath('$(MSBuildThisFileDirectory)', '..', 'tasks', '$(TargetFramework)', '$(_BlueBlazeGeneratorBuildTaskAssemblyFileName)'))</_BlueBlazeGeneratorBuildTaskAssemblyFilePath>
+
+    <!-- ローカルビルド / CI (UseArtifactsOutput) の場合 -->
+    <_BlueBlazeGeneratorBuildTaskAssemblyFilePath Condition="'$(_BlueBlazeGeneratorBuildTaskAssemblyFilePath)' == ''">$([MSBuild]::NormalizePath('$(ArtifactsPath)', 'bin', 'Generators.MSBuild', '$(ArtifactsPivots)', '$(_BlueBlazeGeneratorBuildTaskAssemblyFileName)'))</_BlueBlazeGeneratorBuildTaskAssemblyFilePath>
   </PropertyGroup>
 
   <PropertyGroup>
