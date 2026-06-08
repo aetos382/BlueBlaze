@@ -14,6 +14,9 @@
     <Project Path="Sources/Models/Models.AtProtocol/Models.AtProtocol.csproj" />
     <Project Path="Sources/Models/Models.Bluesky/Models.Bluesky.csproj" />
   </Folder>
+  <Folder Name="/Sources/Tools/">
+    <Project Path="Sources/Tools/Cli/Cli.csproj" />
+  </Folder>
   <Folder Name="/Tests/" />
   <Folder Name="/Tests/Clients/">
     <Project Path="Tests/Clients/Clients.AtProtocol.Tests/Clients.AtProtocol.Tests.csproj" />
