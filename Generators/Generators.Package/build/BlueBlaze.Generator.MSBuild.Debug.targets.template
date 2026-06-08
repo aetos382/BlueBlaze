@@ -42,7 +42,7 @@
 
   <PropertyGroup>
     <UseSharedCompilation>false</UseSharedCompilation>
-    <BlueBlazeGenerateLexiconSourceCodeTaskDebugBreakOnExecute>true</BlueBlazeGenerateLexiconSourceCodeTaskDebugBreakOnExecute>
+    <BlueBlazeGenerateLexiconSourceCodeTaskDebugBreakOnExecute>false</BlueBlazeGenerateLexiconSourceCodeTaskDebugBreakOnExecute>
   </PropertyGroup>
 
 </Project>
