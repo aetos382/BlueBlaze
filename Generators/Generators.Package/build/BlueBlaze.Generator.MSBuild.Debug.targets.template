@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(_UseBlueBlazeGeneratorBuildTaskShadowCopy)' == 'true'">
-    <_BlueBlazeGeneratorBuildTaskShadowDirectory Condition="'$(_BlueBlazeGeneratorBuildTaskShadowDirectory)' == ''">$([MSBuild]::NormalizePath('$(BaseIntermediateOutputPath)', 'generator-task', $([System.Guid]::NewGuid())))</_BlueBlazeGeneratorBuildTaskShadowDirectory>
+    <_BlueBlazeGeneratorBuildTaskShadowDirectory Condition="'$(_BlueBlazeGeneratorBuildTaskShadowDirectory)' == ''">$([MSBuild]::NormalizePath('$(BaseIntermediateOutputPath)', 'generator-task', $([System.Guid]::NewGuid().ToString("D"))))</_BlueBlazeGeneratorBuildTaskShadowDirectory>
     <_BlueBlazeGeneratorBuildTaskAssemblyFilePath>$([MSBuild]::NormalizePath('$(_BlueBlazeGeneratorBuildTaskShadowDirectory)', '$(_BlueBlazeGeneratorBuildTaskAssemblyFileName)'))</_BlueBlazeGeneratorBuildTaskAssemblyFilePath>
   </PropertyGroup>
 
@@ -33,7 +33,12 @@
 
     <MakeDir Directories="$(_BlueBlazeGeneratorBuildTaskShadowDirectory)"/>
 
-    <Copy SourceFiles="$(_BlueBlazeGeneratorBuildTaskAssemblyFileShadowCopySourcePath)"
+    <!-- 依存 DLL も含めてすべてコピーする -->
+    <ItemGroup>
+      <_BlueBlazeGeneratorTaskAllAssemblyFiles Include="$([System.IO.Path]::GetDirectoryName('$(_BlueBlazeGeneratorBuildTaskAssemblyFileShadowCopySourcePath)'))\*.dll" />
+    </ItemGroup>
+
+    <Copy SourceFiles="@(_BlueBlazeGeneratorTaskAllAssemblyFiles)"
           DestinationFolder="$(_BlueBlazeGeneratorBuildTaskShadowDirectory)"
           Retries="3"
           RetryDelayMilliseconds="500" />
@@ -42,7 +47,7 @@
 
   <PropertyGroup>
     <UseSharedCompilation>false</UseSharedCompilation>
-    <BlueBlazeGenerateLexiconSourceCodeTaskDebugBreakOnExecute>true</BlueBlazeGenerateLexiconSourceCodeTaskDebugBreakOnExecute>
+    <BlueBlazeGenerateLexiconSourceCodeTaskDebugBreakOnExecute>false</BlueBlazeGenerateLexiconSourceCodeTaskDebugBreakOnExecute>
   </PropertyGroup>
 
 </Project>
