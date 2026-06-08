@@ -29,9 +29,9 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseExpression>BSD-2-Clause-Patent</PackageLicenseExpression>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <GenerateSBOM>true</GenerateSBOM>
     <IncludeSymbols Condition="'$(IncludeSymbols)' == ''">true</IncludeSymbols>
     <GeneratePackageOnBuild Condition="'$(Configuration)' == 'Release'">true</GeneratePackageOnBuild>
+    <GenerateSBOM Condition="'$(GenerateSBOM)' == '' and '$(Configuration)' == 'Release'">true</GenerateSBOM>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(IncludeSymbols)' == 'true'">

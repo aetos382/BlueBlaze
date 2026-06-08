@@ -11,7 +11,7 @@
     <BlueBlazeGenerateLexiconSourceCodeTaskDebugBreakOnExecute>false</BlueBlazeGenerateLexiconSourceCodeTaskDebugBreakOnExecute>
   </PropertyGroup>
 
-  <Import Project="BlueBlaze.Generator.MSBuild.Debug.targets" Condition="'$(BlueBlazeGeneratorDebugMode)' == 'true' and Exists('BlueBlaze.Generator.MSBuild.Debug.targets')" />
+  <Import Project="$(MSBuildThisFileDirectory)BlueBlaze.Generator.MSBuild.Debug.targets" Condition="Exists('$(MSBuildThisFileDirectory)BlueBlaze.Generator.MSBuild.Debug.targets')" />
 
   <UsingTask TaskName="BlueBlazeGenerateSourceCode"
              AssemblyFile="$(_BlueBlazeGeneratorBuildTaskAssemblyFilePath)"
