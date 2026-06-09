@@ -10,6 +10,7 @@ internal static class ObjectClassEmitter
     internal static void EmitClass(
         StringBuilder sb,
         string className,
+        string classPath,
         ObjectDefinition def,
         string nsid,
         IReadOnlyDictionary<string, LexiconType?> nsidIndex,
@@ -19,6 +20,8 @@ internal static class ObjectClassEmitter
         int indentLevel,
         bool isPartial,
         bool emitJsonAttributes,
+        IReadOnlyDictionary<string, LexiconDefinition>? defIndex,
+        string? generatedModelNamespace,
         // Nested union interfaces to emit inside this class (propertyName -> UnionDefinition)
         IReadOnlyDictionary<string, UnionDefinition>? unionProperties = null)
     {
@@ -55,6 +58,10 @@ internal static class ObjectClassEmitter
                     var interfaceName = "I" + LexiconNameHelper.ToPascalCase(propName);
                     var propType = isReq ? interfaceName : interfaceName + "?";
                     var csPropName = LexiconNameHelper.ToPascalCase(propName);
+                    if (csPropName == className)
+                    {
+                        csPropName += "Value";
+                    }
 
                     if (emitJsonAttributes)
                     {
@@ -75,7 +82,7 @@ internal static class ObjectClassEmitter
                 }
 
                 var result = LexiconTypeMapper.Map(
-                    propDef, isReq, isNull, nsid, nsidIndex, out var unknownFormat);
+                    propDef, isReq, isNull, nsid, nsidIndex, out var unknownFormat, defIndex, generatedModelNamespace);
 
                 if (unknownFormat != null)
                 {
@@ -92,6 +99,22 @@ internal static class ObjectClassEmitter
                 }
 
                 var csPropNameStr = LexiconNameHelper.ToPascalCase(propName);
+
+                // CS0542: プロパティ名が囲む型名と同じ場合はリネーム
+                if (csPropNameStr == className)
+                {
+                    csPropNameStr += "Value";
+                }
+                else
+                {
+                    // CS0102: プロパティ名が同クラス内のネスト型と同じ場合はリネーム
+                    var fullTypePath = result.CSharpType.TrimEnd('?');
+                    var globalClassPath = LexiconNameHelper.GlobalizeTypePath(classPath, generatedModelNamespace);
+                    if (fullTypePath == globalClassPath + "." + csPropNameStr)
+                    {
+                        csPropNameStr += "Value";
+                    }
+                }
 
                 if (emitJsonAttributes)
                 {
@@ -124,8 +147,9 @@ internal static class ObjectClassEmitter
                 foreach (var refStr in ud.Refs)
                 {
                     var resolvedType = LexiconNameHelper.ResolveRef(nsid, refStr, nsidIndex);
+                    var globalResolvedType = LexiconNameHelper.GlobalizeTypePath(resolvedType, generatedModelNamespace);
                     var discriminator = LexiconNameHelper.GetTypeDiscriminator(refStr);
-                    sb.AppendLine($"{indent1}[global::System.Text.Json.Serialization.JsonDerivedType(typeof({resolvedType}), \"{discriminator}\")]");
+                    sb.AppendLine($"{indent1}[global::System.Text.Json.Serialization.JsonDerivedType(typeof({globalResolvedType}), \"{discriminator}\")]");
                 }
 
                 _ = (ud.Closed == true) ? "" : "";

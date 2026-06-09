@@ -26,7 +26,7 @@ public sealed class LexiconGenerator
 
     public static GenerateResult Generate(
         IReadOnlyList<ParseResult> parseResults,
-        string? generatedModelNamespace = null)
+        string? generatedModelNamespace)
     {
         ArgumentNullException.ThrowIfNull(parseResults);
 
@@ -48,12 +48,15 @@ public sealed class LexiconGenerator
         // Phase 1: Build NSID index (nsid -> main def type or null for defs-only)
         var nsidIndex = BuildNsidIndex(documents);
 
+        // Phase 1b: Build def index ("nsid#defKey" -> LexiconDefinition) for ref resolution
+        var defIndex = BuildDefIndex(documents);
+
         // Phase 2: Emit source files per document
         foreach (var docInfo in documents)
         {
             DocumentEmitter.Emit(
                 docInfo, nsidIndex, generatedModelNamespace,
-                files, diagnostics, unionMemberImpls);
+                files, diagnostics, unionMemberImpls, defIndex);
         }
 
         // Phase 3: Emit union member partial class files
@@ -86,6 +89,28 @@ public sealed class LexiconGenerator
             }
 
             index[nsid] = mainType;
+        }
+
+        return index;
+    }
+
+    // "nsid#defKey" -> LexiconDefinition のインデックスを構築する
+    private static Dictionary<string, LexiconDefinition> BuildDefIndex(
+        IReadOnlyList<LexiconDocumentWithInfo> documents)
+    {
+        var index = new Dictionary<string, LexiconDefinition>();
+
+        foreach (var docInfo in documents)
+        {
+            var nsid = docInfo.Document.Id;
+            foreach (var kv in docInfo.Document.Definitions)
+            {
+                var key = nsid + "#" + kv.Key;
+                if (!index.ContainsKey(key))
+                {
+                    index[key] = kv.Value;
+                }
+            }
         }
 
         return index;

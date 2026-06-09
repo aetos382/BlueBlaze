@@ -12,7 +12,9 @@ internal static class LexiconTypeMapper
         bool isNullable,
         string currentNsid,
         IReadOnlyDictionary<string, LexiconType?> nsidIndex,
-        out string? unknownFormatName)
+        out string? unknownFormatName,
+        IReadOnlyDictionary<string, LexiconDefinition>? defIndex,
+        string? generatedModelNamespace)
     {
         unknownFormatName = null;
 
@@ -29,6 +31,9 @@ internal static class LexiconTypeMapper
             case StringDefinition sd:
                 return MapString(sd, nullable, ref unknownFormatName);
 
+            case TokenDefinition:
+                return new MapResult(nullable ? "string?" : "string", nullable);
+
             case BytesDefinition:
                 return new MapResult(nullable ? "byte[]?" : "byte[]", nullable);
 
@@ -39,14 +44,25 @@ internal static class LexiconTypeMapper
                 return new MapResult(nullable ? "object?" : "object", nullable);
 
             case ArrayDefinition ad:
-                return MapArray(ad, isRequired, currentNsid, nsidIndex, out unknownFormatName);
+                return MapArray(ad, isRequired, currentNsid, nsidIndex, defIndex, generatedModelNamespace, out unknownFormatName);
 
             case ReferenceDefinition rd:
+                // ref ターゲットが非クラス型 (string/token/integer 等) の場合はプリミティブ型を返す
+                if (defIndex != null)
+                {
+                    var (targetNsid, targetDefKey) = LexiconNameHelper.ParseRef(rd.Ref, currentNsid);
+                    var defKey = targetNsid + "#" + targetDefKey;
+                    if (defIndex.TryGetValue(defKey, out var targetDef) && IsNonClassDef(targetDef))
+                    {
+                        return Map(targetDef, isRequired, isNullable, targetNsid, nsidIndex, out unknownFormatName, defIndex, generatedModelNamespace);
+                    }
+                }
                 var resolved = LexiconNameHelper.ResolveRef(currentNsid, rd.Ref, nsidIndex);
-                return new MapResult(nullable ? resolved + "?" : resolved, nullable);
+                var globalResolved = LexiconNameHelper.GlobalizeTypePath(resolved, generatedModelNamespace);
+                return new MapResult(nullable ? globalResolved + "?" : globalResolved, nullable);
 
             case UnionDefinition:
-                return null; // Caller handles union specially
+                return null; // 呼び出し側が union を個別に処理する
 
             case UnknownDefinition:
                 return new MapResult(nullable ? "object?" : "object", nullable);
@@ -54,6 +70,11 @@ internal static class LexiconTypeMapper
             default:
                 return null;
         }
+    }
+
+    private static bool IsNonClassDef(LexiconDefinition def)
+    {
+        return def is not ObjectDefinition and not RecordDefinition;
     }
 
     private static MapResult MapString(
@@ -102,10 +123,12 @@ internal static class LexiconTypeMapper
         bool isRequired,
         string currentNsid,
         IReadOnlyDictionary<string, LexiconType?> nsidIndex,
+        IReadOnlyDictionary<string, LexiconDefinition>? defIndex,
+        string? generatedModelNamespace,
         out string? unknownFormatName)
     {
-        var itemResult = Map(ad.Items, isRequired: true, isNullable: false,
-            currentNsid, nsidIndex, out unknownFormatName);
+        var itemResult = Map(ad.Items, isRequired: true, isNullable: false, currentNsid,
+            nsidIndex, out unknownFormatName, defIndex, generatedModelNamespace);
 
         if (itemResult == null)
         {

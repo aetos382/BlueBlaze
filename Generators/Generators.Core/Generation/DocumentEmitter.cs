@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace BlueBlaze.Generators.Core.Generation;
@@ -16,7 +14,8 @@ internal static class DocumentEmitter
         List<GeneratedSourceFile> files,
         List<Diagnostic> diagnostics,
         // Collects (unionInterfaceFqn, refStr) pairs for partial class generation
-        List<(string MemberTypePath, string InterfacePath)> unionMemberImpls)
+        List<(string MemberTypePath, string InterfacePath)> unionMemberImpls,
+        IReadOnlyDictionary<string, LexiconDefinition>? defIndex = null)
     {
         var doc = docInfo.Document;
         var nsid = doc.Id;
@@ -44,7 +43,7 @@ internal static class DocumentEmitter
                     nsid, defKey, objDef, mainType, isMain,
                     nsidIndex, generatedModelNamespace,
                     filePath, files, diagnostics, unionMemberImpls,
-                    emitJsonAttributes: emitJson);
+                    emitJsonAttributes: emitJson, defIndex: defIndex);
             }
             else if (def is RecordDefinition recDef)
             {
@@ -52,22 +51,22 @@ internal static class DocumentEmitter
                     nsid, defKey, recDef.Record, mainType, isMain,
                     nsidIndex, generatedModelNamespace,
                     filePath, files, diagnostics, unionMemberImpls,
-                    emitJsonAttributes: true);
+                    emitJsonAttributes: true, defIndex: defIndex);
             }
             else if (def is QueryDefinition queryDef && isMain)
             {
                 EmitQueryProcedure(nsid, queryDef.Parameters, null, queryDef.Output,
-                    nsidIndex, generatedModelNamespace, filePath, files, diagnostics, unionMemberImpls);
+                    nsidIndex, generatedModelNamespace, filePath, files, diagnostics, unionMemberImpls, defIndex);
             }
             else if (def is ProcedureDefinition procDef && isMain)
             {
                 EmitQueryProcedure(nsid, procDef.Parameters, procDef.Input, procDef.Output,
-                    nsidIndex, generatedModelNamespace, filePath, files, diagnostics, unionMemberImpls);
+                    nsidIndex, generatedModelNamespace, filePath, files, diagnostics, unionMemberImpls, defIndex);
             }
             else if (def is SubscriptionDefinition subDef && isMain)
             {
                 EmitSubscription(nsid, subDef, nsidIndex, generatedModelNamespace,
-                    filePath, files, diagnostics, unionMemberImpls);
+                    filePath, files, diagnostics, unionMemberImpls, defIndex);
             }
             else if (isMain && def.Type == LexiconType.PermissionSet)
             {
@@ -98,7 +97,8 @@ internal static class DocumentEmitter
         List<GeneratedSourceFile> files,
         List<Diagnostic> diagnostics,
         List<(string, string)> unionMemberImpls,
-        bool emitJsonAttributes)
+        bool emitJsonAttributes,
+        IReadOnlyDictionary<string, LexiconDefinition>? defIndex = null)
     {
         var segments = LexiconNameHelper.NsidToSegments(nsid);
         string className;
@@ -146,9 +146,10 @@ internal static class DocumentEmitter
         {
             // Wrap in parent static classes (all segments except last)
             OpenStaticContainers(sb, segments, 0, segments.Length - 1);
-            ObjectClassEmitter.EmitClass(sb, className, objDef, nsid, nsidIndex,
+            ObjectClassEmitter.EmitClass(sb, className, classPath, objDef, nsid, nsidIndex,
                 diagnostics, filePath, defKey, segments.Length - 1,
                 isPartial: true, emitJsonAttributes: emitJsonAttributes,
+                defIndex: defIndex, generatedModelNamespace: generatedModelNamespace,
                 unionProperties: unionProps);
             CloseContainers(sb, segments.Length - 1);
         }
@@ -159,9 +160,10 @@ internal static class DocumentEmitter
             var outerIndent = new string(' ', segments.Length * 4);
             sb.AppendLine($"{outerIndent}public sealed partial class {nestedInClass}");
             sb.AppendLine($"{outerIndent}{{");
-            ObjectClassEmitter.EmitClass(sb, className, objDef, nsid, nsidIndex,
+            ObjectClassEmitter.EmitClass(sb, className, classPath, objDef, nsid, nsidIndex,
                 diagnostics, filePath, defKey, segments.Length + 1,
-                isPartial: false, emitJsonAttributes: emitJsonAttributes,
+                isPartial: true, emitJsonAttributes: emitJsonAttributes,
+                defIndex: defIndex, generatedModelNamespace: generatedModelNamespace,
                 unionProperties: unionProps);
             sb.AppendLine($"{outerIndent}}}");
             CloseContainers(sb, segments.Length);
@@ -170,9 +172,10 @@ internal static class DocumentEmitter
         {
             // Case 1 sub-def, Case 2, defs-only
             OpenStaticContainers(sb, segments, 0, segments.Length);
-            ObjectClassEmitter.EmitClass(sb, className, objDef, nsid, nsidIndex,
+            ObjectClassEmitter.EmitClass(sb, className, classPath, objDef, nsid, nsidIndex,
                 diagnostics, filePath, defKey, segments.Length,
-                isPartial: false, emitJsonAttributes: emitJsonAttributes,
+                isPartial: true, emitJsonAttributes: emitJsonAttributes,
+                defIndex: defIndex, generatedModelNamespace: generatedModelNamespace,
                 unionProperties: unionProps);
             CloseContainers(sb, segments.Length);
         }
@@ -180,7 +183,7 @@ internal static class DocumentEmitter
         var hintName = LexiconNameHelper.GetHintNameBase(generatedModelNamespace, hintSuffix) + ".g.cs";
         files.Add(new GeneratedSourceFile(hintName, sb.ToString()));
 
-        // Queue union member partial class files
+        // Queue union member partial class files (interfacePath は相対パスで格納し EmitUnionMemberImpl でグローバル化する)
         foreach (var up in unionProps)
         {
             var interfacePath = classPath + ".I" + LexiconNameHelper.ToPascalCase(up.Key);
@@ -202,28 +205,29 @@ internal static class DocumentEmitter
         string? filePath,
         List<GeneratedSourceFile> files,
         List<Diagnostic> diagnostics,
-        List<(string, string)> unionMemberImpls)
+        List<(string, string)> unionMemberImpls,
+        IReadOnlyDictionary<string, LexiconDefinition>? defIndex = null)
     {
         var segments = LexiconNameHelper.NsidToSegments(nsid);
 
         if (parameters != null && parameters.Properties != null)
         {
             EmitParametersClass(nsid, segments, parameters, nsidIndex,
-                generatedModelNamespace, filePath, files, diagnostics);
+                generatedModelNamespace, filePath, files, diagnostics, defIndex);
         }
 
         if (input?.Schema is ObjectDefinition inputObj)
         {
             EmitOperationDataClass(nsid, segments, "Request", inputObj, nsidIndex,
                 generatedModelNamespace, filePath, files, diagnostics, unionMemberImpls,
-                emitJsonAttributes: true);
+                emitJsonAttributes: true, defIndex: defIndex);
         }
 
         if (output?.Schema is ObjectDefinition outputObj)
         {
             EmitOperationDataClass(nsid, segments, "Response", outputObj, nsidIndex,
                 generatedModelNamespace, filePath, files, diagnostics, unionMemberImpls,
-                emitJsonAttributes: true);
+                emitJsonAttributes: true, defIndex: defIndex);
         }
     }
 
@@ -235,14 +239,15 @@ internal static class DocumentEmitter
         string? filePath,
         List<GeneratedSourceFile> files,
         List<Diagnostic> diagnostics,
-        List<(string, string)> unionMemberImpls)
+        List<(string, string)> unionMemberImpls,
+        IReadOnlyDictionary<string, LexiconDefinition>? defIndex = null)
     {
         var segments = LexiconNameHelper.NsidToSegments(nsid);
 
         if (subDef.Parameters != null && subDef.Parameters.Properties != null)
         {
             EmitParametersClass(nsid, segments, subDef.Parameters, nsidIndex,
-                generatedModelNamespace, filePath, files, diagnostics);
+                generatedModelNamespace, filePath, files, diagnostics, defIndex);
         }
 
         if (subDef.Message.Schema is ObjectDefinition msgObj)
@@ -250,7 +255,7 @@ internal static class DocumentEmitter
             // No JSON attributes for subscription message (CBOR encoded)
             EmitOperationDataClass(nsid, segments, "Message", msgObj, nsidIndex,
                 generatedModelNamespace, filePath, files, diagnostics, unionMemberImpls,
-                emitJsonAttributes: false);
+                emitJsonAttributes: false, defIndex: defIndex);
         }
     }
 
@@ -262,7 +267,8 @@ internal static class DocumentEmitter
         string? generatedModelNamespace,
         string? filePath,
         List<GeneratedSourceFile> files,
-        List<Diagnostic> diagnostics)
+        List<Diagnostic> diagnostics,
+        IReadOnlyDictionary<string, LexiconDefinition>? defIndex = null)
     {
         var sb = new StringBuilder();
         EmitFileHeader(sb, generatedModelNamespace);
@@ -281,7 +287,7 @@ internal static class DocumentEmitter
             {
                 var propName = kv.Key;
                 var isReq = requiredSet.Contains(propName);
-                var result = LexiconTypeMapper.Map(kv.Value, isReq, false, nsid, nsidIndex, out var unknownFormat);
+                var result = LexiconTypeMapper.Map(kv.Value, isReq, false, nsid, nsidIndex, out var unknownFormat, defIndex, generatedModelNamespace);
 
                 if (unknownFormat != null)
                 {
@@ -330,7 +336,8 @@ internal static class DocumentEmitter
         List<GeneratedSourceFile> files,
         List<Diagnostic> diagnostics,
         List<(string, string)> unionMemberImpls,
-        bool emitJsonAttributes)
+        bool emitJsonAttributes,
+        IReadOnlyDictionary<string, LexiconDefinition>? defIndex = null)
     {
         var unionProps = CollectUnionProperties(objDef);
 
@@ -338,18 +345,19 @@ internal static class DocumentEmitter
         EmitFileHeader(sb, generatedModelNamespace);
         OpenStaticContainers(sb, segments, 0, segments.Length);
 
-        ObjectClassEmitter.EmitClass(sb, className, objDef, nsid, nsidIndex,
+        var classPath = string.Join(".", segments) + "." + className;
+        ObjectClassEmitter.EmitClass(sb, className, classPath, objDef, nsid, nsidIndex,
             diagnostics, filePath, "main", segments.Length,
             isPartial: true, emitJsonAttributes: emitJsonAttributes,
+            defIndex: defIndex, generatedModelNamespace: generatedModelNamespace,
             unionProperties: unionProps);
 
         CloseContainers(sb, segments.Length);
 
-        var classPath = string.Join(".", segments) + "." + className;
         var hintName = LexiconNameHelper.GetHintNameBase(generatedModelNamespace, classPath) + ".g.cs";
         files.Add(new GeneratedSourceFile(hintName, sb.ToString()));
 
-        // Queue union member partial class files
+        // Queue union member partial class files (interfacePath は相対パスで格納し EmitUnionMemberImpl でグローバル化する)
         foreach (var up in unionProps)
         {
             var interfacePath = classPath + ".I" + LexiconNameHelper.ToPascalCase(up.Key);
@@ -379,12 +387,27 @@ internal static class DocumentEmitter
         var sb = new StringBuilder();
         EmitFileHeader(sb, generatedModelNamespace);
 
-        // Open containers for all but last segment
-        OpenStaticContainers(sb, parts, 0, parts.Length - 1);
+        // Response/Message の直下にネストされた型は sealed partial class で包む (CS0441 対策)
+        var hasSealedContainer =
+            parts.Length >= 3 &&
+            (parts[parts.Length - 2] == "Response" || parts[parts.Length - 2] == "Message");
+
+        if (hasSealedContainer)
+        {
+            OpenStaticContainers(sb, parts, 0, parts.Length - 2);
+            var sealedIndent = new string(' ', (parts.Length - 2) * 4);
+            sb.AppendLine($"{sealedIndent}public sealed partial class {parts[parts.Length - 2]}");
+            sb.AppendLine($"{sealedIndent}{{");
+        }
+        else
+        {
+            OpenStaticContainers(sb, parts, 0, parts.Length - 1);
+        }
 
         var indent = new string(' ', (parts.Length - 1) * 4);
         var className = parts[parts.Length - 1];
-        sb.AppendLine($"{indent}public sealed partial class {className} : {interfacePath} {{ }}");
+        var globalInterfacePath = LexiconNameHelper.GlobalizeTypePath(interfacePath, generatedModelNamespace);
+        sb.AppendLine($"{indent}public sealed partial class {className} : {globalInterfacePath} {{ }}");
         sb.AppendLine();
 
         CloseContainers(sb, parts.Length - 1);

@@ -147,6 +147,34 @@ internal static class LexiconNameHelper
             : generatedModelNamespace + "." + classPath;
     }
 
+    // 相対型パスを global:: 付き完全修飾パスに変換する
+    internal static string GlobalizeTypePath(string resolvedPath, string? generatedModelNamespace)
+    {
+        if (string.IsNullOrEmpty(generatedModelNamespace))
+        {
+            return "global::" + resolvedPath;
+        }
+
+        return "global::" + generatedModelNamespace + "." + resolvedPath;
+    }
+
+    // Parses a ref string into (targetNsid, defKey).
+    internal static (string Nsid, string DefKey) ParseRef(string refStr, string currentNsid)
+    {
+        if (refStr.StartsWith("#", StringComparison.Ordinal))
+        {
+            return (currentNsid, refStr.Substring(1));
+        }
+
+        var hash = refStr.IndexOf('#');
+        if (hash < 0)
+        {
+            return (refStr, "main");
+        }
+
+        return (refStr.Substring(0, hash), refStr.Substring(hash + 1));
+    }
+
     // Builds the $type discriminator value for a ref (NSID form without #main).
     internal static string GetTypeDiscriminator(string refStr)
     {
