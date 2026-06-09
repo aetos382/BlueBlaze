@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Text.Json;
 
 using BlueBlaze.Generators.Core.Generation;
@@ -20,11 +19,7 @@ public sealed class LexiconGenerator
         }
         catch (JsonException ex)
         {
-            var message = string.Format(
-                CultureInfo.InvariantCulture,
-                DiagnosticMessages.ParseError,
-                path,
-                ex.Message);
+            var message = DiagnosticMessages.FormatParseError(path, ex.Message);
             return new ParseResult(null, [new Diagnostic(DiagnosticSeverity.Error, message, path, null, null)]);
         }
     }

@@ -81,7 +81,7 @@ internal static class ObjectClassEmitter
                 {
                     diagnostics.Add(new Diagnostic(
                         DiagnosticSeverity.Warning,
-                        string.Format(DiagnosticMessages.UnknownStringFormat, unknownFormat, nsid, defKey ?? ""),
+                        DiagnosticMessages.FormatUnknownStringFormat(unknownFormat, nsid, defKey ?? ""),
                         filePath, nsid, defKey));
                 }
 

@@ -80,7 +80,7 @@ internal static class DocumentEmitter
                 // Unknown main type
                 diagnostics.Add(new Diagnostic(
                     DiagnosticSeverity.Warning,
-                    string.Format(DiagnosticMessages.UnknownLexiconType, def.Type, nsid, defKey),
+                    DiagnosticMessages.FormatUnknownLexiconType(def.Type, nsid, defKey),
                     filePath, nsid, defKey));
             }
         }
@@ -287,7 +287,7 @@ internal static class DocumentEmitter
                 {
                     diagnostics.Add(new Diagnostic(
                         DiagnosticSeverity.Warning,
-                        string.Format(DiagnosticMessages.UnknownStringFormat, unknownFormat, nsid, "main"),
+                        DiagnosticMessages.FormatUnknownStringFormat(unknownFormat, nsid, "main"),
                         filePath, nsid, "main"));
                 }
 
@@ -462,7 +462,7 @@ internal static class DocumentEmitter
         var keys = string.Join(", ", extensionData.Keys);
         diagnostics.Add(new Diagnostic(
             DiagnosticSeverity.Warning,
-            string.Format(DiagnosticMessages.UnknownExtensionData, keys, nsid, defKey ?? ""),
+            DiagnosticMessages.FormatUnknownExtensionData(keys, nsid, defKey),
             filePath, nsid, defKey));
     }
 }
