@@ -85,12 +85,14 @@ internal static class ArgumentOutOfRangeExceptionExtensions
         }
     }
 
+#pragma warning disable IDE0051
     private static void ThrowIf(
         [DoesNotReturnIf(true)] bool condition,
         string? paramName)
     {
         throw new ArgumentOutOfRangeException(paramName);
     }
+#pragma warning restore IDE0051
 }
 
 #endif

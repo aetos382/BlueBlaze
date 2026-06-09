@@ -6,6 +6,7 @@ namespace BlueBlaze.Generators.Core;
 
 #pragma warning disable CA1819
 
+
 public sealed class LexiconDocument
 {
     public int Lexicon { get; set; }
@@ -18,7 +19,9 @@ public sealed class LexiconDocument
     public required IReadOnlyDictionary<string, LexiconDefinition> Definitions { get; set; }
 
     [JsonExtensionData]
+#pragma warning disable CA2227
     public IDictionary<string, JsonElement>? ExtensionData { get; set; }
+#pragma warning restore CA2227
 }
 
 #pragma warning disable CA1720
@@ -94,7 +97,9 @@ public abstract class LexiconDefinition
     public string? Description { get; set; }
 
     [JsonExtensionData]
+#pragma warning disable CA2227
     public IDictionary<string, JsonElement>? ExtensionData { get; set; }
+#pragma warning restore CA2227
 }
 
 public sealed class RecordDefinition : LexiconDefinition
@@ -155,7 +160,9 @@ public sealed class MessageDefinition
     public required LexiconDefinition Schema { get; set; }
 
     [JsonExtensionData]
+#pragma warning disable CA2227
     public IDictionary<string, JsonElement>? ExtensionData { get; set; }
+#pragma warning restore CA2227
 }
 
 public sealed class InputDefinition
@@ -167,7 +174,9 @@ public sealed class InputDefinition
     public LexiconDefinition? Schema { get; set; }
 
     [JsonExtensionData]
+#pragma warning disable CA2227
     public IDictionary<string, JsonElement>? ExtensionData { get; set; }
+#pragma warning restore CA2227
 }
 
 public sealed class OutputDefinition
@@ -179,7 +188,9 @@ public sealed class OutputDefinition
     public LexiconDefinition? Schema { get; set; }
 
     [JsonExtensionData]
+#pragma warning disable CA2227
     public IDictionary<string, JsonElement>? ExtensionData { get; set; }
+#pragma warning restore CA2227
 }
 
 public sealed class ErrorDefinition
@@ -189,7 +200,9 @@ public sealed class ErrorDefinition
     public string? Description { get; set; }
 
     [JsonExtensionData]
+#pragma warning disable CA2227
     public IDictionary<string, JsonElement>? ExtensionData { get; set; }
+#pragma warning restore CA2227
 }
 
 public sealed class BooleanDefinition : LexiconDefinition

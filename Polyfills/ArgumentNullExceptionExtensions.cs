@@ -20,11 +20,13 @@ internal static class ArgumentNullExceptionExtensions
         }
     }
 
+#pragma warning disable IDE0051
     [DoesNotReturn]
     private static void Throw(string? paramName)
     {
         throw new ArgumentNullException(paramName);
     }
+#pragma warning restore IDE0051
 }
 
 #endif
