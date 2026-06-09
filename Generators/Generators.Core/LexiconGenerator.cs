@@ -71,10 +71,11 @@ public sealed class LexiconGenerator
         return new GenerateResult(files, diagnostics);
     }
 
-    private static Dictionary<string, string?> BuildNsidIndex(
+    private static Dictionary<string, LexiconType?> BuildNsidIndex(
         IReadOnlyList<LexiconDocumentWithInfo> documents)
     {
-        var index = new Dictionary<string, string?>();
+        var index = new Dictionary<string, LexiconType?>();
+
         foreach (var docInfo in documents)
         {
             var nsid = docInfo.Document.Id;
@@ -83,22 +84,15 @@ public sealed class LexiconGenerator
                 continue;
             }
 
-            string? mainType = null;
+            LexiconType? mainType = null;
             if (docInfo.Document.Definitions.TryGetValue("main", out var mainDef))
             {
-                mainType = mainDef.Type switch
-                {
-                    LexiconType.Record => "record",
-                    LexiconType.Object => "object",
-                    LexiconType.Query => "query",
-                    LexiconType.Procedure => "procedure",
-                    LexiconType.Subscription => "subscription",
-                    _ => mainDef.Type.ToString().ToLowerInvariant()
-                };
+                mainType = mainDef.Type;
             }
 
             index[nsid] = mainType;
         }
+
         return index;
     }
 }

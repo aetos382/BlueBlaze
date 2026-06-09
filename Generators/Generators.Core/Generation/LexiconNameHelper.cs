@@ -73,12 +73,12 @@ internal static class LexiconNameHelper
 
     // Resolves a lexicon ref string to a fully-qualified C# type path usable in generated code.
     // currentNsid: the NSID of the document being processed
-    // nsidIndex: map of nsid -> main def type ("record"/"object"/"query"/"procedure"/"subscription"/null=defs-only)
+    // nsidIndex: map of nsid -> main def type (null=defs-only)
     // refStr: e.g. "#localDef", "com.atproto.repo.defs#commitMeta", "com.atproto.repo.strongRef"
     internal static string ResolveRef(
         string currentNsid,
         string refStr,
-        IReadOnlyDictionary<string, string?> nsidIndex)
+        IReadOnlyDictionary<string, LexiconType?> nsidIndex)
     {
         string targetNsid;
         string defKey;
@@ -109,7 +109,7 @@ internal static class LexiconNameHelper
         if (defKey == "main")
         {
             // Case 1: record/object -> last segment is the class name, parent is the container
-            if (mainType is "record" or "object")
+            if (mainType is LexiconType.Record or LexiconType.Object)
             {
                 return containerPath; // e.g. "Com.Atproto.Repo.StrongRef" (last segment is the class)
             }
@@ -120,17 +120,17 @@ internal static class LexiconNameHelper
         }
 
         // Non-main def
-        if (mainType is "record" or "object")
+        if (mainType is LexiconType.Record or LexiconType.Object)
         {
             // Case 1: nested inside main class
             // containerPath already includes last segment as class name
             return containerPath + "." + ToPascalCase(defKey);
         }
 
-        if (mainType is "query" or "procedure" or "subscription")
+        if (mainType is LexiconType.Query or LexiconType.Procedure or LexiconType.Subscription)
         {
             // Case 3: nested inside Response/Message
-            var responseOrMessage = mainType == "subscription" ? "Message" : "Response";
+            var responseOrMessage = mainType == LexiconType.Subscription ? "Message" : "Response";
             return containerPath + "." + responseOrMessage + "." + ToPascalCase(defKey);
         }
 

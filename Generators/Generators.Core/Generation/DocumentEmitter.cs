@@ -11,7 +11,7 @@ internal static class DocumentEmitter
     // Returns generated files and appends diagnostics.
     internal static void Emit(
         LexiconDocumentWithInfo docInfo,
-        IReadOnlyDictionary<string, string?> nsidIndex,
+        IReadOnlyDictionary<string, LexiconType?> nsidIndex,
         string? generatedModelNamespace,
         List<GeneratedSourceFile> files,
         List<Diagnostic> diagnostics,
@@ -39,7 +39,7 @@ internal static class DocumentEmitter
             if (def is ObjectDefinition objDef)
             {
                 // Subscription sub-defs are CBOR encoded → no JSON attributes
-                var emitJson = !(mainType == "subscription" && !isMain);
+                var emitJson = !(mainType == LexiconType.Subscription && !isMain);
                 EmitObjectDef(
                     nsid, defKey, objDef, mainType, isMain,
                     nsidIndex, generatedModelNamespace,
@@ -90,9 +90,9 @@ internal static class DocumentEmitter
         string nsid,
         string defKey,
         ObjectDefinition objDef,
-        string? mainType,
+        LexiconType? mainType,
         bool isMain,
-        IReadOnlyDictionary<string, string?> nsidIndex,
+        IReadOnlyDictionary<string, LexiconType?> nsidIndex,
         string? generatedModelNamespace,
         string? filePath,
         List<GeneratedSourceFile> files,
@@ -106,24 +106,24 @@ internal static class DocumentEmitter
         string hintSuffix;
         string? nestedInClass = null;
 
-        if (isMain && (mainType == "record" || mainType == "object"))
+        if (isMain && mainType is LexiconType.Record or LexiconType.Object)
         {
             // Case 1: main class — last segment is the class name
             className = segments[segments.Length - 1];
             classPath = string.Join(".", segments);
             hintSuffix = classPath;
         }
-        else if (!isMain && (mainType == "record" || mainType == "object"))
+        else if (!isMain && mainType is LexiconType.Record or LexiconType.Object)
         {
             // Case 1: sub-def nested inside main partial class
             className = LexiconNameHelper.ToPascalCase(defKey);
             classPath = string.Join(".", segments) + "." + className;
             hintSuffix = classPath;
         }
-        else if (!isMain && (mainType == "query" || mainType == "procedure" || mainType == "subscription"))
+        else if (!isMain && mainType is LexiconType.Query or LexiconType.Procedure or LexiconType.Subscription)
         {
             // Case 3: sub-def nested inside Response/Message partial class
-            nestedInClass = mainType == "subscription" ? "Message" : "Response";
+            nestedInClass = mainType == LexiconType.Subscription ? "Message" : "Response";
             className = LexiconNameHelper.ToPascalCase(defKey);
             classPath = string.Join(".", segments) + "." + nestedInClass + "." + className;
             hintSuffix = classPath;
@@ -142,7 +142,7 @@ internal static class DocumentEmitter
         var sb = new StringBuilder();
         EmitFileHeader(sb, generatedModelNamespace);
 
-        if (isMain && (mainType == "record" || mainType == "object"))
+        if (isMain && mainType is LexiconType.Record or LexiconType.Object)
         {
             // Wrap in parent static classes (all segments except last)
             OpenStaticContainers(sb, segments, 0, segments.Length - 1);
@@ -197,7 +197,7 @@ internal static class DocumentEmitter
         ParametersDefinition? parameters,
         InputDefinition? input,
         OutputDefinition? output,
-        IReadOnlyDictionary<string, string?> nsidIndex,
+        IReadOnlyDictionary<string, LexiconType?> nsidIndex,
         string? generatedModelNamespace,
         string? filePath,
         List<GeneratedSourceFile> files,
@@ -230,7 +230,7 @@ internal static class DocumentEmitter
     private static void EmitSubscription(
         string nsid,
         SubscriptionDefinition subDef,
-        IReadOnlyDictionary<string, string?> nsidIndex,
+        IReadOnlyDictionary<string, LexiconType?> nsidIndex,
         string? generatedModelNamespace,
         string? filePath,
         List<GeneratedSourceFile> files,
@@ -258,7 +258,7 @@ internal static class DocumentEmitter
         string nsid,
         string[] segments,
         ParametersDefinition paramsDef,
-        IReadOnlyDictionary<string, string?> nsidIndex,
+        IReadOnlyDictionary<string, LexiconType?> nsidIndex,
         string? generatedModelNamespace,
         string? filePath,
         List<GeneratedSourceFile> files,
@@ -324,7 +324,7 @@ internal static class DocumentEmitter
         string[] segments,
         string className,
         ObjectDefinition objDef,
-        IReadOnlyDictionary<string, string?> nsidIndex,
+        IReadOnlyDictionary<string, LexiconType?> nsidIndex,
         string? generatedModelNamespace,
         string? filePath,
         List<GeneratedSourceFile> files,

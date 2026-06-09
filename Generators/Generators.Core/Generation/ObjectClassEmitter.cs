@@ -12,7 +12,7 @@ internal static class ObjectClassEmitter
         string className,
         ObjectDefinition def,
         string nsid,
-        IReadOnlyDictionary<string, string?> nsidIndex,
+        IReadOnlyDictionary<string, LexiconType?> nsidIndex,
         List<Diagnostic> diagnostics,
         string? filePath,
         string? defKey,

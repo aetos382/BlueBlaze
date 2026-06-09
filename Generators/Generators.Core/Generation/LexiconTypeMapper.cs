@@ -11,7 +11,7 @@ internal static class LexiconTypeMapper
         bool isRequired,
         bool isNullable,
         string currentNsid,
-        IReadOnlyDictionary<string, string?> nsidIndex,
+        IReadOnlyDictionary<string, LexiconType?> nsidIndex,
         out string? unknownFormatName)
     {
         unknownFormatName = null;
@@ -101,7 +101,7 @@ internal static class LexiconTypeMapper
         ArrayDefinition ad,
         bool isRequired,
         string currentNsid,
-        IReadOnlyDictionary<string, string?> nsidIndex,
+        IReadOnlyDictionary<string, LexiconType?> nsidIndex,
         out string? unknownFormatName)
     {
         unknownFormatName = null;
