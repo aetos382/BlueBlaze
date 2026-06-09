@@ -14,17 +14,27 @@ public sealed class LexiconParseAllTest
         var lexiconsDir = FindLexiconsDirectory();
         var files = Directory.GetFiles(lexiconsDir, "*.json", SearchOption.AllDirectories);
 
-        var documents = new List<LexiconDocumentWithInfo>(files.Length);
+        var parseResults = new List<ParseResult>(files.Length);
         foreach (var file in files)
         {
             var text = File.ReadAllText(file);
-            documents.Add(LexiconGenerator.Parse(text, file));
+            parseResults.Add(LexiconGenerator.Parse(text, file));
         }
 
-        var result = LexiconGenerator.Generate(documents, "BlueBlaze.Generated");
+        var result = LexiconGenerator.Generate(parseResults, "BlueBlaze.Generated");
+
+        var errors = result.Diagnostics
+            .Where(d => d.Severity == DiagnosticSeverity.Error)
+            .ToList();
+
+        if (errors.Count > 0)
+        {
+            var messages = string.Join("\n", errors.Select(d => d.Message));
+            Assert.Fail($"パース/生成エラーが {errors.Count} 件あります:\n{messages}");
+        }
 
         var extensionDataWarnings = result.Diagnostics
-            .Where(d => d.Severity == DiagnosticSeverity.Warning && d.Message.StartsWith("Unknown field"))
+            .Where(d => d.Severity == DiagnosticSeverity.Warning && d.Message.StartsWith("Unknown field", StringComparison.Ordinal))
             .ToList();
 
         if (extensionDataWarnings.Count > 0)

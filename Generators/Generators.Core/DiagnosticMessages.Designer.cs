@@ -11,6 +11,9 @@ internal static class DiagnosticMessages
             "BlueBlaze.Generators.Core.DiagnosticMessages",
             typeof(DiagnosticMessages).Assembly);
 
+    internal static string ParseError =>
+        ResourceManager.GetString("ParseError") ?? "Failed to parse lexicon document '{0}': {1}";
+
     internal static string UnresolvedRef =>
         ResourceManager.GetString("UnresolvedRef") ?? "Cannot resolve ref '{0}' in '{1}#{2}'.";
 

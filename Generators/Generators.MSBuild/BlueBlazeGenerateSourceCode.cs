@@ -34,7 +34,7 @@ public sealed class BlueBlazeGenerateSourceCode : Task
             Debugger.Launch();
         }
 
-        var items = new List<LexiconDocumentWithInfo>();
+        var items = new List<ParseResult>();
 
         foreach (var lexiconDocument in this.LexiconDocuments)
         {

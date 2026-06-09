@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text.Json;
 
 using BlueBlaze.Generators.Core.Generation;
@@ -7,28 +9,51 @@ namespace BlueBlaze.Generators.Core;
 
 public sealed class LexiconGenerator
 {
-    public static LexiconDocumentWithInfo Parse(
+    public static ParseResult Parse(
         string text,
         string path)
     {
-        var document = JsonSerializer.Deserialize(text, LexiconSerializerContext.Default.LexiconDocument)!;
-        return new(path, document);
+        try
+        {
+            var document = JsonSerializer.Deserialize(text, LexiconSerializerContext.Default.LexiconDocument)!;
+            return new ParseResult(new LexiconDocumentWithInfo(path, document), []);
+        }
+        catch (JsonException ex)
+        {
+            var message = string.Format(
+                CultureInfo.InvariantCulture,
+                DiagnosticMessages.ParseError,
+                path,
+                ex.Message);
+            return new ParseResult(null, [new Diagnostic(DiagnosticSeverity.Error, message, path, null, null)]);
+        }
     }
 
     public static GenerateResult Generate(
-        IReadOnlyList<LexiconDocumentWithInfo> documents,
+        IReadOnlyList<ParseResult> parseResults,
         string? generatedModelNamespace = null)
     {
+        ArgumentNullException.ThrowIfNull(parseResults);
+
         var files = new List<GeneratedSourceFile>();
         var diagnostics = new List<Diagnostic>();
         var unionMemberImpls = new List<(string MemberTypePath, string InterfacePath)>();
 
+        // Collect parse diagnostics and extract successfully parsed documents
+        var documents = new List<LexiconDocumentWithInfo>(parseResults.Count);
+        foreach (var pr in parseResults)
+        {
+            diagnostics.AddRange(pr.Diagnostics);
+            if (pr.Document != null)
+            {
+                documents.Add(pr.Document);
+            }
+        }
+
         // Phase 1: Build NSID index (nsid -> main def type or null for defs-only)
         var nsidIndex = BuildNsidIndex(documents);
 
-
-        // Phase 2: Emit source files per document, collect refs and extension data warnings
-        _ = new List<(string RefStr, string SourceNsid, string? FilePath)>();
+        // Phase 2: Emit source files per document
         foreach (var docInfo in documents)
         {
             DocumentEmitter.Emit(
@@ -42,10 +67,6 @@ public sealed class LexiconGenerator
             DocumentEmitter.EmitUnionMemberImpl(
                 memberPath, interfacePath, generatedModelNamespace, files);
         }
-
-        // Phase 4: Validate refs (check duplicate def keys were already handled during emit)
-        // Ref validation: all refs collected during emit are checked against nsidIndex
-        // (This is handled inline in DocumentEmitter; unresolved refs produce Error diagnostics there.)
 
         return new GenerateResult(files, diagnostics);
     }
