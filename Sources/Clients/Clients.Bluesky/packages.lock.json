@@ -92,9 +92,7 @@
       "BlueBlaze.Clients.AtProtocol": {
         "type": "Project",
         "dependencies": {
-          "BlueBlaze.Clients.Core": "[1.0.0, )",
-          "System.Net.Http.Json": "[10.0.8, )",
-          "System.Text.Json": "[10.0.8, )"
+          "BlueBlaze.Clients.Core": "[1.0.0, )"
         }
       },
       "BlueBlaze.Clients.Core": {
@@ -105,7 +103,10 @@
         }
       },
       "BlueBlaze.Models.Bluesky": {
-        "type": "Project"
+        "type": "Project",
+        "dependencies": {
+          "System.Text.Json": "[10.0.8, )"
+        }
       },
       "System.Net.Http.Json": {
         "type": "CentralTransitive",
