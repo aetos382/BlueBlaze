@@ -1,6 +1,9 @@
+using System.Collections.Immutable;
+
 using BlueBlaze.Generators.Core;
 
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace BlueBlaze.Generators.Roslyn;
 
@@ -8,6 +11,22 @@ namespace BlueBlaze.Generators.Roslyn;
 public sealed class LexiconSourceGenerator :
     IIncrementalGenerator
 {
+    private static readonly DiagnosticDescriptor ErrorDescriptor = new(
+        id: "BB0001",
+        title: "Lexicon generation error",
+        messageFormat: "{0}",
+        category: "LexiconGenerator",
+        defaultSeverity: Microsoft.CodeAnalysis.DiagnosticSeverity.Error,
+        isEnabledByDefault: true);
+
+    private static readonly DiagnosticDescriptor WarningDescriptor = new(
+        id: "BB0002",
+        title: "Lexicon generation warning",
+        messageFormat: "{0}",
+        category: "LexiconGenerator",
+        defaultSeverity: Microsoft.CodeAnalysis.DiagnosticSeverity.Warning,
+        isEnabledByDefault: true);
+
     /// <inheritdoc />
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
@@ -51,5 +70,39 @@ public sealed class LexiconSourceGenerator :
             .Where(static item => item.IsValidText)
             .Select(static (input, _) =>
                 LexiconGenerator.Parse(input.Text, input.Path));
+
+        var generatedModelNamespaceProvider = context.AnalyzerConfigOptionsProvider
+            .Select(static (opts, _) =>
+            {
+                if (opts.GlobalOptions.TryGetValue("build_property.GeneratedModelNamespace", out var v) &&
+                    !string.IsNullOrEmpty(v))
+                {
+                    return v;
+                }
+
+                opts.GlobalOptions.TryGetValue("build_property.RootNamespace", out var rootNs);
+                return string.IsNullOrEmpty(rootNs) ? null : rootNs + ".Generated";
+            });
+
+        context.RegisterSourceOutput(
+            lexiconDocumentsProvider.Collect().Combine(generatedModelNamespaceProvider),
+            static (spc, pair) =>
+            {
+                var (documents, generatedModelNamespace) = pair;
+                var result = LexiconGenerator.Generate(documents, generatedModelNamespace);
+
+                foreach (var diag in result.Diagnostics)
+                {
+                    var descriptor = diag.Severity == Core.DiagnosticSeverity.Error
+                        ? ErrorDescriptor
+                        : WarningDescriptor;
+                    spc.ReportDiagnostic(Microsoft.CodeAnalysis.Diagnostic.Create(descriptor, Location.None, diag.Message));
+                }
+
+                foreach (var file in result.Files)
+                {
+                    spc.AddSource(file.HintName, file.SourceText);
+                }
+            });
     }
 }

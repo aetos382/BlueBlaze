@@ -18,6 +18,8 @@ public sealed class BlueBlazeGenerateSourceCode : Task
 
     public string? OutputPath { get; set; }
 
+    public string? GeneratedModelNamespace { get; set; }
+
     public bool DebugBreakOnExecute { get; set; }
 
     [Output]
@@ -48,7 +50,31 @@ public sealed class BlueBlazeGenerateSourceCode : Task
             items.Add(item);
         }
 
-        return true;
+        var result = LexiconGenerator.Generate(items, this.GeneratedModelNamespace);
+
+        foreach (var diag in result.Diagnostics)
+        {
+            if (diag.Severity == DiagnosticSeverity.Error)
+            {
+                this.Log.LogError(diag.Message);
+            }
+            else
+            {
+                this.Log.LogWarning(diag.Message);
+            }
+        }
+
+        var taskItems = new List<ITaskItem>(result.Files.Count);
+        foreach (var file in result.Files)
+        {
+            var outputFile = Path.Combine(this.OutputPath, file.HintName);
+            Directory.CreateDirectory(Path.GetDirectoryName(outputFile));
+            File.WriteAllText(outputFile, file.SourceText, System.Text.Encoding.UTF8);
+            taskItems.Add(new TaskItem(outputFile));
+        }
+        this.GeneratedFiles = [.. taskItems];
+
+        return !this.Log.HasLoggedErrors;
     }
 
     private static bool IsLexiconDocument(ITaskItem item)

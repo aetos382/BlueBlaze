@@ -16,6 +16,9 @@ public sealed class LexiconDocument
 
     [JsonPropertyName("defs")]
     public required IReadOnlyDictionary<string, LexiconDefinition> Definitions { get; set; }
+
+    [JsonExtensionData]
+    public IDictionary<string, JsonElement>? ExtensionData { get; set; }
 }
 
 #pragma warning disable CA1720
@@ -35,7 +38,7 @@ public enum LexiconType
     [JsonStringEnumMemberName("subscription")]
     Subscription,
 
-    [JsonStringEnumMemberName("permissionSet")]
+    [JsonStringEnumMemberName("permission-set")]
     PermissionSet,
 
     [JsonStringEnumMemberName("boolean")]
@@ -89,6 +92,9 @@ public abstract class LexiconDefinition
     public required LexiconType Type { get; set; }
 
     public string? Description { get; set; }
+
+    [JsonExtensionData]
+    public IDictionary<string, JsonElement>? ExtensionData { get; set; }
 }
 
 public sealed class RecordDefinition : LexiconDefinition
@@ -147,6 +153,9 @@ public sealed class MessageDefinition
     public string? Description { get; set; }
 
     public required LexiconDefinition Schema { get; set; }
+
+    [JsonExtensionData]
+    public IDictionary<string, JsonElement>? ExtensionData { get; set; }
 }
 
 public sealed class InputDefinition
@@ -156,6 +165,9 @@ public sealed class InputDefinition
     public required string Encoding { get; set; }
 
     public LexiconDefinition? Schema { get; set; }
+
+    [JsonExtensionData]
+    public IDictionary<string, JsonElement>? ExtensionData { get; set; }
 }
 
 public sealed class OutputDefinition
@@ -165,6 +177,9 @@ public sealed class OutputDefinition
     public required string Encoding { get; set; }
 
     public LexiconDefinition? Schema { get; set; }
+
+    [JsonExtensionData]
+    public IDictionary<string, JsonElement>? ExtensionData { get; set; }
 }
 
 public sealed class ErrorDefinition
@@ -172,6 +187,9 @@ public sealed class ErrorDefinition
     public required string Name { get; set; }
 
     public string? Description { get; set; }
+
+    [JsonExtensionData]
+    public IDictionary<string, JsonElement>? ExtensionData { get; set; }
 }
 
 public sealed class BooleanDefinition : LexiconDefinition
@@ -244,7 +262,7 @@ public sealed class ObjectDefinition : LexiconDefinition
 
 public sealed class BlobDefinition : LexiconDefinition
 {
-    public string? Accept { get; set; }
+    public string[]? Accept { get; set; }
 
     public int? MaxSize { get; set; }
 }
@@ -318,7 +336,6 @@ public enum StringFormat
     JsonSerializerDefaults.Web,
     RespectNullableAnnotations = true,
     RespectRequiredConstructorParameters = true,
-    UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow,
     UseStringEnumConverter = true)]
 [JsonSerializable(typeof(LexiconDocument))]
 [JsonSerializable(typeof(RecordDefinition))]
