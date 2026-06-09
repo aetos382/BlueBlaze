@@ -104,7 +104,6 @@ internal static class DocumentEmitter
         string className;
         string classPath;
         string hintSuffix;
-        string? nestedInClass = null;
 
         if (isMain && mainType is LexiconType.Record or LexiconType.Object)
         {
@@ -122,10 +121,10 @@ internal static class DocumentEmitter
         }
         else if (!isMain && mainType is LexiconType.Query or LexiconType.Procedure or LexiconType.Subscription)
         {
-            // Case 3: sub-def nested inside Response/Message partial class
-            nestedInClass = mainType == LexiconType.Subscription ? "Message" : "Response";
-            className = LexiconNameHelper.ToPascalCase(defKey);
-            classPath = string.Join(".", segments) + "." + nestedInClass + "." + className;
+            // Case 3: Response/Message プレフィックスを付けた兄弟クラスとして emit
+            var responseOrMessage = mainType == LexiconType.Subscription ? "Message" : "Response";
+            className = responseOrMessage + LexiconNameHelper.ToPascalCase(defKey);
+            classPath = string.Join(".", segments) + "." + className;
             hintSuffix = classPath;
         }
         else
@@ -153,24 +152,9 @@ internal static class DocumentEmitter
                 unionProperties: unionProps);
             CloseContainers(sb, segments.Length - 1);
         }
-        else if (nestedInClass != null)
-        {
-            // Case 3 sub-def: nested inside partial Response/Message class
-            OpenStaticContainers(sb, segments, 0, segments.Length);
-            var outerIndent = new string(' ', segments.Length * 4);
-            sb.AppendLine($"{outerIndent}public sealed partial class {nestedInClass}");
-            sb.AppendLine($"{outerIndent}{{");
-            ObjectClassEmitter.EmitClass(sb, className, classPath, objDef, nsid, nsidIndex,
-                diagnostics, filePath, defKey, segments.Length + 1,
-                isPartial: true, emitJsonAttributes: emitJsonAttributes,
-                defIndex: defIndex, generatedModelNamespace: generatedModelNamespace,
-                unionProperties: unionProps);
-            sb.AppendLine($"{outerIndent}}}");
-            CloseContainers(sb, segments.Length);
-        }
         else
         {
-            // Case 1 sub-def, Case 2, defs-only
+            // Case 1 sub-def, Case 2, Case 3, defs-only
             OpenStaticContainers(sb, segments, 0, segments.Length);
             ObjectClassEmitter.EmitClass(sb, className, classPath, objDef, nsid, nsidIndex,
                 diagnostics, filePath, defKey, segments.Length,
@@ -387,22 +371,7 @@ internal static class DocumentEmitter
         var sb = new StringBuilder();
         EmitFileHeader(sb, generatedModelNamespace);
 
-        // Response/Message の直下にネストされた型は sealed partial class で包む (CS0441 対策)
-        var hasSealedContainer =
-            parts.Length >= 3 &&
-            (parts[parts.Length - 2] == "Response" || parts[parts.Length - 2] == "Message");
-
-        if (hasSealedContainer)
-        {
-            OpenStaticContainers(sb, parts, 0, parts.Length - 2);
-            var sealedIndent = new string(' ', (parts.Length - 2) * 4);
-            sb.AppendLine($"{sealedIndent}public sealed partial class {parts[parts.Length - 2]}");
-            sb.AppendLine($"{sealedIndent}{{");
-        }
-        else
-        {
-            OpenStaticContainers(sb, parts, 0, parts.Length - 1);
-        }
+        OpenStaticContainers(sb, parts, 0, parts.Length - 1);
 
         var indent = new string(' ', (parts.Length - 1) * 4);
         var className = parts[parts.Length - 1];
