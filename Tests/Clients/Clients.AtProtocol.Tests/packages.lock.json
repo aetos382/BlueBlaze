@@ -122,6 +122,12 @@
         "contentHash": "dxOZt8/LWuiox7rugInJoIa5Mmu3pBmXdfaoZOx/mxx8+sUFFpjBXPlWXQXGeWzpkVPNC3x1Jf7rt2h2Zjyvvg=="
       },
       "BlueBlaze.Clients.AtProtocol": {
+        "type": "Project",
+        "dependencies": {
+          "BlueBlaze.Clients.Core": "[1.0.0, )"
+        }
+      },
+      "BlueBlaze.Clients.Core": {
         "type": "Project"
       }
     },

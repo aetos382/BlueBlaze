@@ -9,6 +9,7 @@
   <Folder Name="/Sources/Clients/">
     <Project Path="Sources/Clients/Clients.AtProtocol/Clients.AtProtocol.csproj" />
     <Project Path="Sources/Clients/Clients.Bluesky/Clients.Bluesky.csproj" />
+    <Project Path="Sources/Clients/Clients.Core/Clients.Core.csproj" />
   </Folder>
   <Folder Name="/Sources/Models/">
     <Project Path="Sources/Models/Models.AtProtocol/Models.AtProtocol.csproj" />

@@ -10,9 +10,8 @@
     <UsePolyfills>true</UsePolyfills>
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="System.Text.Json" />
-    <PackageReference Include="System.Net.Http.Json" />
+  <ItemGroup>
+    <ProjectReference Include="../Clients.Core/Clients.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -23,6 +23,33 @@
           "Microsoft.NETCore.Platforms": "1.1.0"
         }
       },
+      "System.Net.Http.Json": {
+        "type": "Direct",
+        "requested": "[10.0.8, )",
+        "resolved": "10.0.8",
+        "contentHash": "66vEeOlwSm/ArLfOpeKbt+YRFPK7It9UVBhuaFxXbPwNw6wG0aCotM3VfrF79A9ZMsfjH6dSsv8lore8/4euQA==",
+        "dependencies": {
+          "System.Buffers": "4.6.1",
+          "System.Memory": "4.6.3",
+          "System.Text.Json": "10.0.8",
+          "System.Threading.Tasks.Extensions": "4.6.3"
+        }
+      },
+      "System.Text.Json": {
+        "type": "Direct",
+        "requested": "[10.0.8, )",
+        "resolved": "10.0.8",
+        "contentHash": "/fysUDkD7oFGaRPoA7IaFs0wRoO3GlwlCNq2P+xWZqxLy1R4cktRSKfMjJDy9ymS4grL7IDVdt8de8L9a0z55Q==",
+        "dependencies": {
+          "Microsoft.Bcl.AsyncInterfaces": "10.0.8",
+          "System.Buffers": "4.6.1",
+          "System.IO.Pipelines": "10.0.8",
+          "System.Memory": "4.6.3",
+          "System.Runtime.CompilerServices.Unsafe": "6.1.2",
+          "System.Text.Encodings.Web": "10.0.8",
+          "System.Threading.Tasks.Extensions": "4.6.3"
+        }
+      },
       "Microsoft.Bcl.AsyncInterfaces": {
         "type": "Transitive",
         "resolved": "10.0.8",
@@ -88,51 +115,6 @@
         "dependencies": {
           "System.Runtime.CompilerServices.Unsafe": "6.1.2"
         }
-      },
-      "BlueBlaze.Clients.AtProtocol": {
-        "type": "Project",
-        "dependencies": {
-          "BlueBlaze.Clients.Core": "[1.0.0, )",
-          "System.Net.Http.Json": "[10.0.8, )",
-          "System.Text.Json": "[10.0.8, )"
-        }
-      },
-      "BlueBlaze.Clients.Core": {
-        "type": "Project",
-        "dependencies": {
-          "System.Net.Http.Json": "[10.0.8, )",
-          "System.Text.Json": "[10.0.8, )"
-        }
-      },
-      "BlueBlaze.Models.Bluesky": {
-        "type": "Project"
-      },
-      "System.Net.Http.Json": {
-        "type": "CentralTransitive",
-        "requested": "[10.0.8, )",
-        "resolved": "10.0.8",
-        "contentHash": "66vEeOlwSm/ArLfOpeKbt+YRFPK7It9UVBhuaFxXbPwNw6wG0aCotM3VfrF79A9ZMsfjH6dSsv8lore8/4euQA==",
-        "dependencies": {
-          "System.Buffers": "4.6.1",
-          "System.Memory": "4.6.3",
-          "System.Text.Json": "10.0.8",
-          "System.Threading.Tasks.Extensions": "4.6.3"
-        }
-      },
-      "System.Text.Json": {
-        "type": "CentralTransitive",
-        "requested": "[10.0.8, )",
-        "resolved": "10.0.8",
-        "contentHash": "/fysUDkD7oFGaRPoA7IaFs0wRoO3GlwlCNq2P+xWZqxLy1R4cktRSKfMjJDy9ymS4grL7IDVdt8de8L9a0z55Q==",
-        "dependencies": {
-          "Microsoft.Bcl.AsyncInterfaces": "10.0.8",
-          "System.Buffers": "4.6.1",
-          "System.IO.Pipelines": "10.0.8",
-          "System.Memory": "4.6.3",
-          "System.Runtime.CompilerServices.Unsafe": "6.1.2",
-          "System.Text.Encodings.Web": "10.0.8",
-          "System.Threading.Tasks.Extensions": "4.6.3"
-        }
       }
     },
     "net10.0": {
@@ -153,18 +135,6 @@
         "requested": "[4.1.5, )",
         "resolved": "4.1.5",
         "contentHash": "i5z+cNu/cOcdO0AgFB8aXk8w6In2H+haaDfSgd9ImvQIK+rSHavHZIogVoAZLL8jLwYx4bAcs5b7EyuMMG4mQQ=="
-      },
-      "BlueBlaze.Clients.AtProtocol": {
-        "type": "Project",
-        "dependencies": {
-          "BlueBlaze.Clients.Core": "[1.0.0, )"
-        }
-      },
-      "BlueBlaze.Clients.Core": {
-        "type": "Project"
-      },
-      "BlueBlaze.Models.Bluesky": {
-        "type": "Project"
       }
     }
   }

@@ -122,14 +122,21 @@
         "contentHash": "dxOZt8/LWuiox7rugInJoIa5Mmu3pBmXdfaoZOx/mxx8+sUFFpjBXPlWXQXGeWzpkVPNC3x1Jf7rt2h2Zjyvvg=="
       },
       "BlueBlaze.Clients.AtProtocol": {
-        "type": "Project"
+        "type": "Project",
+        "dependencies": {
+          "BlueBlaze.Clients.Core": "[1.0.0, )"
+        }
       },
       "BlueBlaze.Clients.Bluesky": {
         "type": "Project",
         "dependencies": {
           "BlueBlaze.Clients.AtProtocol": "[1.0.0, )",
+          "BlueBlaze.Clients.Core": "[1.0.0, )",
           "BlueBlaze.Models.Bluesky": "[1.0.0, )"
         }
+      },
+      "BlueBlaze.Clients.Core": {
+        "type": "Project"
       },
       "BlueBlaze.Models.Bluesky": {
         "type": "Project"

@@ -10,14 +10,9 @@
     <UsePolyfills>true</UsePolyfills>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="../../Models/Models.Bluesky/Models.Bluesky.csproj" />
-    <ProjectReference Include="../Clients.AtProtocol/Clients.AtProtocol.csproj" />
-    <ProjectReference Include="../Clients.Core/Clients.Core.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <InternalsVisibleTo Include="BlueBlaze.Clients.Bluesky.Tests" />
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="System.Text.Json" />
+    <PackageReference Include="System.Net.Http.Json" />
   </ItemGroup>
 
 </Project>
