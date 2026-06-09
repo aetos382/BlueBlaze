@@ -21,7 +21,7 @@ public sealed class BlueBlazeGenerateSourceCode : Task
     public required string OutputPath { get; set; }
 
     [Required]
-    public string GeneratedModelNamespace { get; set; }
+    public required string GeneratedModelNamespace { get; set; }
 
     public bool DebugBreakOnExecute { get; set; }
 

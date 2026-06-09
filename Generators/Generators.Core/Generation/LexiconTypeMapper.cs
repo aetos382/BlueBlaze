@@ -104,8 +104,6 @@ internal static class LexiconTypeMapper
         IReadOnlyDictionary<string, LexiconType?> nsidIndex,
         out string? unknownFormatName)
     {
-        unknownFormatName = null;
-
         var itemResult = Map(ad.Items, isRequired: true, isNullable: false,
             currentNsid, nsidIndex, out unknownFormatName);
 
