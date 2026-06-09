@@ -12,19 +12,23 @@ namespace BlueBlaze.Generators.MSBuild;
 public sealed class BlueBlazeGenerateSourceCode : Task
 {
 #pragma warning disable CA1819
+    // ReSharper disable MemberCanBePrivate.Global
 
     [Required]
     public ITaskItem[] LexiconDocuments { get; set; } = [];
 
-    public string? OutputPath { get; set; }
+    [Required]
+    public required string OutputPath { get; set; }
 
-    public string? GeneratedModelNamespace { get; set; }
+    [Required]
+    public string GeneratedModelNamespace { get; set; }
 
     public bool DebugBreakOnExecute { get; set; }
 
     [Output]
     public ITaskItem[] GeneratedFiles { get; set; } = [];
 
+    // ReSharper restore MemberCanBePrivate.Global
 #pragma warning restore CA1819
 
     public override bool Execute()
@@ -65,14 +69,17 @@ public sealed class BlueBlazeGenerateSourceCode : Task
         }
 
         var taskItems = new List<ITaskItem>(result.Files.Count);
+
         foreach (var file in result.Files)
         {
             var outputFile = Path.Combine(this.OutputPath, file.HintName);
             Directory.CreateDirectory(Path.GetDirectoryName(outputFile));
+
             File.WriteAllText(outputFile, file.SourceText, System.Text.Encoding.UTF8);
             taskItems.Add(new TaskItem(outputFile));
         }
-        this.GeneratedFiles = [.. taskItems];
+
+        this.GeneratedFiles = taskItems.ToArray();
 
         return !this.Log.HasLoggedErrors;
     }

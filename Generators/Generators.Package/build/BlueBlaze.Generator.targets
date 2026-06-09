@@ -1,5 +1,9 @@
 <Project>
 
+  <PropertyGroup>
+    <BlueBlazeGeneratorModelNamespace Condition="'$(BlueBlazeGeneratorModelNamespace)' == ''">$(RootNamespace).Generated</BlueBlazeGeneratorModelNamespace>
+  </PropertyGroup>
+
   <Import Project="BlueBlaze.Generators.MSBuild.targets" Condition="'$(BlueBlazeGeneratorRunAsBuildTask)' == 'true'" />
 
 </Project>

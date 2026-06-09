@@ -27,7 +27,7 @@
     <BlueBlazeGenerateLexiconSourceCodeTaskDebugBreakOnExecute>false</BlueBlazeGenerateLexiconSourceCodeTaskDebugBreakOnExecute>
   </PropertyGroup>
 
-  <Import Project="$(MSBuildThisFileDirectory)BlueBlaze.Generator.MSBuild.Debug.targets" Condition="Exists('$(MSBuildThisFileDirectory)BlueBlaze.Generator.MSBuild.Debug.targets')" />
+  <Import Project="$(MSBuildThisFileDirectory)BlueBlaze.Generators.MSBuild.Debug.targets" Condition="Exists('$(MSBuildThisFileDirectory)BlueBlaze.Generators.MSBuild.Debug.targets')" />
 
   <UsingTask TaskName="BlueBlazeGenerateSourceCode"
              AssemblyFile="$(_BlueBlazeGeneratorBuildTaskAssemblyFilePath)"
@@ -41,6 +41,7 @@
     <BlueBlazeGenerateSourceCode
       LexiconDocuments="@(LexiconDocument)"
       OutputPath="$(IntermediateOutputPath)GeneratedSources/BlueBlaze.Generator/"
+      GeneratedModelNamespace="$(BlueBlazeGeneratorModelNamespace)"
       DebugBreakOnExecute="$(BlueBlazeGenerateLexiconSourceCodeTaskDebugBreakOnExecute)">
 
       <Output TaskParameter="GeneratedFiles" ItemName="GeneratedLexiconSources" />
