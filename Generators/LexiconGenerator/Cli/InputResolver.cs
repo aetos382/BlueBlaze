@@ -52,7 +52,9 @@ internal static class InputResolver
 
     private static bool ContainsGlobChars(string path)
     {
+#pragma warning disable CA1307
         return path.Contains('*');
+#pragma warning restore
     }
 
     private static (string baseDir, string pattern) SplitGlobPattern(string path)

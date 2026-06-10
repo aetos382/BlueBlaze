@@ -31,7 +31,7 @@
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <PackageProjectUrl>https://github.com/aetos382/BlueBlaze</PackageProjectUrl>
     <IncludeSymbols Condition="'$(IncludeSymbols)' == ''">true</IncludeSymbols>
-    <GeneratePackageOnBuild Condition="'$(Configuration)' == 'Release'">true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild Condition="'$(GeneratePackageOnBuild)' == '' and '$(Configuration)' == 'Release' and '$(PublishAot)' != 'true'">true</GeneratePackageOnBuild>
     <GenerateSBOM Condition="'$(GenerateSBOM)' == '' and '$(Configuration)' == 'Release'">true</GenerateSBOM>
   </PropertyGroup>
 
