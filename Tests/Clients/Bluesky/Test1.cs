@@ -1,4 +1,4 @@
-namespace BlueBlaze.Clients.Bluesky.Tests;
+namespace BlueBlaze.Client.Bluesky.Tests;
 
 [TestClass]
 public sealed class Test1

@@ -11,11 +11,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../Clients.Core/Clients.Core.csproj" />
+    <ProjectReference Include="../../Models/Bluesky/Models.Bluesky.csproj" />
+    <ProjectReference Include="../AtProtocol/Client.AtProtocol.csproj" />
+    <ProjectReference Include="../Core/Client.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="BlueBlaze.Clients.AtProtocol.Tests" />
+    <InternalsVisibleTo Include="BlueBlaze.Client.Bluesky.Tests" />
   </ItemGroup>
 
 </Project>

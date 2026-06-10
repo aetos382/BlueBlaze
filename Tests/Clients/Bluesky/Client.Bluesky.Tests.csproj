@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../../../Sources/Clients/Clients.Bluesky/Clients.Bluesky.csproj" />
+    <ProjectReference Include="../../../Sources/Clients/Bluesky/Client.Bluesky.csproj" />
   </ItemGroup>
 
   <ItemGroup>
