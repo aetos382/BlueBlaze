@@ -14,7 +14,7 @@ internal static class LexiconTypeMapper
         IReadOnlyDictionary<string, LexiconType?> nsidIndex,
         out string? unknownFormatName,
         IReadOnlyDictionary<string, LexiconDefinition>? defIndex,
-        string? generatedModelNamespace)
+        string? generatedCodeNamespace)
     {
         unknownFormatName = null;
 
@@ -44,7 +44,7 @@ internal static class LexiconTypeMapper
                 return new MapResult(nullable ? "object?" : "object", nullable);
 
             case ArrayDefinition ad:
-                return MapArray(ad, isRequired, currentNsid, nsidIndex, defIndex, generatedModelNamespace, out unknownFormatName);
+                return MapArray(ad, isRequired, currentNsid, nsidIndex, defIndex, generatedCodeNamespace, out unknownFormatName);
 
             case ReferenceDefinition rd:
                 // ref ターゲットが非クラス型 (string/token/integer 等) の場合はプリミティブ型を返す
@@ -54,11 +54,11 @@ internal static class LexiconTypeMapper
                     var defKey = targetNsid + "#" + targetDefKey;
                     if (defIndex.TryGetValue(defKey, out var targetDef) && IsNonClassDef(targetDef))
                     {
-                        return Map(targetDef, isRequired, isNullable, targetNsid, nsidIndex, out unknownFormatName, defIndex, generatedModelNamespace);
+                        return Map(targetDef, isRequired, isNullable, targetNsid, nsidIndex, out unknownFormatName, defIndex, generatedCodeNamespace);
                     }
                 }
                 var resolved = LexiconNameHelper.ResolveRef(currentNsid, rd.Ref, nsidIndex);
-                var globalResolved = LexiconNameHelper.GlobalizeTypePath(resolved, generatedModelNamespace);
+                var globalResolved = LexiconNameHelper.GlobalizeTypePath(resolved, generatedCodeNamespace);
                 return new MapResult(nullable ? globalResolved + "?" : globalResolved, nullable);
 
             case UnionDefinition:
@@ -124,11 +124,11 @@ internal static class LexiconTypeMapper
         string currentNsid,
         IReadOnlyDictionary<string, LexiconType?> nsidIndex,
         IReadOnlyDictionary<string, LexiconDefinition>? defIndex,
-        string? generatedModelNamespace,
+        string? generatedCodeNamespace,
         out string? unknownFormatName)
     {
         var itemResult = Map(ad.Items, isRequired: true, isNullable: false, currentNsid,
-            nsidIndex, out unknownFormatName, defIndex, generatedModelNamespace);
+            nsidIndex, out unknownFormatName, defIndex, generatedCodeNamespace);
 
         if (itemResult == null)
         {

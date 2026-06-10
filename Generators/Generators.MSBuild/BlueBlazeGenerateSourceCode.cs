@@ -21,7 +21,7 @@ public sealed class BlueBlazeGenerateSourceCode : Task
     public required string OutputPath { get; set; }
 
     [Required]
-    public required string GeneratedModelNamespace { get; set; }
+    public required string GeneratedCodeNamespace { get; set; }
 
     public bool DebugBreakOnExecute { get; set; }
 
@@ -54,7 +54,7 @@ public sealed class BlueBlazeGenerateSourceCode : Task
             items.Add(item);
         }
 
-        var result = LexiconGenerator.Generate(items, this.GeneratedModelNamespace);
+        var result = LexiconGenerator.Generate(items, this.GeneratedCodeNamespace);
 
         foreach (var diag in result.Diagnostics)
         {

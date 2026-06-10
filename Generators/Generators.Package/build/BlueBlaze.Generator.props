@@ -16,7 +16,7 @@
 
   <ItemGroup>
     <CompilerVisibleProperty Include="BlueBlazeGeneratorRunAsBuildTask" />
-    <CompilerVisibleProperty Include="BlueBlazeGeneratorModelNamespace"/>
+    <CompilerVisibleProperty Include="BlueBlazeGeneratedCodeNamespace"/>
     <CompilerVisibleItemMetadata Include="LexiconDocument" MetadataName="IsLexiconDocument"/>
   </ItemGroup>
 

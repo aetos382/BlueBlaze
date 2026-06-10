@@ -65,13 +65,12 @@ public sealed class LexiconSourceGenerator :
                 return result;
             })
             .Where(static item => item.IsValidText)
-            .Select(static (input, _) =>
-                LexiconGenerator.Parse(input.Text, input.Path));
+            .Select(static (input, _) => LexiconGenerator.Parse(input.Text, input.Path));
 
-        var generatedModelNamespaceProvider = context.AnalyzerConfigOptionsProvider
+        var generatedCodeNamespaceProvider = context.AnalyzerConfigOptionsProvider
             .Select(static (opts, _) =>
             {
-                if (opts.GlobalOptions.TryGetValue("build_property.GeneratedModelNamespace", out var v) &&
+                if (opts.GlobalOptions.TryGetValue("build_property.BlueBlazeGeneratedCodeNamespace", out var v) &&
                     !string.IsNullOrEmpty(v))
                 {
                     return v;
@@ -82,11 +81,11 @@ public sealed class LexiconSourceGenerator :
             });
 
         context.RegisterSourceOutput(
-            lexiconDocumentsProvider.Collect().Combine(generatedModelNamespaceProvider),
+            lexiconDocumentsProvider.Collect().Combine(generatedCodeNamespaceProvider),
             static (spc, pair) =>
             {
-                var (documents, generatedModelNamespace) = pair;
-                var result = LexiconGenerator.Generate(documents, generatedModelNamespace);
+                var (documents, generatedCodeNamespace) = pair;
+                var result = LexiconGenerator.Generate(documents, generatedCodeNamespace);
 
                 foreach (var diag in result.Diagnostics)
                 {

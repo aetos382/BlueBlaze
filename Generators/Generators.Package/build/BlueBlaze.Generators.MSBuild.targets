@@ -41,7 +41,7 @@
     <BlueBlazeGenerateSourceCode
       LexiconDocuments="@(LexiconDocument)"
       OutputPath="$(IntermediateOutputPath)GeneratedSources/BlueBlaze.Generator/"
-      GeneratedModelNamespace="$(BlueBlazeGeneratorModelNamespace)"
+      GeneratedCodeNamespace="$(BlueBlazeGeneratedCodeNamespace)"
       DebugBreakOnExecute="$(BlueBlazeGenerateLexiconSourceCodeTaskDebugBreakOnExecute)">
 
       <Output TaskParameter="GeneratedFiles" ItemName="GeneratedLexiconSources" />

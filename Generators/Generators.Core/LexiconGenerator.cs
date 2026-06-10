@@ -26,7 +26,7 @@ public sealed class LexiconGenerator
 
     public static GenerateResult Generate(
         IReadOnlyList<ParseResult> parseResults,
-        string? generatedModelNamespace)
+        string? generatedCodeNamespace)
     {
         ArgumentNullException.ThrowIfNull(parseResults);
 
@@ -55,7 +55,7 @@ public sealed class LexiconGenerator
         foreach (var docInfo in documents)
         {
             DocumentEmitter.Emit(
-                docInfo, nsidIndex, generatedModelNamespace,
+                docInfo, nsidIndex, generatedCodeNamespace,
                 files, diagnostics, unionMemberImpls, defIndex);
         }
 
@@ -63,7 +63,7 @@ public sealed class LexiconGenerator
         foreach (var (memberPath, interfacePath) in unionMemberImpls)
         {
             DocumentEmitter.EmitUnionMemberImpl(
-                memberPath, interfacePath, generatedModelNamespace, files);
+                memberPath, interfacePath, generatedCodeNamespace, files);
         }
 
         return new GenerateResult(files, diagnostics);

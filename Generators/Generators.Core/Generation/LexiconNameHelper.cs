@@ -140,22 +140,22 @@ internal static class LexiconNameHelper
 
     // Returns the hint name prefix for a generated file.
     // e.g. "BlueBlaze.Generated.Com.Atproto.Repo.StrongRef"
-    internal static string GetHintNameBase(string? generatedModelNamespace, string classPath)
+    internal static string GetHintNameBase(string? generatedCodeNamespace, string classPath)
     {
-        return string.IsNullOrEmpty(generatedModelNamespace)
+        return string.IsNullOrEmpty(generatedCodeNamespace)
             ? classPath
-            : generatedModelNamespace + "." + classPath;
+            : generatedCodeNamespace + "." + classPath;
     }
 
     // 相対型パスを global:: 付き完全修飾パスに変換する
-    internal static string GlobalizeTypePath(string resolvedPath, string? generatedModelNamespace)
+    internal static string GlobalizeTypePath(string resolvedPath, string? generatedCodeNamespace)
     {
-        if (string.IsNullOrEmpty(generatedModelNamespace))
+        if (string.IsNullOrEmpty(generatedCodeNamespace))
         {
             return "global::" + resolvedPath;
         }
 
-        return "global::" + generatedModelNamespace + "." + resolvedPath;
+        return "global::" + generatedCodeNamespace + "." + resolvedPath;
     }
 
     // Parses a ref string into (targetNsid, defKey).

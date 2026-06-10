@@ -21,7 +21,7 @@ internal static class ObjectClassEmitter
         bool isPartial,
         bool emitJsonAttributes,
         IReadOnlyDictionary<string, LexiconDefinition>? defIndex,
-        string? generatedModelNamespace,
+        string? generatedCodeNamespace,
         // Nested union interfaces to emit inside this class (propertyName -> UnionDefinition)
         IReadOnlyDictionary<string, UnionDefinition>? unionProperties = null)
     {
@@ -82,7 +82,7 @@ internal static class ObjectClassEmitter
                 }
 
                 var result = LexiconTypeMapper.Map(
-                    propDef, isReq, isNull, nsid, nsidIndex, out var unknownFormat, defIndex, generatedModelNamespace);
+                    propDef, isReq, isNull, nsid, nsidIndex, out var unknownFormat, defIndex, generatedCodeNamespace);
 
                 if (unknownFormat != null)
                 {
@@ -109,7 +109,7 @@ internal static class ObjectClassEmitter
                 {
                     // CS0102: プロパティ名が同クラス内のネスト型と同じ場合はリネーム
                     var fullTypePath = result.CSharpType.TrimEnd('?');
-                    var globalClassPath = LexiconNameHelper.GlobalizeTypePath(classPath, generatedModelNamespace);
+                    var globalClassPath = LexiconNameHelper.GlobalizeTypePath(classPath, generatedCodeNamespace);
                     if (fullTypePath == globalClassPath + "." + csPropNameStr)
                     {
                         csPropNameStr += "Value";
@@ -147,7 +147,7 @@ internal static class ObjectClassEmitter
                 foreach (var refStr in ud.Refs)
                 {
                     var resolvedType = LexiconNameHelper.ResolveRef(nsid, refStr, nsidIndex);
-                    var globalResolvedType = LexiconNameHelper.GlobalizeTypePath(resolvedType, generatedModelNamespace);
+                    var globalResolvedType = LexiconNameHelper.GlobalizeTypePath(resolvedType, generatedCodeNamespace);
                     var discriminator = LexiconNameHelper.GetTypeDiscriminator(refStr);
                     sb.AppendLine($"{indent1}[global::System.Text.Json.Serialization.JsonDerivedType(typeof({globalResolvedType}), \"{discriminator}\")]");
                 }
