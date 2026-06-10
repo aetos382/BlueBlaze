@@ -12,7 +12,7 @@ public sealed class LexiconSourceGenerator :
 {
     private static readonly DiagnosticDescriptor ErrorDescriptor = new(
         id: "BB0001",
-        title: "Lexicon generation error",
+        title: new LocalizableResourceString(nameof(Resources.ErrorDescriptorTitle), Resources.ResourceManager, typeof(Resources)),
         messageFormat: "{0}",
         category: "LexiconGenerator",
         defaultSeverity: Microsoft.CodeAnalysis.DiagnosticSeverity.Error,
@@ -20,7 +20,7 @@ public sealed class LexiconSourceGenerator :
 
     private static readonly DiagnosticDescriptor WarningDescriptor = new(
         id: "BB0002",
-        title: "Lexicon generation warning",
+        title: new LocalizableResourceString(nameof(Resources.WarningDescriptorTitle), Resources.ResourceManager, typeof(Resources)),
         messageFormat: "{0}",
         category: "LexiconGenerator",
         defaultSeverity: Microsoft.CodeAnalysis.DiagnosticSeverity.Warning,
@@ -48,8 +48,8 @@ public sealed class LexiconSourceGenerator :
                     !bool.TryParse(stringValue, out value))
                 {
                     var message = string.IsNullOrEmpty(stringValue)
-                        ? "The MSBuild property 'BlueBlazeGeneratorRunAsBuildTask' is not set. It must be set to 'true' or 'false'."
-                        : $"The MSBuild property 'BlueBlazeGeneratorRunAsBuildTask' has an invalid value '{stringValue}'. It must be 'true' or 'false'.";
+                        ? Resources.RunAsBuildTaskNotSet
+                        : Resources.FormatRunAsBuildTaskInvalidValue(stringValue);
 
                     diagnostic = new Core.Diagnostic(Core.DiagnosticSeverity.Error, message, null, null, null);
                 }
@@ -74,8 +74,8 @@ public sealed class LexiconSourceGenerator :
                     !bool.TryParse(metaValue, out var isLexiconDocument))
                 {
                     var message = string.IsNullOrEmpty(metaValue)
-                        ? $"The MSBuild metadata 'IsLexiconDocument' is not set on '{additionalText.Path}'. The file will be skipped."
-                        : $"The MSBuild metadata 'IsLexiconDocument' has an invalid value '{metaValue}' on '{additionalText.Path}'. It must be 'true' or 'false'. The file will be skipped.";
+                        ? Resources.FormatIsLexiconDocumentNotSet(additionalText.Path)
+                        : Resources.FormatIsLexiconDocumentInvalidValue(metaValue, additionalText.Path);
 
                     return new LexiconFileResult(null, new Core.Diagnostic(Core.DiagnosticSeverity.Warning, message, additionalText.Path, null, null));
                 }
@@ -89,7 +89,7 @@ public sealed class LexiconSourceGenerator :
                 return sourceText is null
                     ? new LexiconFileResult(null, new Core.Diagnostic(
                         Core.DiagnosticSeverity.Warning,
-                        $"Could not read the content of '{additionalText.Path}'. The file will be skipped.",
+                        Resources.FormatCouldNotReadFile(additionalText.Path),
                         additionalText.Path, null, null))
                     : new LexiconFileResult(LexiconGenerator.Parse(sourceText.ToString(), additionalText.Path), null);
             })
@@ -110,7 +110,7 @@ public sealed class LexiconSourceGenerator :
                 {
                     diagnostic = new Core.Diagnostic(
                         Core.DiagnosticSeverity.Error,
-                        "The MSBuild property 'BlueBlazeGeneratedCodeNamespace' is required.",
+                        Resources.GeneratedCodeNamespaceRequired,
                         null, null, null);
                 }
 
