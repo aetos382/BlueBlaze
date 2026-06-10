@@ -26,7 +26,7 @@ public sealed class LexiconGenerator
 
     public static GenerateResult Generate(
         IReadOnlyList<ParseResult> parseResults,
-        string? generatedCodeNamespace)
+        string generatedCodeNamespace)
     {
         ArgumentNullException.ThrowIfNull(parseResults);
 
