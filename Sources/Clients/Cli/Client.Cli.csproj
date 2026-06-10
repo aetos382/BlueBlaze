@@ -6,6 +6,9 @@
     <PublishAot>true</PublishAot>
     <RuntimeIdentifiers>win-x64;linux-x64</RuntimeIdentifiers>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <IsPackable>true</IsPackable>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>dotnet-bb</ToolCommandName>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Clients\Bluesky\Client.Bluesky.csproj" />
+    <ProjectReference Include="..\Bluesky\Client.Bluesky.csproj" />
   </ItemGroup>
 
 </Project>
