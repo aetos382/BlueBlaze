@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BlueBlaze.Generator" Version="1.0.0" />
+    <PackageReference Include="BlueBlaze.LexiconGenerator" Version="1.0.0" />
   </ItemGroup>
 
   <ItemGroup>

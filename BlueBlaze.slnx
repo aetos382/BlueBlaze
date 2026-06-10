@@ -1,9 +1,11 @@
 <Solution>
   <Folder Name="/Generators/">
-    <Project Path="Generators/Generators.Core/Generators.Core.csproj" />
-    <Project Path="Generators/Generators.MSBuild/Generators.MSBuild.csproj" />
-    <Project Path="Generators/Generators.Package/Generators.Package.csproj" />
-    <Project Path="Generators/Generators.Roslyn/Generators.Roslyn.csproj" />
+    <Folder Name="/Generators/LexiconGenerator/">
+      <Project Path="Generators/LexiconGenerator/Core/LexiconGenerator.Core.csproj" />
+      <Project Path="Generators/LexiconGenerator/MSBuild/LexiconGenerator.MSBuild.csproj" />
+      <Project Path="Generators/LexiconGenerator/Package/LexiconGenerator.Package.csproj" />
+      <Project Path="Generators/LexiconGenerator/Roslyn/LexiconGenerator.Roslyn.csproj" />
+    </Folder>
   </Folder>
   <Folder Name="/Sources/" />
   <Folder Name="/Sources/Clients/">
@@ -24,8 +26,10 @@
     <Project Path="Tests/Clients/Clients.Bluesky.Tests/Clients.Bluesky.Tests.csproj" />
   </Folder>
   <Folder Name="/Tests/Generators/">
-    <Project Path="Tests/Generators/Generators.Core.Tests/Generators.Core.Tests.csproj" />
-    <Project Path="Tests/Generators/Generators.MSBuild.Tests/Generators.MSBuild.Tests.csproj" />
-    <Project Path="Tests/Generators/Generators.Roslyn.Tests/Generators.Roslyn.Tests.csproj" />
+    <Folder Name="/Tests/Generators/LexiconGenerator/">
+      <Project Path="Tests/Generators/LexiconGenerator/Core/LexiconGenerator.Core.Tests.csproj" />
+      <Project Path="Tests/Generators/LexiconGenerator/MSBuild/LexiconGenerator.MSBuild.Tests.csproj" />
+      <Project Path="Tests/Generators/LexiconGenerator/Roslyn/LexiconGenerator.Roslyn.Tests.csproj" />
+    </Folder>
   </Folder>
 </Solution>
