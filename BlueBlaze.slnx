@@ -1,14 +1,11 @@
 <Solution>
-  <Folder Name="/Generators/">
-    <Folder Name="/Generators/LexiconGenerator/">
-      <Project Path="Generators/LexiconGenerator/Core/LexiconGenerator.Core.csproj" />
-      <Project Path="Generators/LexiconGenerator/MSBuild/LexiconGenerator.MSBuild.csproj" />
-      <Project Path="Generators/LexiconGenerator/Package/LexiconGenerator.Package.csproj" />
-      <Project Path="Generators/LexiconGenerator/Roslyn/LexiconGenerator.Roslyn.csproj" />
-    </Folder>
-  </Folder>
+  <Folder Name="/Generators/" />
   <Folder Name="/Generators/LexiconGenerator/">
     <Project Path="Generators/LexiconGenerator/Cli/LexiconGenerator.Cli.csproj" />
+    <Project Path="Generators/LexiconGenerator/Core/LexiconGenerator.Core.csproj" />
+    <Project Path="Generators/LexiconGenerator/MSBuild/LexiconGenerator.MSBuild.csproj" />
+    <Project Path="Generators/LexiconGenerator/Package/LexiconGenerator.Package.csproj" />
+    <Project Path="Generators/LexiconGenerator/Roslyn/LexiconGenerator.Roslyn.csproj" />
   </Folder>
   <Folder Name="/Sources/" />
   <Folder Name="/Sources/Clients/">
@@ -26,11 +23,10 @@
     <Project Path="Tests/Clients/AtProtocol/Client.AtProtocol.Tests.csproj" />
     <Project Path="Tests/Clients/Bluesky/Client.Bluesky.Tests.csproj" />
   </Folder>
-  <Folder Name="/Tests/Generators/">
-    <Folder Name="/Tests/Generators/LexiconGenerator/">
-      <Project Path="Tests/Generators/LexiconGenerator/Core/LexiconGenerator.Core.Tests.csproj" />
-      <Project Path="Tests/Generators/LexiconGenerator/MSBuild/LexiconGenerator.MSBuild.Tests.csproj" />
-      <Project Path="Tests/Generators/LexiconGenerator/Roslyn/LexiconGenerator.Roslyn.Tests.csproj" />
-    </Folder>
+  <Folder Name="/Tests/Generators/" />
+  <Folder Name="/Tests/Generators/LexiconGenerator/">
+    <Project Path="Tests/Generators/LexiconGenerator/Core/LexiconGenerator.Core.Tests.csproj" />
+    <Project Path="Tests/Generators/LexiconGenerator/MSBuild/LexiconGenerator.MSBuild.Tests.csproj" />
+    <Project Path="Tests/Generators/LexiconGenerator/Roslyn/LexiconGenerator.Roslyn.Tests.csproj" />
   </Folder>
 </Solution>
