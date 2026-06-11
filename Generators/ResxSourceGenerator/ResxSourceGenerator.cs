@@ -31,7 +31,8 @@ public sealed class ResxGenerator : IIncrementalGenerator
     private readonly record struct ResxFile(
         string FilePath,
         string? Content,
-        string RootNamespace);
+        string RootNamespace,
+        string AccessModifier);
 
     /// <inheritdoc />
     public void Initialize(IncrementalGeneratorInitializationContext context)
@@ -56,9 +57,15 @@ public sealed class ResxGenerator : IIncrementalGenerator
             .Combine(rootNamespaceProvider)
             .Select(static (pair, cancellationToken) =>
             {
-                var ((additionalText, _), rootNamespace) = pair;
+                var ((additionalText, optionsProvider), rootNamespace) = pair;
+                var options = optionsProvider.GetOptions(additionalText);
+                options.TryGetValue("build_metadata.EmbeddedResource.AccessModifier", out var accessModifier);
                 var content = additionalText.GetText(cancellationToken)?.ToString();
-                return new ResxFile(additionalText.Path, content, rootNamespace);
+                return new ResxFile(
+                    additionalText.Path,
+                    content,
+                    rootNamespace,
+                    string.IsNullOrEmpty(accessModifier) ? "internal" : accessModifier!);
             });
 
         context.RegisterSourceOutput(resxFilesProvider, static (spc, item) =>
@@ -74,7 +81,7 @@ public sealed class ResxGenerator : IIncrementalGenerator
 
             try
             {
-                var (hintName, source) = GenerateSource(item.FilePath, item.Content, item.RootNamespace);
+                var (hintName, source) = GenerateSource(item.FilePath, item.Content, item.RootNamespace, item.AccessModifier);
                 spc.AddSource(hintName, SourceText.From(source, Encoding.UTF8));
             }
             catch (System.Xml.XmlException ex)
@@ -90,7 +97,8 @@ public sealed class ResxGenerator : IIncrementalGenerator
     private static (string HintName, string Source) GenerateSource(
         string filePath,
         string content,
-        string rootNamespace)
+        string rootNamespace,
+        string accessModifier)
     {
         var fileName = Path.GetFileNameWithoutExtension(filePath);
         var className = SanitizeIdentifier(fileName);
@@ -112,11 +120,11 @@ public sealed class ResxGenerator : IIncrementalGenerator
             sb.AppendLine();
         }
 
-        sb.AppendLine("internal static partial class " + className);
+        sb.AppendLine(accessModifier + " static partial class " + className);
         sb.AppendLine("{");
         sb.AppendLine("    private static global::System.Resources.ResourceManager? s_resourceManager;");
         sb.AppendLine();
-        sb.AppendLine("    internal static global::System.Resources.ResourceManager ResourceManager =>");
+        sb.AppendLine("    " + accessModifier + " static global::System.Resources.ResourceManager ResourceManager =>");
         sb.AppendLine("        s_resourceManager ??= new global::System.Resources.ResourceManager(");
         sb.AppendLine("            \"" + resourceBaseName + "\",");
         sb.AppendLine("            typeof(" + className + ").Assembly);");
@@ -134,7 +142,7 @@ public sealed class ResxGenerator : IIncrementalGenerator
                 sb.AppendLine("        ResourceManager.GetString(\"" + name + "\", null)!;");
                 sb.AppendLine();
 
-                sb.Append("    internal static string Format" + identifier + "(");
+                sb.Append("    " + accessModifier + " static string Format" + identifier + "(");
                 for (var i = 0; i < formatArgCount; i++)
                 {
                     if (i > 0)
@@ -156,7 +164,7 @@ public sealed class ResxGenerator : IIncrementalGenerator
             }
             else
             {
-                sb.AppendLine("    internal static string " + identifier + " =>");
+                sb.AppendLine("    " + accessModifier + " static string " + identifier + " =>");
                 sb.AppendLine("        ResourceManager.GetString(\"" + name + "\", null)!;");
             }
         }

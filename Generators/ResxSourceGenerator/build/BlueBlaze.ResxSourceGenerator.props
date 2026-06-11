@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <CompilerVisibleItemMetadata Include="EmbeddedResource" MetadataName="GenerateSource" />
+    <CompilerVisibleItemMetadata Include="EmbeddedResource" MetadataName="AccessModifier" />
   </ItemGroup>
 
 </Project>
