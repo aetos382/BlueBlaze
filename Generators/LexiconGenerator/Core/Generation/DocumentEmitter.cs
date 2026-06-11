@@ -143,8 +143,8 @@ internal static class DocumentEmitter
 
         if (isMain && mainType is LexiconType.Record or LexiconType.Object)
         {
-            // Wrap in parent static classes (all segments except last)
-            OpenStaticContainers(sb, segments, 0, segments.Length - 1);
+            // Wrap in parent sealed classes (all segments except last)
+            OpenSealedContainers(sb, segments, 0, segments.Length - 1);
             ObjectClassEmitter.EmitClass(sb, className, classPath, objDef, nsid, nsidIndex,
                 diagnostics, filePath, defKey, segments.Length - 1,
                 isPartial: true, emitJsonAttributes: emitJsonAttributes,
@@ -155,7 +155,7 @@ internal static class DocumentEmitter
         else
         {
             // Case 1 sub-def, Case 2, Case 3, defs-only
-            OpenStaticContainers(sb, segments, 0, segments.Length);
+            OpenSealedContainers(sb, segments, 0, segments.Length);
             ObjectClassEmitter.EmitClass(sb, className, classPath, objDef, nsid, nsidIndex,
                 diagnostics, filePath, defKey, segments.Length,
                 isPartial: true, emitJsonAttributes: emitJsonAttributes,
@@ -270,7 +270,7 @@ internal static class DocumentEmitter
     {
         var sb = new StringBuilder();
         EmitFileHeader(sb, generatedCodeNamespace);
-        OpenStaticContainers(sb, segments, 0, segments.Length);
+        OpenSealedContainers(sb, segments, 0, segments.Length);
 
         var indent = new string(' ', segments.Length * 4);
         var indent1 = new string(' ', (segments.Length + 1) * 4);
@@ -341,7 +341,7 @@ internal static class DocumentEmitter
 
         var sb = new StringBuilder();
         EmitFileHeader(sb, generatedCodeNamespace);
-        OpenStaticContainers(sb, segments, 0, segments.Length);
+        OpenSealedContainers(sb, segments, 0, segments.Length);
 
         var classPath = string.Join(".", segments) + "." + className;
         ObjectClassEmitter.EmitClass(sb, className, classPath, objDef, nsid, nsidIndex,
@@ -385,7 +385,7 @@ internal static class DocumentEmitter
         var sb = new StringBuilder();
         EmitFileHeader(sb, generatedCodeNamespace);
 
-        OpenStaticContainers(sb, parts, 0, parts.Length - 1);
+        OpenSealedContainers(sb, parts, 0, parts.Length - 1);
 
         var indent = new string(' ', (parts.Length - 1) * 4);
         var className = parts[parts.Length - 1];
@@ -434,12 +434,12 @@ internal static class DocumentEmitter
         }
     }
 
-    private static void OpenStaticContainers(StringBuilder sb, string[] segments, int start, int end)
+    private static void OpenSealedContainers(StringBuilder sb, string[] segments, int start, int end)
     {
         for (var i = start; i < end; i++)
         {
             var indent = new string(' ', i * 4);
-            sb.AppendLine($"{indent}public static partial class {segments[i]}");
+            sb.AppendLine($"{indent}public sealed partial class {segments[i]}");
             sb.AppendLine($"{indent}{{");
         }
     }
