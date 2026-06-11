@@ -13,6 +13,10 @@
     <PackageReference Include="BlueBlaze.LexiconGenerator" Version="1.0.0" />
   </ItemGroup>
 
+  <ItemGroup Condition="'$(TargetFramework)' == 'net481'">
+    <PackageReference Include="System.Text.Json" />
+  </ItemGroup>
+
   <ItemGroup>
     <LexiconDocument Include="Lexicons/**/*.json" />
   </ItemGroup>
