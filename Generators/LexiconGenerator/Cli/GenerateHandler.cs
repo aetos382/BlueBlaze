@@ -69,7 +69,7 @@ internal static class GenerateHandler
             }
 
             await File
-                .WriteAllTextAsync(outputPath, file.SourceText, Encoding.UTF8, cancellationToken)
+                .WriteAllTextAsync(outputPath, file.SourceText, new UTF8Encoding(false), cancellationToken)
                 .ConfigureAwait(false);
         }
 

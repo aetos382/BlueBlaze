@@ -75,7 +75,7 @@ public sealed class BlueBlazeGenerateSourceCode : Task
             var outputFile = Path.Combine(this.OutputPath, file.HintName);
             Directory.CreateDirectory(Path.GetDirectoryName(outputFile) ?? this.OutputPath);
 
-            File.WriteAllText(outputFile, file.SourceText, System.Text.Encoding.UTF8);
+            File.WriteAllText(outputFile, file.SourceText, new System.Text.UTF8Encoding(false));
             taskItems.Add(new TaskItem(outputFile));
         }
 

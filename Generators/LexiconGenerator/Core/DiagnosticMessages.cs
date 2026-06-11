@@ -62,7 +62,8 @@ internal static class DiagnosticMessages
 
     internal static string FormatUnknownExtensionData(string keys, string nsid, string? defKey)
     {
-        return string.Format(CultureInfo.InvariantCulture, UnknownExtensionData, keys, nsid, defKey ?? "");
+        var location = defKey != null ? $"{nsid}#{defKey}" : nsid;
+        return string.Format(CultureInfo.InvariantCulture, UnknownExtensionData, keys, location);
     }
 
     internal static string FormatInvalidLexiconVersion(int version, string path)
