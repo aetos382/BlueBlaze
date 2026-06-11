@@ -157,8 +157,16 @@ jobs:
           path: packages
           merge-multiple: true
 
+      - name: List packages
+        run: ls -lh packages/
+
       - name: Push to GitHub Packages
-        run: dotnet nuget push "packages/*.nupkg" --skip-duplicate --timeout 600
+        run: |
+          for f in packages/*.nupkg; do
+            echo "::group::Pushing $f"
+            time dotnet nuget push "$f" --skip-duplicate --timeout 300
+            echo "::endgroup::"
+          done
 
       - name: Create draft release
         env:
