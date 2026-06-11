@@ -1,7 +1,7 @@
 <Solution>
   <Folder Name="/Generators/" />
   <Folder Name="/Generators/ResxSourceGenerator/">
-    <Project Path="Generators/ResxSourceGenerator/ResxSourceGenerator.Roslyn.csproj" />
+    <Project Path="Generators/ResxSourceGenerator/ResxSourceGenerator.csproj" />
   </Folder>
   <Folder Name="/Generators/LexiconGenerator/">
     <Project Path="Generators/LexiconGenerator/Cli/LexiconGenerator.Cli.csproj" />

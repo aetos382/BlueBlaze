@@ -7,7 +7,7 @@ using System.Xml.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 
-namespace BlueBlaze.ResxSourceGenerator.Roslyn;
+namespace BlueBlaze.ResxSourceGenerator;
 
 [Generator(LanguageNames.CSharp)]
 public sealed class ResxGenerator : IIncrementalGenerator
