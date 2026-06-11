@@ -6,6 +6,10 @@
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net481'">
+    <UsePolyfills>true</UsePolyfills>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Generators\LexiconGenerator\MSBuild\LexiconGenerator.MSBuild.csproj" />
   </ItemGroup>
