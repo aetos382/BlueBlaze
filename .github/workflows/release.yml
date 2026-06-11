@@ -155,7 +155,7 @@ jobs:
           merge-multiple: true
 
       - name: Push to GitHub Packages
-        run: dotnet nuget push "packages/*.nupkg" --skip-duplicate
+        run: dotnet nuget push "packages/*.nupkg" --skip-duplicate --timeout 600
 
       - name: Create draft release
         env:
