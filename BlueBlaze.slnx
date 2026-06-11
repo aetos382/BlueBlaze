@@ -32,4 +32,7 @@
     <Project Path="Tests/Generators/LexiconGenerator/MSBuild/LexiconGenerator.MSBuild.Tests.csproj" />
     <Project Path="Tests/Generators/LexiconGenerator/Roslyn/LexiconGenerator.Roslyn.Tests.csproj" />
   </Folder>
+  <Folder Name="/Tests/Generators/ResxSourceGenerator/">
+    <Project Path="Tests/Generators/ResxSourceGenerator/BlueBlaze.ResxSourceGenerator.Tests.csproj" />
+  </Folder>
 </Solution>
