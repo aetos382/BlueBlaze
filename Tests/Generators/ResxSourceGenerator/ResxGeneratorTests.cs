@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
@@ -42,10 +43,10 @@ public sealed class ResxGeneratorTests
         Assert.AreEqual(1, result.GeneratedTrees.Length);
         var source = result.GeneratedTrees[0].GetText().ToString();
 
-        StringAssert.Contains(source, "namespace MyNamespace;");
-        StringAssert.Contains(source, "internal static partial class Resources");
-        StringAssert.Contains(source, "internal static string MyKey =>");
-        StringAssert.Contains(source, "ResourceManager.GetString(\"MyKey\", null)!");
+        StringAssert.Contains(source, "namespace MyNamespace;", StringComparison.Ordinal);
+        StringAssert.Contains(source, "internal static partial class Resources", StringComparison.Ordinal);
+        StringAssert.Contains(source, "internal static string MyKey =>", StringComparison.Ordinal);
+        StringAssert.Contains(source, "ResourceManager.GetString(\"MyKey\", null)!", StringComparison.Ordinal);
     }
 
     [TestMethod]
@@ -57,8 +58,8 @@ public sealed class ResxGeneratorTests
         Assert.AreEqual(1, result.GeneratedTrees.Length);
         var source = result.GeneratedTrees[0].GetText().ToString();
 
-        Assert.IsFalse(source.Contains("namespace "), "Should not emit namespace declaration");
-        StringAssert.Contains(source, "internal static partial class Resources");
+        Assert.IsFalse(source.Contains("namespace ", StringComparison.Ordinal), "Should not emit namespace declaration");
+        StringAssert.Contains(source, "internal static partial class Resources", StringComparison.Ordinal);
     }
 
     [TestMethod]
@@ -70,9 +71,9 @@ public sealed class ResxGeneratorTests
         Assert.AreEqual(1, result.GeneratedTrees.Length);
         var source = result.GeneratedTrees[0].GetText().ToString();
 
-        StringAssert.Contains(source, "private static string MyMessage =>");
-        StringAssert.Contains(source, "internal static string FormatMyMessage(object? arg0)");
-        StringAssert.Contains(source, "string.Format(");
+        StringAssert.Contains(source, "private static string MyMessage =>", StringComparison.Ordinal);
+        StringAssert.Contains(source, "internal static string FormatMyMessage(object? arg0)", StringComparison.Ordinal);
+        StringAssert.Contains(source, "string.Format(", StringComparison.Ordinal);
     }
 
     [TestMethod]
@@ -97,8 +98,8 @@ public sealed class ResxGeneratorTests
         Assert.AreEqual(1, result.GeneratedTrees.Length);
         var source = result.GeneratedTrees[0].GetText().ToString();
 
-        StringAssert.Contains(source, "public static partial class Resources");
-        StringAssert.Contains(source, "public static string MyKey =>");
+        StringAssert.Contains(source, "public static partial class Resources", StringComparison.Ordinal);
+        StringAssert.Contains(source, "public static string MyKey =>", StringComparison.Ordinal);
     }
 
     [TestMethod]
@@ -121,9 +122,9 @@ public sealed class ResxGeneratorTests
         Assert.AreEqual(1, result.GeneratedTrees.Length);
         var source = result.GeneratedTrees[0].GetText().ToString();
 
-        StringAssert.Contains(source, "global::Microsoft.CodeAnalysis.LocalizableResourceString MyKey =>");
-        StringAssert.Contains(source, "new global::Microsoft.CodeAnalysis.LocalizableResourceString(");
-        Assert.IsFalse(source.Contains("GetString("), "Should not call GetString");
+        StringAssert.Contains(source, "global::Microsoft.CodeAnalysis.LocalizableResourceString MyKey =>", StringComparison.Ordinal);
+        StringAssert.Contains(source, "new global::Microsoft.CodeAnalysis.LocalizableResourceString(", StringComparison.Ordinal);
+        Assert.IsFalse(source.Contains("GetString(", StringComparison.Ordinal), "Should not call GetString");
     }
 
     [TestMethod]
@@ -137,10 +138,11 @@ public sealed class ResxGeneratorTests
         Assert.AreEqual(1, result.GeneratedTrees.Length);
         var source = result.GeneratedTrees[0].GetText().ToString();
 
-        StringAssert.Contains(source, "global::Microsoft.CodeAnalysis.LocalizableResourceString MyMessage =>");
+        StringAssert.Contains(source, "global::Microsoft.CodeAnalysis.LocalizableResourceString MyMessage =>", StringComparison.Ordinal);
         StringAssert.Contains(
             source,
-            "global::Microsoft.CodeAnalysis.LocalizableResourceString FormatMyMessage(string arg0)");
+            "global::Microsoft.CodeAnalysis.LocalizableResourceString FormatMyMessage(string arg0)",
+            StringComparison.Ordinal);
     }
 
     private static GeneratorDriverRunResult RunGenerator(
