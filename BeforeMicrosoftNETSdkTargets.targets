@@ -29,6 +29,7 @@
           Condition="'$(NativeAotTool)' == 'true'">
     <ItemGroup>
       <TfmSpecificPackageFile Remove="@(TfmSpecificPackageFile)" Condition="'%(Extension)' == '.pdb'" />
+      <TfmSpecificPackageFile Remove="@(TfmSpecificPackageFile)" Condition="'%(Extension)' == '.dbg'" />
     </ItemGroup>
   </Target>
 
