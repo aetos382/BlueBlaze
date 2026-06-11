@@ -112,33 +112,35 @@ public sealed class ResxGeneratorTests
     }
 
     [TestMethod]
-    public void GenerateLocalizableResourceString_Simple()
+    public void GenerateResourcesRoslyn_Simple()
     {
         var additionalText = new InMemoryAdditionalText("Resources.resx", SimpleResxContent);
         var result = RunGenerator(
             additionalText,
-            fileOptions: new() { ["build_metadata.EmbeddedResource.GenerateRoslynLocalizableResourceString"] = "true" });
+            fileOptions: new() { ["build_metadata.EmbeddedResource.GenerateRoslynResources"] = "true" });
 
         Assert.AreEqual(1, result.GeneratedTrees.Length);
         var source = result.GeneratedTrees[0].GetText().ToString();
 
+        StringAssert.Contains(source, "internal static partial class Resources", StringComparison.Ordinal);
+        StringAssert.Contains(source, "internal static string MyKey =>", StringComparison.Ordinal);
+        StringAssert.Contains(source, "internal static partial class ResourcesRoslyn", StringComparison.Ordinal);
         StringAssert.Contains(source, "global::Microsoft.CodeAnalysis.LocalizableResourceString MyKey =>", StringComparison.Ordinal);
-        StringAssert.Contains(source, "new global::Microsoft.CodeAnalysis.LocalizableResourceString(", StringComparison.Ordinal);
-        Assert.IsFalse(source.Contains("GetString(", StringComparison.Ordinal), "Should not call GetString");
     }
 
     [TestMethod]
-    public void GenerateLocalizableResourceString_Format()
+    public void GenerateResourcesRoslyn_Format()
     {
         var additionalText = new InMemoryAdditionalText("Resources.resx", FormatResxContent);
         var result = RunGenerator(
             additionalText,
-            fileOptions: new() { ["build_metadata.EmbeddedResource.GenerateRoslynLocalizableResourceString"] = "true" });
+            fileOptions: new() { ["build_metadata.EmbeddedResource.GenerateRoslynResources"] = "true" });
 
         Assert.AreEqual(1, result.GeneratedTrees.Length);
         var source = result.GeneratedTrees[0].GetText().ToString();
 
-        StringAssert.Contains(source, "global::Microsoft.CodeAnalysis.LocalizableResourceString MyMessage =>", StringComparison.Ordinal);
+        StringAssert.Contains(source, "internal static string FormatMyMessage(object? arg0)", StringComparison.Ordinal);
+        StringAssert.Contains(source, "internal static partial class ResourcesRoslyn", StringComparison.Ordinal);
         StringAssert.Contains(
             source,
             "global::Microsoft.CodeAnalysis.LocalizableResourceString FormatMyMessage(string arg0)",

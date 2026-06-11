@@ -28,6 +28,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Update="Resources.resx">
+      <GenerateRoslynResources>true</GenerateRoslynResources>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
     <InternalsVisibleTo Include="BlueBlaze.LexiconGenerator.Roslyn.Tests" />
   </ItemGroup>
 

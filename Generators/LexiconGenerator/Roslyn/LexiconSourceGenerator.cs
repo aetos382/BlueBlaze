@@ -12,7 +12,7 @@ public sealed class LexiconSourceGenerator :
 {
     private static readonly DiagnosticDescriptor ErrorDescriptor = new(
         id: "BB0001",
-        title: new LocalizableResourceString(nameof(Resources.ErrorDescriptorTitle), Resources.ResourceManager, typeof(Resources)),
+        title: ResourcesRoslyn.ErrorDescriptorTitle,
         messageFormat: "{0}",
         category: "LexiconGenerator",
         defaultSeverity: Microsoft.CodeAnalysis.DiagnosticSeverity.Error,
@@ -20,7 +20,7 @@ public sealed class LexiconSourceGenerator :
 
     private static readonly DiagnosticDescriptor WarningDescriptor = new(
         id: "BB0002",
-        title: new LocalizableResourceString(nameof(Resources.WarningDescriptorTitle), Resources.ResourceManager, typeof(Resources)),
+        title: ResourcesRoslyn.WarningDescriptorTitle,
         messageFormat: "{0}",
         category: "LexiconGenerator",
         defaultSeverity: Microsoft.CodeAnalysis.DiagnosticSeverity.Warning,
@@ -48,8 +48,8 @@ public sealed class LexiconSourceGenerator :
                     !bool.TryParse(stringValue, out value))
                 {
                     var message = string.IsNullOrEmpty(stringValue)
-                        ? Resources.RunAsBuildTaskNotSet
-                        : Resources.FormatRunAsBuildTaskInvalidValue(stringValue);
+                        ? Resources.RunAsBuildTaskNotSet.ToString(null)
+                        : Resources.FormatRunAsBuildTaskInvalidValue(stringValue!).ToString(null);
 
                     diagnostic = new Core.Diagnostic(Core.DiagnosticSeverity.Error, message, null, null, null);
                 }
@@ -74,8 +74,8 @@ public sealed class LexiconSourceGenerator :
                     !bool.TryParse(metaValue, out var isLexiconDocument))
                 {
                     var message = string.IsNullOrEmpty(metaValue)
-                        ? Resources.FormatIsLexiconDocumentNotSet(additionalText.Path)
-                        : Resources.FormatIsLexiconDocumentInvalidValue(metaValue, additionalText.Path);
+                        ? Resources.FormatIsLexiconDocumentNotSet(additionalText.Path).ToString(null)
+                        : Resources.FormatIsLexiconDocumentInvalidValue(metaValue!, additionalText.Path).ToString(null);
 
                     return new LexiconFileResult(null, new Core.Diagnostic(Core.DiagnosticSeverity.Warning, message, additionalText.Path, null, null));
                 }
@@ -89,7 +89,7 @@ public sealed class LexiconSourceGenerator :
                 return sourceText is null
                     ? new LexiconFileResult(null, new Core.Diagnostic(
                         Core.DiagnosticSeverity.Warning,
-                        Resources.FormatCouldNotReadFile(additionalText.Path),
+                        Resources.FormatCouldNotReadFile(additionalText.Path).ToString(null),
                         additionalText.Path, null, null))
                     : new LexiconFileResult(LexiconCodeGenerator.Parse(sourceText.ToString(), additionalText.Path), null);
             })
@@ -110,7 +110,7 @@ public sealed class LexiconSourceGenerator :
                 {
                     diagnostic = new Core.Diagnostic(
                         Core.DiagnosticSeverity.Error,
-                        Resources.GeneratedCodeNamespaceRequired,
+                        Resources.GeneratedCodeNamespaceRequired.ToString(null),
                         null, null, null);
                 }
 

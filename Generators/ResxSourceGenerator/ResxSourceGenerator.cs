@@ -61,14 +61,14 @@ public sealed class ResxGenerator : IIncrementalGenerator
                 var ((additionalText, optionsProvider), rootNamespace) = pair;
                 var options = optionsProvider.GetOptions(additionalText);
                 options.TryGetValue("build_metadata.EmbeddedResource.AccessModifier", out var accessModifier);
-                options.TryGetValue("build_metadata.EmbeddedResource.GenerateRoslynLocalizableResourceString", out var generateLocalizableStr);
+                options.TryGetValue("build_metadata.EmbeddedResource.GenerateRoslynResources", out var generateRoslynResources);
                 var content = additionalText.GetText(cancellationToken)?.ToString();
                 return new ResxFile(
                     additionalText.Path,
                     content,
                     rootNamespace,
                     string.IsNullOrEmpty(accessModifier) ? "internal" : accessModifier!,
-                    string.Equals(generateLocalizableStr, "true", StringComparison.OrdinalIgnoreCase));
+                    string.Equals(generateRoslynResources, "true", StringComparison.OrdinalIgnoreCase));
             });
 
         context.RegisterSourceOutput(resxFilesProvider, static (spc, item) =>
@@ -139,18 +139,32 @@ public sealed class ResxGenerator : IIncrementalGenerator
             var formatArgCount = CountFormatArgs(value);
 
             sb.AppendLine();
-
-            if (generateLocalizableResourceString)
-            {
-                AppendLocalizableResourceStringMember(sb, accessModifier, identifier, name, className, formatArgCount);
-            }
-            else
-            {
-                AppendStringMember(sb, accessModifier, identifier, name, formatArgCount);
-            }
+            AppendStringMember(sb, accessModifier, identifier, name, formatArgCount);
         }
 
         sb.AppendLine("}");
+
+        if (generateLocalizableResourceString)
+        {
+            var roslynClassName = className + "Roslyn";
+            sb.AppendLine();
+            sb.AppendLine(accessModifier + " static partial class " + roslynClassName);
+            sb.AppendLine("{");
+            sb.AppendLine("    private static global::System.Resources.ResourceManager ResourceManager =>");
+            sb.AppendLine("        " + className + ".ResourceManager;");
+
+            foreach (var (name, value) in entries)
+            {
+                var identifier = SanitizeIdentifier(name);
+                var formatArgCount = CountFormatArgs(value);
+
+                sb.AppendLine();
+                AppendLocalizableResourceStringMember(sb, accessModifier, identifier, name, className, formatArgCount);
+            }
+
+            sb.AppendLine("}");
+        }
+
         sb.AppendLine();
         sb.Append("#pragma warning restore CA1304");
 
