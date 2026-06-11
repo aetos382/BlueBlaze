@@ -20,10 +20,6 @@
     <ToolPackageRuntimeIdentifiers Condition="'$(ToolPackageRuntimeIdentifiers)' == '' and '$(RuntimeIdentifiers)' != ''">$(RuntimeIdentifiers)</ToolPackageRuntimeIdentifiers>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(BuildNativeAotPackage)' == 'false' and '$(NativeAotTool)' == 'true'">
-    <IsPackable>false</IsPackable>
-  </PropertyGroup>
-
   <Target Name="_ExcludeDebugFilesFromToolPackage"
           AfterTargets="PackTool"
           Condition="'$(NativeAotTool)' == 'true'">
