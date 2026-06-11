@@ -14,8 +14,4 @@
     <ProjectReference Include="..\..\..\..\Generators\LexiconGenerator\MSBuild\LexiconGenerator.MSBuild.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
-  </ItemGroup>
-
 </Project>

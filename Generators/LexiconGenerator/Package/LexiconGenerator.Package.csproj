@@ -25,11 +25,11 @@
   <ItemGroup>
     <None Include="build/**/*.props">
       <Pack>true</Pack>
-      <PackagePath>build/</PackagePath>
+      <PackagePath>build/%(RecursiveDir)</PackagePath>
     </None>
     <None Include="build/**/*.targets">
       <Pack>true</Pack>
-      <PackagePath>build/</PackagePath>
+      <PackagePath>build/%(RecursiveDir)</PackagePath>
     </None>
   </ItemGroup>
 

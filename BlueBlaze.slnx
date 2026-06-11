@@ -1,5 +1,8 @@
 <Solution>
   <Folder Name="/Generators/" />
+  <Folder Name="/Generators/ResxSourceGenerator/">
+    <Project Path="Generators/ResxSourceGenerator/ResxSourceGenerator.csproj" />
+  </Folder>
   <Folder Name="/Generators/LexiconGenerator/">
     <Project Path="Generators/LexiconGenerator/Cli/LexiconGenerator.Cli.csproj" />
     <Project Path="Generators/LexiconGenerator/Core/LexiconGenerator.Core.csproj" />
@@ -28,5 +31,8 @@
     <Project Path="Tests/Generators/LexiconGenerator/Core/LexiconGenerator.Core.Tests.csproj" />
     <Project Path="Tests/Generators/LexiconGenerator/MSBuild/LexiconGenerator.MSBuild.Tests.csproj" />
     <Project Path="Tests/Generators/LexiconGenerator/Roslyn/LexiconGenerator.Roslyn.Tests.csproj" />
+  </Folder>
+  <Folder Name="/Tests/Generators/ResxSourceGenerator/">
+    <Project Path="Tests/Generators/ResxSourceGenerator/BlueBlaze.ResxSourceGenerator.Tests.csproj" />
   </Folder>
 </Solution>

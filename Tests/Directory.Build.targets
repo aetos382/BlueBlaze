@@ -2,4 +2,8 @@
 
   <Import Project="../Directory.Build.targets" />
 
+  <ItemGroup Condition="'$(UsingMSTestSdk)' == 'true' AND '$(MSTestImplicitUsings)' != 'false'">
+    <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
+  </ItemGroup>
+
 </Project>

@@ -1,0 +1,16 @@
+<Project>
+
+  <PropertyGroup>
+    <AdditionalFileItemNames>
+      $(AdditionalFileItemNames);
+      EmbeddedResource
+    </AdditionalFileItemNames>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <CompilerVisibleItemMetadata Include="EmbeddedResource" MetadataName="GenerateSource" />
+    <CompilerVisibleItemMetadata Include="EmbeddedResource" MetadataName="AccessModifier" />
+    <CompilerVisibleItemMetadata Include="EmbeddedResource" MetadataName="GenerateRoslynResources" />
+  </ItemGroup>
+
+</Project>

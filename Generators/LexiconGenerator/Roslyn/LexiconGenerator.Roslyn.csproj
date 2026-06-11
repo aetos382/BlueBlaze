@@ -1,5 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+  <Import Project="..\..\ResxSourceGenerator\build\BlueBlaze.ResxSourceGenerator.props" />
+
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <IsRoslynComponent>true</IsRoslynComponent>
@@ -19,11 +21,20 @@
     <ProjectReference Include="..\Core\LexiconGenerator.Core.csproj">
       <PrivateAssets>all</PrivateAssets>
     </ProjectReference>
+    <ProjectReference Include="..\..\ResxSourceGenerator\ResxSourceGenerator.csproj">
+      <OutputItemType>Analyzer</OutputItemType>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Resources.resx">
+      <GenerateRoslynResources>true</GenerateRoslynResources>
+    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>
     <InternalsVisibleTo Include="BlueBlaze.LexiconGenerator.Roslyn.Tests" />
   </ItemGroup>
-
 
 </Project>
