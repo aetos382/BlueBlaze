@@ -38,6 +38,7 @@ jobs:
           --configuration Release
           -p:Version=${{ inputs.version }}
           -p:BuildNativeAotPackage=false
+          -p:GenerateSBOM=true
           -bl:pack.binlog
           --no-logo
 
@@ -92,6 +93,7 @@ jobs:
           --configuration Release
           -r ${{ matrix.rid }}
           -p:Version=${{ inputs.version }}
+          -p:GenerateSBOM=true
           -bl:lexgen-cli-${{ matrix.rid }}.binlog
           --no-logo
 
@@ -101,6 +103,7 @@ jobs:
           --configuration Release
           -r ${{ matrix.rid }}
           -p:Version=${{ inputs.version }}
+          -p:GenerateSBOM=true
           -bl:client-cli-${{ matrix.rid }}.binlog
           --no-logo
 
