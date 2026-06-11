@@ -73,7 +73,7 @@ public sealed class BlueBlazeGenerateSourceCode : Task
         foreach (var file in result.Files)
         {
             var outputFile = Path.Combine(this.OutputPath, file.HintName);
-            Directory.CreateDirectory(Path.GetDirectoryName(outputFile));
+            Directory.CreateDirectory(Path.GetDirectoryName(outputFile) ?? this.OutputPath);
 
             File.WriteAllText(outputFile, file.SourceText, System.Text.Encoding.UTF8);
             taskItems.Add(new TaskItem(outputFile));

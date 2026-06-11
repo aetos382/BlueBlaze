@@ -143,13 +143,16 @@ internal static class ObjectClassEmitter
                 var ud = kv.Value;
                 var interfaceName = "I" + LexiconNameHelper.ToPascalCase(propName);
 
-                sb.AppendLine($"{indent1}[global::System.Text.Json.Serialization.JsonPolymorphic(TypeDiscriminatorPropertyName = \"$type\")]");
-                foreach (var refStr in ud.Refs)
+                if (emitJsonAttributes)
                 {
-                    var resolvedType = LexiconNameHelper.ResolveRef(nsid, refStr, nsidIndex);
-                    var globalResolvedType = LexiconNameHelper.GlobalizeTypePath(resolvedType, generatedCodeNamespace);
-                    var discriminator = LexiconNameHelper.GetTypeDiscriminator(refStr);
-                    sb.AppendLine($"{indent1}[global::System.Text.Json.Serialization.JsonDerivedType(typeof({globalResolvedType}), \"{discriminator}\")]");
+                    sb.AppendLine($"{indent1}[global::System.Text.Json.Serialization.JsonPolymorphic(TypeDiscriminatorPropertyName = \"$type\")]");
+                    foreach (var refStr in ud.Refs)
+                    {
+                        var resolvedType = LexiconNameHelper.ResolveRef(nsid, refStr, nsidIndex);
+                        var globalResolvedType = LexiconNameHelper.GlobalizeTypePath(resolvedType, generatedCodeNamespace);
+                        var discriminator = LexiconNameHelper.GetTypeDiscriminator(refStr);
+                        sb.AppendLine($"{indent1}[global::System.Text.Json.Serialization.JsonDerivedType(typeof({globalResolvedType}), \"{discriminator}\")]");
+                    }
                 }
 
                 sb.AppendLine($"{indent1}public interface {interfaceName} {{ }}");
