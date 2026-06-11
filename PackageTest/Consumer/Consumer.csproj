@@ -5,6 +5,10 @@
     <BlueBlazeGeneratorRunAsBuildTask>true</BlueBlazeGeneratorRunAsBuildTask>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net481'">
+    <UsePolyfills>true</UsePolyfills>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="BlueBlaze.LexiconGenerator" Version="1.0.0" />
   </ItemGroup>
