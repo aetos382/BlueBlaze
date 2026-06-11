@@ -55,12 +55,12 @@ internal static class DocumentEmitter
             }
             else if (def is QueryDefinition queryDef && isMain)
             {
-                EmitQueryProcedure(nsid, queryDef.Parameters, null, queryDef.Output,
+                EmitQueryProcedure(nsid, queryDef.Parameters, null, queryDef.Output, queryDef.Errors,
                     nsidIndex, generatedCodeNamespace, filePath, files, diagnostics, unionMemberImpls, defIndex);
             }
             else if (def is ProcedureDefinition procDef && isMain)
             {
-                EmitQueryProcedure(nsid, procDef.Parameters, procDef.Input, procDef.Output,
+                EmitQueryProcedure(nsid, procDef.Parameters, procDef.Input, procDef.Output, procDef.Errors,
                     nsidIndex, generatedCodeNamespace, filePath, files, diagnostics, unionMemberImpls, defIndex);
             }
             else if (def is SubscriptionDefinition subDef && isMain)
@@ -184,6 +184,7 @@ internal static class DocumentEmitter
         ParametersDefinition? parameters,
         InputDefinition? input,
         OutputDefinition? output,
+        ErrorDefinition[]? errors,
         IReadOnlyDictionary<string, LexiconType?> nsidIndex,
         string? generatedCodeNamespace,
         string? filePath,
@@ -193,6 +194,13 @@ internal static class DocumentEmitter
         IReadOnlyDictionary<string, LexiconDefinition>? defIndex = null)
     {
         var segments = LexiconNameHelper.NsidToSegments(nsid);
+
+        EmitExtensionDataWarnings(input?.ExtensionData, filePath, nsid, "main", diagnostics);
+        EmitExtensionDataWarnings(output?.ExtensionData, filePath, nsid, "main", diagnostics);
+        foreach (var error in errors ?? [])
+        {
+            EmitExtensionDataWarnings(error.ExtensionData, filePath, nsid, "main", diagnostics);
+        }
 
         if (parameters != null && parameters.Properties != null)
         {
@@ -227,6 +235,12 @@ internal static class DocumentEmitter
         IReadOnlyDictionary<string, LexiconDefinition>? defIndex = null)
     {
         var segments = LexiconNameHelper.NsidToSegments(nsid);
+
+        EmitExtensionDataWarnings(subDef.Message.ExtensionData, filePath, nsid, "main", diagnostics);
+        foreach (var error in subDef.Errors ?? [])
+        {
+            EmitExtensionDataWarnings(error.ExtensionData, filePath, nsid, "main", diagnostics);
+        }
 
         if (subDef.Parameters != null && subDef.Parameters.Properties != null)
         {

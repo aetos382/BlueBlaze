@@ -152,7 +152,6 @@ internal static class ObjectClassEmitter
                     sb.AppendLine($"{indent1}[global::System.Text.Json.Serialization.JsonDerivedType(typeof({globalResolvedType}), \"{discriminator}\")]");
                 }
 
-                _ = (ud.Closed == true) ? "" : "";
                 sb.AppendLine($"{indent1}public interface {interfaceName} {{ }}");
                 sb.AppendLine();
             }
