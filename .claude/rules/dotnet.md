@@ -1,5 +1,6 @@
 ---
 paths:
+  - '**/*.slnx'
   - '**/*.csproj'
   - '/Directory.Packages.props'
   - '/.config/dotnet-tools.json'

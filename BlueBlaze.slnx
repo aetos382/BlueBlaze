@@ -1,30 +1,32 @@
 <Solution>
-  <Folder Name="/Generators/">
-    <Project Path="Generators/Generators.Core/Generators.Core.csproj" />
-    <Project Path="Generators/Generators.MSBuild/Generators.MSBuild.csproj" />
-    <Project Path="Generators/Generators.Package/Generators.Package.csproj" />
-    <Project Path="Generators/Generators.Roslyn/Generators.Roslyn.csproj" />
+  <Folder Name="/Generators/" />
+  <Folder Name="/Generators/LexiconGenerator/">
+    <Project Path="Generators/LexiconGenerator/Cli/LexiconGenerator.Cli.csproj" />
+    <Project Path="Generators/LexiconGenerator/Core/LexiconGenerator.Core.csproj" />
+    <Project Path="Generators/LexiconGenerator/MSBuild/LexiconGenerator.MSBuild.csproj" />
+    <Project Path="Generators/LexiconGenerator/Package/LexiconGenerator.Package.csproj" />
+    <Project Path="Generators/LexiconGenerator/Roslyn/LexiconGenerator.Roslyn.csproj" />
   </Folder>
   <Folder Name="/Sources/" />
   <Folder Name="/Sources/Clients/">
-    <Project Path="Sources/Clients/Clients.AtProtocol/Clients.AtProtocol.csproj" />
-    <Project Path="Sources/Clients/Clients.Bluesky/Clients.Bluesky.csproj" />
+    <Project Path="Sources/Clients/AtProtocol/Client.AtProtocol.csproj" />
+    <Project Path="Sources/Clients/Bluesky/Client.Bluesky.csproj" />
+    <Project Path="Sources/Clients/Cli/Client.Cli.csproj" />
+    <Project Path="Sources/Clients/Core/Client.Core.csproj" />
   </Folder>
   <Folder Name="/Sources/Models/">
-    <Project Path="Sources/Models/Models.AtProtocol/Models.AtProtocol.csproj" />
-    <Project Path="Sources/Models/Models.Bluesky/Models.Bluesky.csproj" />
-  </Folder>
-  <Folder Name="/Sources/Tools/">
-    <Project Path="Sources/Tools/Cli/Cli.csproj" />
+    <Project Path="Sources/Models/AtProtocol/Models.AtProtocol.csproj" />
+    <Project Path="Sources/Models/Bluesky/Models.Bluesky.csproj" />
   </Folder>
   <Folder Name="/Tests/" />
   <Folder Name="/Tests/Clients/">
-    <Project Path="Tests/Clients/Clients.AtProtocol.Tests/Clients.AtProtocol.Tests.csproj" />
-    <Project Path="Tests/Clients/Clients.Bluesky.Tests/Clients.Bluesky.Tests.csproj" />
+    <Project Path="Tests/Clients/AtProtocol/Client.AtProtocol.Tests.csproj" />
+    <Project Path="Tests/Clients/Bluesky/Client.Bluesky.Tests.csproj" />
   </Folder>
-  <Folder Name="/Tests/Generators/">
-    <Project Path="Tests/Generators/Generators.Core.Tests/Generators.Core.Tests.csproj" />
-    <Project Path="Tests/Generators/Generators.MSBuild.Tests/Generators.MSBuild.Tests.csproj" />
-    <Project Path="Tests/Generators/Generators.Roslyn.Tests/Generators.Roslyn.Tests.csproj" />
+  <Folder Name="/Tests/Generators/" />
+  <Folder Name="/Tests/Generators/LexiconGenerator/">
+    <Project Path="Tests/Generators/LexiconGenerator/Core/LexiconGenerator.Core.Tests.csproj" />
+    <Project Path="Tests/Generators/LexiconGenerator/MSBuild/LexiconGenerator.MSBuild.Tests.csproj" />
+    <Project Path="Tests/Generators/LexiconGenerator/Roslyn/LexiconGenerator.Roslyn.Tests.csproj" />
   </Folder>
 </Solution>

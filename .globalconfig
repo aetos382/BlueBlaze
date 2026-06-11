@@ -41,6 +41,7 @@ dotnet_diagnostic.IDE0160.severity = none
 dotnet_diagnostic.IDE0161.severity = suggestion
 dotnet_diagnostic.IDE0270.severity = silent
 dotnet_diagnostic.IDE0290.severity = suggestion
+dotnet_diagnostic.IDE0305.severity = suggestion
 
 dotnet_diagnostic.CA1852.severity = suggestion
 
@@ -59,6 +60,10 @@ dotnet_naming_symbols.static_readonly_fields.applicable_kinds = field
 dotnet_naming_symbols.static_readonly_fields.required_modifiers = static, readonly
 dotnet_naming_symbols.static_readonly_fields.applicable_accessibilities = *
 
+dotnet_naming_symbols.constants.applicable_kinds = field, local
+dotnet_naming_symbols.constants.required_modifiers = const
+dotnet_naming_symbols.constants.applicable_accessibilities = *
+
 dotnet_naming_symbols.fields.applicable_kinds = field
 dotnet_naming_symbols.fields.applicable_accessibilities = private
 
@@ -75,30 +80,42 @@ dotnet_naming_style.pascal_case_starting_with_large_t.required_prefix = T
 dotnet_naming_style.camel_case_starting_with_underscore.capitalization = camel_case
 dotnet_naming_style.camel_case_starting_with_underscore.required_prefix = _
 
+# 型と名前空間は PascalCase
 dotnet_naming_rule.types_and_namespaces_should_be_pascal_case.symbols = types_and_namespaces
 dotnet_naming_rule.types_and_namespaces_should_be_pascal_case.style = pascal_case
 dotnet_naming_rule.types_and_namespaces_should_be_pascal_case.severity = warning
 
+# インターフェイスは大文字の I で始まる PascalCase
 dotnet_naming_rule.interfaces_should_be_pascal_case_starting_with_large_i.symbols = interfaces
 dotnet_naming_rule.interfaces_should_be_pascal_case_starting_with_large_i.style = pascal_case_starting_with_large_i
 dotnet_naming_rule.interfaces_should_be_pascal_case_starting_with_large_i.severity = warning
 
+# 型パラメーターは大文字の T で始まる PascalCase
 dotnet_naming_rule.type_parameters_should_be_pascal_case_starting_with_large_t.symbols = type_parameters
 dotnet_naming_rule.type_parameters_should_be_pascal_case_starting_with_large_t.style = pascal_case_starting_with_large_t
 dotnet_naming_rule.type_parameters_should_be_pascal_case_starting_with_large_t.severity = warning
 
+# プライベートでないメンバーは PascalCase
 dotnet_naming_rule.members.symbols = non_private_members
 dotnet_naming_rule.members.style = pascal_case
 dotnet_naming_rule.members.severity = warning
 
+# パラメーターとローカル変数は camelCase
 dotnet_naming_rule.parameters_and_local_variables_should_be_camel_case.symbols = parameters_and_local_variables
 dotnet_naming_rule.parameters_and_local_variables_should_be_camel_case.style = camel_case
 dotnet_naming_rule.parameters_and_local_variables_should_be_camel_case.severity = warning
 
+# フィールドはアンダースコアで始まる camelCase
 dotnet_naming_rule.fields_should_be_camel_case_starting_with_underscore.symbols = fields
 dotnet_naming_rule.fields_should_be_camel_case_starting_with_underscore.style = camel_case_starting_with_underscore
 dotnet_naming_rule.fields_should_be_camel_case_starting_with_underscore.severity = warning
 
+# static readonly フィールドは PascalCase
 dotnet_naming_rule.static_readonly_fields_should_be_pascal_case.symbols = static_readonly_fields
 dotnet_naming_rule.static_readonly_fields_should_be_pascal_case.style = pascal_case
 dotnet_naming_rule.static_readonly_fields_should_be_pascal_case.severity = warning
+
+# 定数は PascalCase
+dotnet_naming_rule.constants_should_be_pascal_case.symbols = constants
+dotnet_naming_rule.constants_should_be_pascal_case.style = pascal_case
+dotnet_naming_rule.constants_should_be_pascal_case.severity = warning

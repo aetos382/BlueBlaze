@@ -2,12 +2,7 @@
   <Import Project="../Directory.Build.props" />
 
   <PropertyGroup>
-    <NoWarn>$(NoWarn);CA1515</NoWarn>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <_OriginalBeforeMicrosoftNETSdkTargets>$(BeforeMicrosoftNETSdkTargets.Trim())</_OriginalBeforeMicrosoftNETSdkTargets>
-    <BeforeMicrosoftNETSdkTargets>$(MSBuildThisFileDirectory)BeforeMicrosoftNETSdkTargets.targets</BeforeMicrosoftNETSdkTargets>
+    <NoWarn>$(NoWarn);CA1515;CA1707</NoWarn>
   </PropertyGroup>
 
 </Project>

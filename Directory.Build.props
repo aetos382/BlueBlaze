@@ -40,4 +40,8 @@
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <_OriginalBeforeMicrosoftNETSdkTargets>$(BeforeMicrosoftNETSdkTargets.Trim())</_OriginalBeforeMicrosoftNETSdkTargets>
+    <BeforeMicrosoftNETSdkTargets>$(MSBuildThisFileDirectory)BeforeMicrosoftNETSdkTargets.targets</BeforeMicrosoftNETSdkTargets>
+  </PropertyGroup>
 </Project>

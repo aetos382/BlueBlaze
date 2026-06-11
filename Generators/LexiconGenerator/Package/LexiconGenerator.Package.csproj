@@ -1,0 +1,96 @@
+<Project Sdk="Microsoft.Build.NoTargets">
+
+  <PropertyGroup>
+    <TargetFrameworks>net10.0;net481;netstandard2.0</TargetFrameworks>
+    <IsPackable>true</IsPackable>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <PackageId>BlueBlaze.LexiconGenerator</PackageId>
+    <DevelopmentDependency>true</DevelopmentDependency>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <IncludeSymbols>false</IncludeSymbols>
+    <NoWarn>$(NoWarn);NU5100</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Roslyn\LexiconGenerator.Roslyn.csproj">
+      <PrivateAssets>all</PrivateAssets>
+      <Pack>true</Pack>
+    </ProjectReference>
+    <ProjectReference Include="..\MSBuild\LexiconGenerator.MSBuild.csproj">
+      <PrivateAssets>all</PrivateAssets>
+      <Pack>true</Pack>
+    </ProjectReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="build/**/*.props">
+      <Pack>true</Pack>
+      <PackagePath>build/</PackagePath>
+    </None>
+    <None Include="build/**/*.targets">
+      <Pack>true</Pack>
+      <PackagePath>build/</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Update="@(ProjectReference)">
+      <SkipGetTargetFrameworkProperties>false</SkipGetTargetFrameworkProperties>
+    </ProjectReference>
+  </ItemGroup>
+
+  <PropertyGroup>
+    <BeforePack>
+      $(BeforePack);
+      _CreateLibPlaceholder;
+      _BuildReferencedProjectsForPack
+    </BeforePack>
+  </PropertyGroup>
+
+  <Target Name="_CreateLibPlaceholder">
+    <PropertyGroup>
+      <_PlaceholderFile>$([MSBuild]::NormalizePath('$(IntermediateOutputPath)', '_._'))</_PlaceholderFile>
+    </PropertyGroup>
+    <MakeDir Directories="$([System.IO.Path]::GetDirectoryName('$(_PlaceholderFile)'))" />
+    <Touch Files="$(_PlaceholderFile)" AlwaysCreate="true">
+      <Output TaskParameter="TouchedFiles" ItemName="_PlaceholderFile" />
+    </Touch>
+    <ItemGroup>
+      <_PlaceholderTfm Include="$(TargetFramework)" Condition="'$(TargetFramework)' != ''" />
+      <_PlaceholderTfm Include="$(TargetFrameworks)" Condition="'$(TargetFramework)' == '' and '$(TargetFrameworks)' != ''" />
+    </ItemGroup>
+    <ItemGroup>
+      <None Include="@(_PlaceholderFile)">
+        <Pack>true</Pack>
+        <PackagePath>lib/%(_PlaceholderTfm.Identity)/</PackagePath>
+      </None>
+    </ItemGroup>
+  </Target>
+
+  <Target Name="_BuildReferencedProjectsForPack">
+
+    <MSBuild
+      Projects="@(ProjectReference)"
+      Condition="'%(Pack)' == 'true'"
+      Targets="_GetOwnTfmOutputs"
+      RemoveProperties="TargetFramework;TargetFrameworks"
+      BuildInParallel="true">
+
+      <Output TaskParameter="TargetOutputs" ItemName="_BuildOutputs" />
+
+    </MSBuild>
+
+    <ItemGroup>
+      <None Include="@(_BuildOutputs)" Condition="'%(_BuildOutputs.ComponentType)' == 'RoslynComponent'">
+        <Pack>true</Pack>
+        <PackagePath>analyzers/dotnet/roslyn5.0/cs/%(_BuildOutputs.DestinationSubDirectory)</PackagePath>
+      </None>
+      <None Include="@(_BuildOutputs)" Condition="'%(_BuildOutputs.ComponentType)' == 'MSBuildTasks'">
+        <Pack>true</Pack>
+        <PackagePath>tasks/%(_BuildOutputs.TargetFramework)/%(_BuildOutputs.DestinationSubDirectory)</PackagePath>
+      </None>
+    </ItemGroup>
+
+  </Target>
+
+</Project>

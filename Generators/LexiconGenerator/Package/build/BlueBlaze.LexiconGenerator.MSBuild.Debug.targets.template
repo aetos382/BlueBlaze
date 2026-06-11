@@ -1,0 +1,53 @@
+<!--
+  MSBuild タスクをデバッガーでステップ実行したい場合に使用する。
+  このファイルを "BlueBlaze.LexiconGenerator.MSBuild.Debug.targets" にリネームする。
+-->
+<Project>
+  <PropertyGroup>
+    <_UseBlueBlazeGeneratorBuildTaskShadowCopy Condition="'$(_UseBlueBlazeGeneratorBuildTaskShadowCopy)' == ''">true</_UseBlueBlazeGeneratorBuildTaskShadowCopy>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(_UseBlueBlazeGeneratorBuildTaskShadowCopy)' == 'true'">
+    <_BlueBlazeGeneratorBuildTaskShadowDirectory Condition="'$(_BlueBlazeGeneratorBuildTaskShadowDirectory)' == ''">$([MSBuild]::NormalizePath('$(BaseIntermediateOutputPath)', 'generator-task', $([System.Guid]::NewGuid().ToString("D"))))</_BlueBlazeGeneratorBuildTaskShadowDirectory>
+    <_BlueBlazeGeneratorBuildTaskAssemblyFilePath>$([MSBuild]::NormalizePath('$(_BlueBlazeGeneratorBuildTaskShadowDirectory)', '$(_BlueBlazeGeneratorBuildTaskAssemblyFileName)'))</_BlueBlazeGeneratorBuildTaskAssemblyFilePath>
+  </PropertyGroup>
+
+  <Target Name="_ResolveBlueBlazeGeneratorTaskAssemblyShadowCopySourcePath">
+
+    <MSBuild Projects="$(MSBuildThisFileDirectory)../../MSBuild/LexiconGenerator.MSBuild.csproj"
+             Targets="GetTargetPath"
+             Properties="TargetFramework=$(TargetFramework);Configuration=$(Configuration)"
+             BuildInParallel="false">
+      <Output TaskParameter="TargetOutputs" ItemName="_BlueBlazeGeneratorMSBuildTargetPath" />
+    </MSBuild>
+
+    <PropertyGroup>
+      <_BlueBlazeGeneratorBuildTaskAssemblyFileShadowCopySourcePath>@(_BlueBlazeGeneratorMSBuildTargetPath)</_BlueBlazeGeneratorBuildTaskAssemblyFileShadowCopySourcePath>
+    </PropertyGroup>
+
+  </Target>
+
+  <Target Name="_ShadowCopyBlueBlazeGeneratorTaskAssembly"
+          DependsOnTargets="_ResolveBlueBlazeGeneratorTaskAssemblyShadowCopySourcePath"
+          BeforeTargets="BlueBlazeGenerateLexiconSourceCode">
+
+    <MakeDir Directories="$(_BlueBlazeGeneratorBuildTaskShadowDirectory)"/>
+
+    <!-- 依存 DLL も含めてすべてコピーする -->
+    <ItemGroup>
+      <_BlueBlazeGeneratorTaskAllAssemblyFiles Include="$([System.IO.Path]::GetDirectoryName('$(_BlueBlazeGeneratorBuildTaskAssemblyFileShadowCopySourcePath)'))\*.dll" />
+    </ItemGroup>
+
+    <Copy SourceFiles="@(_BlueBlazeGeneratorTaskAllAssemblyFiles)"
+          DestinationFolder="$(_BlueBlazeGeneratorBuildTaskShadowDirectory)"
+          Retries="3"
+          RetryDelayMilliseconds="500" />
+
+  </Target>
+
+  <PropertyGroup>
+    <UseSharedCompilation>false</UseSharedCompilation>
+    <BlueBlazeGenerateLexiconSourceCodeTaskDebugBreakOnExecute>false</BlueBlazeGenerateLexiconSourceCodeTaskDebugBreakOnExecute>
+  </PropertyGroup>
+
+</Project>

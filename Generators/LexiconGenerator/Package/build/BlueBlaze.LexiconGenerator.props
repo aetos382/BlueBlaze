@@ -1,0 +1,23 @@
+<Project>
+
+  <PropertyGroup>
+    <AdditionalFileItemNames>
+      $(AdditionalFileItemNames);
+      LexiconDocument
+    </AdditionalFileItemNames>
+  </PropertyGroup>
+
+  <ItemDefinitionGroup>
+    <LexiconDocument>
+      <IsLexiconDocument>true</IsLexiconDocument>
+      <Visible>true</Visible>
+    </LexiconDocument>
+  </ItemDefinitionGroup>
+
+  <ItemGroup>
+    <CompilerVisibleProperty Include="BlueBlazeGeneratorRunAsBuildTask" />
+    <CompilerVisibleProperty Include="BlueBlazeGeneratedCodeNamespace"/>
+    <CompilerVisibleItemMetadata Include="LexiconDocument" MetadataName="IsLexiconDocument"/>
+  </ItemGroup>
+
+</Project>
