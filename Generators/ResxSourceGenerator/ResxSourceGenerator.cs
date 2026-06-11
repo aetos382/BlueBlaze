@@ -45,10 +45,18 @@ public sealed class ResxGenerator : IIncrementalGenerator
 
         var resxFilesProvider = context.AdditionalTextsProvider
             .Where(static f => f.Path.EndsWith(".resx", StringComparison.OrdinalIgnoreCase))
+            .Combine(context.AnalyzerConfigOptionsProvider)
+            .Where(static pair =>
+            {
+                var (additionalText, optionsProvider) = pair;
+                var options = optionsProvider.GetOptions(additionalText);
+                return !options.TryGetValue("build_metadata.EmbeddedResource.GenerateSource", out var v)
+                    || !string.Equals(v, "false", StringComparison.OrdinalIgnoreCase);
+            })
             .Combine(rootNamespaceProvider)
             .Select(static (pair, cancellationToken) =>
             {
-                var (additionalText, rootNamespace) = pair;
+                var ((additionalText, _), rootNamespace) = pair;
                 var content = additionalText.GetText(cancellationToken)?.ToString();
                 return new ResxFile(additionalText.Path, content, rootNamespace);
             });
