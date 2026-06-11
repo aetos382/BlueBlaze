@@ -18,8 +18,8 @@ public sealed class LexiconDocument
     [JsonPropertyName("defs")]
     public required IReadOnlyDictionary<string, LexiconDefinition> Definitions { get; set; }
 
-    [JsonExtensionData]
 #pragma warning disable CA2227
+    [JsonExtensionData]
     public IDictionary<string, JsonElement>? ExtensionData { get; set; }
 #pragma warning restore CA2227
 }
@@ -96,8 +96,8 @@ public abstract class LexiconDefinition
 
     public string? Description { get; set; }
 
-    [JsonExtensionData]
 #pragma warning disable CA2227
+    [JsonExtensionData]
     public IDictionary<string, JsonElement>? ExtensionData { get; set; }
 #pragma warning restore CA2227
 }
@@ -159,8 +159,8 @@ public sealed class MessageDefinition
 
     public required LexiconDefinition Schema { get; set; }
 
-    [JsonExtensionData]
 #pragma warning disable CA2227
+    [JsonExtensionData]
     public IDictionary<string, JsonElement>? ExtensionData { get; set; }
 #pragma warning restore CA2227
 }
@@ -173,8 +173,8 @@ public sealed class InputDefinition
 
     public LexiconDefinition? Schema { get; set; }
 
-    [JsonExtensionData]
 #pragma warning disable CA2227
+    [JsonExtensionData]
     public IDictionary<string, JsonElement>? ExtensionData { get; set; }
 #pragma warning restore CA2227
 }
@@ -187,8 +187,8 @@ public sealed class OutputDefinition
 
     public LexiconDefinition? Schema { get; set; }
 
-    [JsonExtensionData]
 #pragma warning disable CA2227
+    [JsonExtensionData]
     public IDictionary<string, JsonElement>? ExtensionData { get; set; }
 #pragma warning restore CA2227
 }
@@ -199,8 +199,8 @@ public sealed class ErrorDefinition
 
     public string? Description { get; set; }
 
-    [JsonExtensionData]
 #pragma warning disable CA2227
+    [JsonExtensionData]
     public IDictionary<string, JsonElement>? ExtensionData { get; set; }
 #pragma warning restore CA2227
 }
@@ -356,8 +356,6 @@ public enum StringFormat
 [JsonSerializable(typeof(ProcedureDefinition))]
 [JsonSerializable(typeof(SubscriptionDefinition))]
 [JsonSerializable(typeof(PermissionSetDefinition))]
-[JsonSerializable(typeof(InputDefinition))]
-[JsonSerializable(typeof(OutputDefinition))]
 [JsonSerializable(typeof(BooleanDefinition))]
 [JsonSerializable(typeof(IntegerDefinition))]
 [JsonSerializable(typeof(StringDefinition))]

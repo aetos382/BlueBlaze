@@ -55,12 +55,12 @@ internal static class DocumentEmitter
             }
             else if (def is QueryDefinition queryDef && isMain)
             {
-                EmitQueryProcedure(nsid, queryDef.Parameters, null, queryDef.Output,
+                EmitQueryProcedure(nsid, queryDef.Parameters, null, queryDef.Output, queryDef.Errors,
                     nsidIndex, generatedCodeNamespace, filePath, files, diagnostics, unionMemberImpls, defIndex);
             }
             else if (def is ProcedureDefinition procDef && isMain)
             {
-                EmitQueryProcedure(nsid, procDef.Parameters, procDef.Input, procDef.Output,
+                EmitQueryProcedure(nsid, procDef.Parameters, procDef.Input, procDef.Output, procDef.Errors,
                     nsidIndex, generatedCodeNamespace, filePath, files, diagnostics, unionMemberImpls, defIndex);
             }
             else if (def is SubscriptionDefinition subDef && isMain)
@@ -143,8 +143,8 @@ internal static class DocumentEmitter
 
         if (isMain && mainType is LexiconType.Record or LexiconType.Object)
         {
-            // Wrap in parent static classes (all segments except last)
-            OpenStaticContainers(sb, segments, 0, segments.Length - 1);
+            // Wrap in parent sealed classes (all segments except last)
+            OpenSealedContainers(sb, segments, 0, segments.Length - 1);
             ObjectClassEmitter.EmitClass(sb, className, classPath, objDef, nsid, nsidIndex,
                 diagnostics, filePath, defKey, segments.Length - 1,
                 isPartial: true, emitJsonAttributes: emitJsonAttributes,
@@ -155,7 +155,7 @@ internal static class DocumentEmitter
         else
         {
             // Case 1 sub-def, Case 2, Case 3, defs-only
-            OpenStaticContainers(sb, segments, 0, segments.Length);
+            OpenSealedContainers(sb, segments, 0, segments.Length);
             ObjectClassEmitter.EmitClass(sb, className, classPath, objDef, nsid, nsidIndex,
                 diagnostics, filePath, defKey, segments.Length,
                 isPartial: true, emitJsonAttributes: emitJsonAttributes,
@@ -184,6 +184,7 @@ internal static class DocumentEmitter
         ParametersDefinition? parameters,
         InputDefinition? input,
         OutputDefinition? output,
+        ErrorDefinition[]? errors,
         IReadOnlyDictionary<string, LexiconType?> nsidIndex,
         string? generatedCodeNamespace,
         string? filePath,
@@ -193,6 +194,13 @@ internal static class DocumentEmitter
         IReadOnlyDictionary<string, LexiconDefinition>? defIndex = null)
     {
         var segments = LexiconNameHelper.NsidToSegments(nsid);
+
+        EmitExtensionDataWarnings(input?.ExtensionData, filePath, nsid, "main", diagnostics);
+        EmitExtensionDataWarnings(output?.ExtensionData, filePath, nsid, "main", diagnostics);
+        foreach (var error in errors ?? [])
+        {
+            EmitExtensionDataWarnings(error.ExtensionData, filePath, nsid, "main", diagnostics);
+        }
 
         if (parameters != null && parameters.Properties != null)
         {
@@ -228,6 +236,12 @@ internal static class DocumentEmitter
     {
         var segments = LexiconNameHelper.NsidToSegments(nsid);
 
+        EmitExtensionDataWarnings(subDef.Message.ExtensionData, filePath, nsid, "main", diagnostics);
+        foreach (var error in subDef.Errors ?? [])
+        {
+            EmitExtensionDataWarnings(error.ExtensionData, filePath, nsid, "main", diagnostics);
+        }
+
         if (subDef.Parameters != null && subDef.Parameters.Properties != null)
         {
             EmitParametersClass(nsid, segments, subDef.Parameters, nsidIndex,
@@ -256,7 +270,7 @@ internal static class DocumentEmitter
     {
         var sb = new StringBuilder();
         EmitFileHeader(sb, generatedCodeNamespace);
-        OpenStaticContainers(sb, segments, 0, segments.Length);
+        OpenSealedContainers(sb, segments, 0, segments.Length);
 
         var indent = new string(' ', segments.Length * 4);
         var indent1 = new string(' ', (segments.Length + 1) * 4);
@@ -327,7 +341,7 @@ internal static class DocumentEmitter
 
         var sb = new StringBuilder();
         EmitFileHeader(sb, generatedCodeNamespace);
-        OpenStaticContainers(sb, segments, 0, segments.Length);
+        OpenSealedContainers(sb, segments, 0, segments.Length);
 
         var classPath = string.Join(".", segments) + "." + className;
         ObjectClassEmitter.EmitClass(sb, className, classPath, objDef, nsid, nsidIndex,
@@ -371,7 +385,7 @@ internal static class DocumentEmitter
         var sb = new StringBuilder();
         EmitFileHeader(sb, generatedCodeNamespace);
 
-        OpenStaticContainers(sb, parts, 0, parts.Length - 1);
+        OpenSealedContainers(sb, parts, 0, parts.Length - 1);
 
         var indent = new string(' ', (parts.Length - 1) * 4);
         var className = parts[parts.Length - 1];
@@ -420,12 +434,12 @@ internal static class DocumentEmitter
         }
     }
 
-    private static void OpenStaticContainers(StringBuilder sb, string[] segments, int start, int end)
+    private static void OpenSealedContainers(StringBuilder sb, string[] segments, int start, int end)
     {
         for (var i = start; i < end; i++)
         {
             var indent = new string(' ', i * 4);
-            sb.AppendLine($"{indent}public static partial class {segments[i]}");
+            sb.AppendLine($"{indent}public sealed partial class {segments[i]}");
             sb.AppendLine($"{indent}{{");
         }
     }

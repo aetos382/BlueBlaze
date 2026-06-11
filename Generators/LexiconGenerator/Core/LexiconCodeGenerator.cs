@@ -14,7 +14,19 @@ public sealed class LexiconCodeGenerator
     {
         try
         {
-            var document = JsonSerializer.Deserialize(text, LexiconSerializerContext.Default.LexiconDocument)!;
+            var document = JsonSerializer.Deserialize(text, LexiconSerializerContext.Default.LexiconDocument);
+            if (document is null)
+            {
+                var message = DiagnosticMessages.FormatParseError(path, "Document is null.");
+                return new ParseResult(null, [new Diagnostic(DiagnosticSeverity.Error, message, path, null, null)]);
+            }
+
+            if (document.Lexicon != 1)
+            {
+                var message = DiagnosticMessages.FormatInvalidLexiconVersion(document.Lexicon, path);
+                return new ParseResult(null, [new Diagnostic(DiagnosticSeverity.Error, message, path, null, null)]);
+            }
+
             return new ParseResult(new LexiconDocumentWithInfo(path, document), []);
         }
         catch (JsonException ex)

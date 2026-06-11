@@ -56,7 +56,7 @@ internal static class ObjectClassEmitter
                 if (propDef is UnionDefinition)
                 {
                     var interfaceName = "I" + LexiconNameHelper.ToPascalCase(propName);
-                    var propType = isReq ? interfaceName : interfaceName + "?";
+                    var propType = (isReq && !isNull) ? interfaceName : interfaceName + "?";
                     var csPropName = LexiconNameHelper.ToPascalCase(propName);
                     if (csPropName == className)
                     {
@@ -121,7 +121,7 @@ internal static class ObjectClassEmitter
                     sb.AppendLine($"{indent1}[global::System.Text.Json.Serialization.JsonPropertyName(\"{propName}\")]");
                 }
 
-                if (isReq && !isNull)
+                if (isReq)
                 {
                     sb.AppendLine($"{indent1}public required {result.CSharpType} {csPropNameStr} {{ get; init; }}");
                 }
@@ -143,16 +143,18 @@ internal static class ObjectClassEmitter
                 var ud = kv.Value;
                 var interfaceName = "I" + LexiconNameHelper.ToPascalCase(propName);
 
-                sb.AppendLine($"{indent1}[global::System.Text.Json.Serialization.JsonPolymorphic(TypeDiscriminatorPropertyName = \"$type\")]");
-                foreach (var refStr in ud.Refs)
+                if (emitJsonAttributes)
                 {
-                    var resolvedType = LexiconNameHelper.ResolveRef(nsid, refStr, nsidIndex);
-                    var globalResolvedType = LexiconNameHelper.GlobalizeTypePath(resolvedType, generatedCodeNamespace);
-                    var discriminator = LexiconNameHelper.GetTypeDiscriminator(refStr);
-                    sb.AppendLine($"{indent1}[global::System.Text.Json.Serialization.JsonDerivedType(typeof({globalResolvedType}), \"{discriminator}\")]");
+                    sb.AppendLine($"{indent1}[global::System.Text.Json.Serialization.JsonPolymorphic(TypeDiscriminatorPropertyName = \"$type\")]");
+                    foreach (var refStr in ud.Refs)
+                    {
+                        var resolvedType = LexiconNameHelper.ResolveRef(nsid, refStr, nsidIndex);
+                        var globalResolvedType = LexiconNameHelper.GlobalizeTypePath(resolvedType, generatedCodeNamespace);
+                        var discriminator = LexiconNameHelper.GetTypeDiscriminator(refStr);
+                        sb.AppendLine($"{indent1}[global::System.Text.Json.Serialization.JsonDerivedType(typeof({globalResolvedType}), \"{discriminator}\")]");
+                    }
                 }
 
-                _ = (ud.Closed == true) ? "" : "";
                 sb.AppendLine($"{indent1}public interface {interfaceName} {{ }}");
                 sb.AppendLine();
             }

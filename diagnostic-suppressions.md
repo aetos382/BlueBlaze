@@ -7,7 +7,7 @@
 
 | ファイル | 対象メンバー |
 |---|---|
-| [Generators/Generators.Core/LexiconDocument.cs](Generators/Generators.Core/LexiconDocument.cs) | `LexiconDocument.ExtensionData` 他 6 プロパティ |
+| [Generators/LexiconGenerator/Core/LexiconDocument.cs](Generators/LexiconGenerator/Core/LexiconDocument.cs) | `LexiconDocument.ExtensionData` 他 6 プロパティ |
 
 **理由**: `[JsonExtensionData]` プロパティは Source Generated Serializer でデシリアライズするために
 `set` アクセサーが必要。`RespectRequiredConstructorParameters = true` と `init` の組み合わせが

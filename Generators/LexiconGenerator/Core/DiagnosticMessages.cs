@@ -30,6 +30,9 @@ internal static class DiagnosticMessages
     private static string UnknownExtensionData =>
         ResourceManager.GetString(nameof(UnknownExtensionData)) ?? "Unknown field(s) '{0}' found in '{1}#{2}'. The lexicon schema may have been updated.";
 
+    private static string InvalidLexiconVersion =>
+        ResourceManager.GetString(nameof(InvalidLexiconVersion)) ?? "Unsupported lexicon version {0} in '{1}'. Expected 1.";
+
 #pragma warning restore CA1304
 
     internal static string FormatParseError(string path, string exMessage)
@@ -59,6 +62,12 @@ internal static class DiagnosticMessages
 
     internal static string FormatUnknownExtensionData(string keys, string nsid, string? defKey)
     {
-        return string.Format(CultureInfo.InvariantCulture, UnknownExtensionData, keys, nsid, defKey ?? "");
+        var location = defKey != null ? $"{nsid}#{defKey}" : nsid;
+        return string.Format(CultureInfo.InvariantCulture, UnknownExtensionData, keys, location);
+    }
+
+    internal static string FormatInvalidLexiconVersion(int version, string path)
+    {
+        return string.Format(CultureInfo.InvariantCulture, InvalidLexiconVersion, version, path);
     }
 }

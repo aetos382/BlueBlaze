@@ -12,6 +12,11 @@ public sealed class LexiconParseAllTest
     public void 全Lexiconファイルをパースしてコード生成_ExtensionDataWarnなし()
     {
         var lexiconsDir = FindLexiconsDirectory();
+        if (lexiconsDir is null)
+        {
+            Assert.Inconclusive("submodules/atproto/lexicons が見つかりません。submodule が checkout されていない環境ではこのテストをスキップします。");
+        }
+
         var files = Directory.GetFiles(lexiconsDir, "*.json", SearchOption.AllDirectories);
 
         var parseResults = new List<ParseResult>(files.Length);
@@ -44,7 +49,7 @@ public sealed class LexiconParseAllTest
         }
     }
 
-    private static string FindLexiconsDirectory()
+    private static string? FindLexiconsDirectory()
     {
         var dir = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
         while (dir != null)
@@ -57,6 +62,6 @@ public sealed class LexiconParseAllTest
 
             dir = dir.Parent;
         }
-        throw new DirectoryNotFoundException("submodules/atproto/lexicons ディレクトリが見つかりません。");
+        return null;
     }
 }

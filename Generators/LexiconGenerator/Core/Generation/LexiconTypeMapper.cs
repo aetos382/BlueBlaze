@@ -44,7 +44,7 @@ internal static class LexiconTypeMapper
                 return new MapResult(nullable ? "object?" : "object", nullable);
 
             case ArrayDefinition ad:
-                return MapArray(ad, isRequired, currentNsid, nsidIndex, defIndex, generatedCodeNamespace, out unknownFormatName);
+                return MapArray(ad, isRequired, isNullable, currentNsid, nsidIndex, defIndex, generatedCodeNamespace, out unknownFormatName);
 
             case ReferenceDefinition rd:
                 // ref ターゲットが非クラス型 (string/token/integer 等) の場合はプリミティブ型を返す
@@ -121,6 +121,7 @@ internal static class LexiconTypeMapper
     private static MapResult? MapArray(
         ArrayDefinition ad,
         bool isRequired,
+        bool isNullable,
         string currentNsid,
         IReadOnlyDictionary<string, LexiconType?> nsidIndex,
         IReadOnlyDictionary<string, LexiconDefinition>? defIndex,
@@ -139,8 +140,9 @@ internal static class LexiconTypeMapper
             ? itemResult.CSharpType.TrimEnd('?')
             : itemResult.CSharpType;
 
+        var nullable = !isRequired || isNullable;
         var listType = $"global::System.Collections.Generic.IReadOnlyList<{itemType}>";
-        return new MapResult(isRequired ? listType : listType + "?", !isRequired);
+        return new MapResult(nullable ? listType + "?" : listType, nullable);
     }
 }
 
