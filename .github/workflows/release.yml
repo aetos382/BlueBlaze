@@ -9,8 +9,7 @@ on:
         type: string
 
 permissions:
-  contents: write
-  packages: write
+  contents: read
 
 jobs:
   pack:
@@ -126,6 +125,10 @@ jobs:
     name: Publish
     needs: [pack, pack-native]
     runs-on: ubuntu-slim
+
+    permissions:
+      contents: write
+      packages: write
 
     env:
       NUGET_FEED_URL: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
