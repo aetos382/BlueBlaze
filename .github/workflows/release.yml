@@ -37,7 +37,6 @@ jobs:
           dotnet pack BlueBlaze.slnx
           --configuration Release
           -p:Version=${{ inputs.version }}
-          -p:BuildNativeAotPackage=false
           -p:GenerateSBOM=true
           -bl:pack.binlog
           --no-logo
