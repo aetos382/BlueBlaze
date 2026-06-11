@@ -122,12 +122,6 @@
         "contentHash": "dxOZt8/LWuiox7rugInJoIa5Mmu3pBmXdfaoZOx/mxx8+sUFFpjBXPlWXQXGeWzpkVPNC3x1Jf7rt2h2Zjyvvg=="
       },
       "BlueBlaze.LexiconGenerator.Roslyn": {
-        "type": "Project",
-        "dependencies": {
-          "BlueBlaze.ResxSourceGenerator.Roslyn": "[1.0.0, )"
-        }
-      },
-      "BlueBlaze.ResxSourceGenerator.Roslyn": {
         "type": "Project"
       }
     },
