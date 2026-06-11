@@ -1,0 +1,10 @@
+<Project>
+
+  <PropertyGroup>
+    <AdditionalFileItemNames>
+      $(AdditionalFileItemNames);
+      EmbeddedResource
+    </AdditionalFileItemNames>
+  </PropertyGroup>
+
+</Project>

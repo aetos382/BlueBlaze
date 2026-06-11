@@ -1,5 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+  <Import Project="..\..\ResxSourceGenerator\build\BlueBlaze.ResxSourceGenerator.props" />
+
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <IsRoslynComponent>true</IsRoslynComponent>
@@ -26,12 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <AdditionalFiles Include="Resources.resx" />
-  </ItemGroup>
-
-  <ItemGroup>
     <InternalsVisibleTo Include="BlueBlaze.LexiconGenerator.Roslyn.Tests" />
   </ItemGroup>
-
 
 </Project>
