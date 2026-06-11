@@ -32,7 +32,8 @@ public sealed class ResxGenerator : IIncrementalGenerator
         string FilePath,
         string? Content,
         string RootNamespace,
-        string AccessModifier);
+        string AccessModifier,
+        bool GenerateLocalizableResourceString);
 
     /// <inheritdoc />
     public void Initialize(IncrementalGeneratorInitializationContext context)
@@ -60,12 +61,14 @@ public sealed class ResxGenerator : IIncrementalGenerator
                 var ((additionalText, optionsProvider), rootNamespace) = pair;
                 var options = optionsProvider.GetOptions(additionalText);
                 options.TryGetValue("build_metadata.EmbeddedResource.AccessModifier", out var accessModifier);
+                options.TryGetValue("build_metadata.EmbeddedResource.GenerateRoslynLocalizableResourceString", out var generateLocalizableStr);
                 var content = additionalText.GetText(cancellationToken)?.ToString();
                 return new ResxFile(
                     additionalText.Path,
                     content,
                     rootNamespace,
-                    string.IsNullOrEmpty(accessModifier) ? "internal" : accessModifier!);
+                    string.IsNullOrEmpty(accessModifier) ? "internal" : accessModifier!,
+                    string.Equals(generateLocalizableStr, "true", StringComparison.OrdinalIgnoreCase));
             });
 
         context.RegisterSourceOutput(resxFilesProvider, static (spc, item) =>
@@ -81,7 +84,7 @@ public sealed class ResxGenerator : IIncrementalGenerator
 
             try
             {
-                var (hintName, source) = GenerateSource(item.FilePath, item.Content, item.RootNamespace, item.AccessModifier);
+                var (hintName, source) = GenerateSource(item.FilePath, item.Content, item.RootNamespace, item.AccessModifier, item.GenerateLocalizableResourceString);
                 spc.AddSource(hintName, SourceText.From(source, Encoding.UTF8));
             }
             catch (System.Xml.XmlException ex)
@@ -98,7 +101,8 @@ public sealed class ResxGenerator : IIncrementalGenerator
         string filePath,
         string content,
         string rootNamespace,
-        string accessModifier)
+        string accessModifier,
+        bool generateLocalizableResourceString)
     {
         var fileName = Path.GetFileNameWithoutExtension(filePath);
         var className = SanitizeIdentifier(fileName);
@@ -136,36 +140,13 @@ public sealed class ResxGenerator : IIncrementalGenerator
 
             sb.AppendLine();
 
-            if (formatArgCount > 0)
+            if (generateLocalizableResourceString)
             {
-                sb.AppendLine("    private static string " + identifier + " =>");
-                sb.AppendLine("        ResourceManager.GetString(\"" + name + "\", null)!;");
-                sb.AppendLine();
-
-                sb.Append("    " + accessModifier + " static string Format" + identifier + "(");
-                for (var i = 0; i < formatArgCount; i++)
-                {
-                    if (i > 0)
-                    {
-                        sb.Append(", ");
-                    }
-
-                    sb.Append("object? arg" + i.ToString(System.Globalization.CultureInfo.InvariantCulture));
-                }
-
-                sb.AppendLine(")");
-                sb.Append("        => string.Format(global::System.Globalization.CultureInfo.InvariantCulture, " + identifier);
-                for (var i = 0; i < formatArgCount; i++)
-                {
-                    sb.Append(", arg" + i.ToString(System.Globalization.CultureInfo.InvariantCulture));
-                }
-
-                sb.AppendLine(");");
+                AppendLocalizableResourceStringMember(sb, accessModifier, identifier, name, className, formatArgCount);
             }
             else
             {
-                sb.AppendLine("    " + accessModifier + " static string " + identifier + " =>");
-                sb.AppendLine("        ResourceManager.GetString(\"" + name + "\", null)!;");
+                AppendStringMember(sb, accessModifier, identifier, name, formatArgCount);
             }
         }
 
@@ -174,6 +155,88 @@ public sealed class ResxGenerator : IIncrementalGenerator
         sb.Append("#pragma warning restore CA1304");
 
         return (className + ".g.cs", sb.ToString());
+    }
+
+    private static void AppendStringMember(
+        StringBuilder sb,
+        string accessModifier,
+        string identifier,
+        string name,
+        int formatArgCount)
+    {
+        if (formatArgCount > 0)
+        {
+            sb.AppendLine("    private static string " + identifier + " =>");
+            sb.AppendLine("        ResourceManager.GetString(\"" + name + "\", null)!;");
+            sb.AppendLine();
+
+            sb.Append("    " + accessModifier + " static string Format" + identifier + "(");
+            for (var i = 0; i < formatArgCount; i++)
+            {
+                if (i > 0)
+                {
+                    sb.Append(", ");
+                }
+
+                sb.Append("object? arg" + i.ToString(System.Globalization.CultureInfo.InvariantCulture));
+            }
+
+            sb.AppendLine(")");
+            sb.Append("        => string.Format(global::System.Globalization.CultureInfo.InvariantCulture, " + identifier);
+            for (var i = 0; i < formatArgCount; i++)
+            {
+                sb.Append(", arg" + i.ToString(System.Globalization.CultureInfo.InvariantCulture));
+            }
+
+            sb.AppendLine(");");
+        }
+        else
+        {
+            sb.AppendLine("    " + accessModifier + " static string " + identifier + " =>");
+            sb.AppendLine("        ResourceManager.GetString(\"" + name + "\", null)!;");
+        }
+    }
+
+    private static void AppendLocalizableResourceStringMember(
+        StringBuilder sb,
+        string accessModifier,
+        string identifier,
+        string name,
+        string className,
+        int formatArgCount)
+    {
+        sb.AppendLine("    " + accessModifier + " static global::Microsoft.CodeAnalysis.LocalizableResourceString " + identifier + " =>");
+        sb.AppendLine("        new global::Microsoft.CodeAnalysis.LocalizableResourceString(");
+        sb.AppendLine("            \"" + name + "\",");
+        sb.AppendLine("            ResourceManager,");
+        sb.AppendLine("            typeof(" + className + "));");
+
+        if (formatArgCount > 0)
+        {
+            sb.AppendLine();
+            sb.Append("    " + accessModifier + " static global::Microsoft.CodeAnalysis.LocalizableResourceString Format" + identifier + "(");
+            for (var i = 0; i < formatArgCount; i++)
+            {
+                if (i > 0)
+                {
+                    sb.Append(", ");
+                }
+
+                sb.Append("string arg" + i.ToString(System.Globalization.CultureInfo.InvariantCulture));
+            }
+
+            sb.AppendLine(")");
+            sb.AppendLine("        => new global::Microsoft.CodeAnalysis.LocalizableResourceString(");
+            sb.AppendLine("            \"" + name + "\",");
+            sb.AppendLine("            ResourceManager,");
+            sb.Append("            typeof(" + className + ")");
+            for (var i = 0; i < formatArgCount; i++)
+            {
+                sb.Append(", arg" + i.ToString(System.Globalization.CultureInfo.InvariantCulture));
+            }
+
+            sb.AppendLine(");");
+        }
     }
 
     private static List<(string Name, string Value)> ParseResxEntries(string content)
