@@ -19,6 +19,14 @@
     <ProjectReference Include="..\Core\LexiconGenerator.Core.csproj">
       <PrivateAssets>all</PrivateAssets>
     </ProjectReference>
+    <ProjectReference Include="..\..\ResxSourceGenerator\ResxSourceGenerator.Roslyn.csproj">
+      <OutputItemType>Analyzer</OutputItemType>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="Resources.resx" />
   </ItemGroup>
 
   <ItemGroup>
