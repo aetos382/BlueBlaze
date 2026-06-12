@@ -92,26 +92,13 @@
       "BlueBlaze.Client.AtProtocol": {
         "type": "Project",
         "dependencies": {
-          "BlueBlaze.Client.Core": "[1.0.0, )",
-          "BlueBlaze.Models.AtProtocol": "[1.0.0, )"
+          "BlueBlaze.Client.Core": "[1.0.0, )"
         }
       },
       "BlueBlaze.Client.Core": {
         "type": "Project",
         "dependencies": {
           "System.Net.Http.Json": "[10.0.9, )",
-          "System.Text.Json": "[10.0.9, )"
-        }
-      },
-      "BlueBlaze.Models.AtProtocol": {
-        "type": "Project",
-        "dependencies": {
-          "System.Text.Json": "[10.0.9, )"
-        }
-      },
-      "BlueBlaze.Models.Bluesky": {
-        "type": "Project",
-        "dependencies": {
           "System.Text.Json": "[10.0.9, )"
         }
       },
@@ -167,17 +154,10 @@
       "BlueBlaze.Client.AtProtocol": {
         "type": "Project",
         "dependencies": {
-          "BlueBlaze.Client.Core": "[1.0.0, )",
-          "BlueBlaze.Models.AtProtocol": "[1.0.0, )"
+          "BlueBlaze.Client.Core": "[1.0.0, )"
         }
       },
       "BlueBlaze.Client.Core": {
-        "type": "Project"
-      },
-      "BlueBlaze.Models.AtProtocol": {
-        "type": "Project"
-      },
-      "BlueBlaze.Models.Bluesky": {
         "type": "Project"
       }
     },
