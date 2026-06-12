@@ -1,5 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+  <Import Project="../../../Generators/LexiconGenerator/Package/build/BlueBlaze.LexiconGenerator.props" />
+
   <PropertyGroup>
     <TargetFrameworks>net10.0;netstandard2.0</TargetFrameworks>
     <IsPackable>true</IsPackable>
@@ -10,12 +12,26 @@
     <UsePolyfills>true</UsePolyfills>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <BlueBlazeGeneratorRunAsBuildTask>true</BlueBlazeGeneratorRunAsBuildTask>
+    <BlueBlazeGeneratedCodeNamespace>BlueBlaze.Client.AtProtocol.Generated</BlueBlazeGeneratedCodeNamespace>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="../Core/Client.Core.csproj" />
+    <ProjectReference Include="../../../Generators/LexiconGenerator/MSBuild/LexiconGenerator.MSBuild.csproj">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
   </ItemGroup>
 
   <ItemGroup>
     <InternalsVisibleTo Include="BlueBlaze.Client.AtProtocol.Tests" />
   </ItemGroup>
+
+  <ItemGroup>
+    <LexiconDocument Include="../../../submodules/atproto/lexicons/com/atproto/**/*.json" />
+  </ItemGroup>
+
+  <Import Project="../../../Generators/LexiconGenerator/Package/build/BlueBlaze.LexiconGenerator.targets" />
 
 </Project>

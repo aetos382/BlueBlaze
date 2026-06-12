@@ -129,9 +129,9 @@ internal static class LexiconNameHelper
 
         if (mainType is LexiconType.Query or LexiconType.Procedure or LexiconType.Subscription)
         {
-            // Case 3: Response/Message プレフィックスを付けた兄弟クラスとして解決
-            var responseOrMessage = mainType == LexiconType.Subscription ? "Message" : "Response";
-            return containerPath + "." + responseOrMessage + ToPascalCase(defKey);
+            // Case 3: Output/Message プレフィックスを付けた兄弟クラスとして解決
+            var outputOrMessage = mainType == LexiconType.Subscription ? "Message" : "Output";
+            return containerPath + "." + outputOrMessage + ToPascalCase(defKey);
         }
 
         // Case 2: defs-only -> nested inside container class

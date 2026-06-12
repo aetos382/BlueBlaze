@@ -38,7 +38,8 @@ public sealed class LexiconCodeGenerator
 
     public static GenerateResult Generate(
         IReadOnlyList<ParseResult> parseResults,
-        string generatedCodeNamespace)
+        string generatedCodeNamespace,
+        bool generateTypeInfo = false)
     {
         ArgumentNullException.ThrowIfNull(parseResults);
 
@@ -46,7 +47,6 @@ public sealed class LexiconCodeGenerator
         var diagnostics = new List<Diagnostic>();
         var unionMemberImpls = new List<(string MemberTypePath, string InterfacePath)>();
 
-        // Collect parse diagnostics and extract successfully parsed documents
         var documents = new List<LexiconDocumentWithInfo>(parseResults.Count);
         foreach (var pr in parseResults)
         {
@@ -57,13 +57,10 @@ public sealed class LexiconCodeGenerator
             }
         }
 
-        // Phase 1: Build NSID index (nsid -> main def type or null for defs-only)
         var nsidIndex = BuildNsidIndex(documents);
-
-        // Phase 1b: Build def index ("nsid#defKey" -> LexiconDefinition) for ref resolution
         var defIndex = BuildDefIndex(documents);
 
-        // Phase 2: Emit source files per document
+        // Phase 1: Emit DTO classes (DocumentEmitter)
         foreach (var docInfo in documents)
         {
             DocumentEmitter.Emit(
@@ -71,11 +68,84 @@ public sealed class LexiconCodeGenerator
                 files, diagnostics, unionMemberImpls, defIndex);
         }
 
-        // Phase 3: Emit union member partial class files
+        // Phase 2: Emit union member partial class files
         foreach (var (memberPath, interfacePath) in unionMemberImpls)
         {
             DocumentEmitter.EmitUnionMemberImpl(
                 memberPath, interfacePath, generatedCodeNamespace, files);
+        }
+
+        // Phase 3: Emit client support types and collect NSID prefixes
+        var seenPrefixes = new HashSet<string>(StringComparer.Ordinal);
+
+        foreach (var docInfo in documents)
+        {
+            var nsid = docInfo.Document.Id;
+            if (!docInfo.Document.Definitions.TryGetValue("main", out var mainDef))
+            {
+                continue;
+            }
+
+            var segments = LexiconNameHelper.NsidToSegments(nsid);
+            bool isQuery;
+            bool hasInput;
+            bool hasOutput;
+            bool hasParameters;
+
+            if (mainDef is QueryDefinition queryDef)
+            {
+                isQuery = true;
+                hasInput = false;
+                hasOutput = queryDef.Output?.Schema is ObjectDefinition;
+                hasParameters = queryDef.Parameters?.Properties?.Count > 0;
+
+                if (hasParameters)
+                {
+                    ParametersEmitter.Emit(segments, queryDef.Parameters!, generatedCodeNamespace, files);
+                }
+            }
+            else if (mainDef is ProcedureDefinition procDef)
+            {
+                isQuery = false;
+                hasInput = procDef.Input?.Schema is ObjectDefinition;
+                hasOutput = procDef.Output?.Schema is ObjectDefinition;
+                hasParameters = false;
+
+                if (hasInput)
+                {
+                    InputEmitter.Emit(nsid, generatedCodeNamespace, files);
+                }
+            }
+            else
+            {
+                continue;
+            }
+
+            RequestEmitter.Emit(nsid, segments, isQuery, hasParameters, hasInput, generatedCodeNamespace, files);
+
+            if (hasOutput)
+            {
+                DeserializerEmitter.Emit(segments, generateTypeInfo, generatedCodeNamespace, files);
+            }
+
+            for (var i = 1; i < segments.Length; i++)
+            {
+                seenPrefixes.Add(string.Join(".", segments, 0, i));
+            }
+        }
+
+        // Phase 4: Emit client prefix structs (shortest prefix first)
+        var sortedPrefixes = new List<string>(seenPrefixes);
+        sortedPrefixes.Sort(StringComparer.Ordinal);
+        foreach (var prefix in sortedPrefixes)
+        {
+            ClientPrefixEmitter.Emit(prefix.Split('.'), generatedCodeNamespace, files);
+        }
+
+        // Phase 5: Emit client extension methods
+        foreach (var docInfo in documents)
+        {
+            ClientMethodEmitter.Emit(docInfo, generatedCodeNamespace, files);
         }
 
         return new GenerateResult(files, diagnostics);
@@ -106,7 +176,6 @@ public sealed class LexiconCodeGenerator
         return index;
     }
 
-    // "nsid#defKey" -> LexiconDefinition のインデックスを構築する
     private static Dictionary<string, LexiconDefinition> BuildDefIndex(
         IReadOnlyList<LexiconDocumentWithInfo> documents)
     {

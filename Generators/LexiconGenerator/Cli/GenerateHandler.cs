@@ -14,6 +14,7 @@ internal static class GenerateHandler
         FileInfo[] inputs,
         DirectoryInfo outputDir,
         string generatedCodeNamespace,
+        bool generateTypeInfo,
         TextWriter errorWriter,
         CancellationToken cancellationToken)
     {
@@ -41,7 +42,7 @@ internal static class GenerateHandler
             return 1;
         }
 
-        var generateResult = LexiconCodeGenerator.Generate(parseResults, generatedCodeNamespace);
+        var generateResult = LexiconCodeGenerator.Generate(parseResults, generatedCodeNamespace, generateTypeInfo);
 
         foreach (var diag in generateResult.Diagnostics)
         {

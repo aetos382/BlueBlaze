@@ -121,8 +121,8 @@ internal static class DocumentEmitter
         }
         else if (!isMain && mainType is LexiconType.Query or LexiconType.Procedure or LexiconType.Subscription)
         {
-            // Case 3: Response/Message プレフィックスを付けた兄弟クラスとして emit
-            var responseOrMessage = mainType == LexiconType.Subscription ? "Message" : "Response";
+            // Case 3: Output/Message プレフィックスを付けた兄弟クラスとして emit
+            var responseOrMessage = mainType == LexiconType.Subscription ? "Message" : "Output";
             className = responseOrMessage + LexiconNameHelper.ToPascalCase(defKey);
             classPath = string.Join(".", segments) + "." + className;
             hintSuffix = classPath;
@@ -210,14 +210,14 @@ internal static class DocumentEmitter
 
         if (input?.Schema is ObjectDefinition inputObj)
         {
-            EmitOperationDataClass(nsid, segments, "Request", inputObj, nsidIndex,
+            EmitOperationDataClass(nsid, segments, "Input", inputObj, nsidIndex,
                 generatedCodeNamespace, filePath, files, diagnostics, unionMemberImpls,
                 emitJsonAttributes: true, defIndex: defIndex);
         }
 
         if (output?.Schema is ObjectDefinition outputObj)
         {
-            EmitOperationDataClass(nsid, segments, "Response", outputObj, nsidIndex,
+            EmitOperationDataClass(nsid, segments, "Output", outputObj, nsidIndex,
                 generatedCodeNamespace, filePath, files, diagnostics, unionMemberImpls,
                 emitJsonAttributes: true, defIndex: defIndex);
         }
@@ -275,7 +275,7 @@ internal static class DocumentEmitter
         var indent = new string(' ', segments.Length * 4);
         var indent1 = new string(' ', (segments.Length + 1) * 4);
 
-        sb.AppendLine($"{indent}public sealed class Parameters");
+        sb.AppendLine($"{indent}public sealed partial class Parameters");
         sb.AppendLine($"{indent}{{");
 
         if (paramsDef.Properties != null)

@@ -25,6 +25,8 @@ public sealed class BlueBlazeGenerateSourceCode : Task
 
     public bool DebugBreakOnExecute { get; set; }
 
+    public bool GenerateTypeInfo { get; set; }
+
     [Output]
     public ITaskItem[] GeneratedFiles { get; set; } = [];
 
@@ -54,7 +56,7 @@ public sealed class BlueBlazeGenerateSourceCode : Task
             items.Add(item);
         }
 
-        var result = LexiconCodeGenerator.Generate(items, this.GeneratedCodeNamespace);
+        var result = LexiconCodeGenerator.Generate(items, this.GeneratedCodeNamespace, this.GenerateTypeInfo);
 
         foreach (var diag in result.Diagnostics)
         {

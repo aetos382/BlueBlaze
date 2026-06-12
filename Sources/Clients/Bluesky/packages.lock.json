@@ -102,12 +102,6 @@
           "System.Text.Json": "[10.0.9, )"
         }
       },
-      "BlueBlaze.Models.Bluesky": {
-        "type": "Project",
-        "dependencies": {
-          "System.Text.Json": "[10.0.9, )"
-        }
-      },
       "System.Net.Http.Json": {
         "type": "CentralTransitive",
         "requested": "[10.0.9, )",
@@ -164,9 +158,6 @@
         }
       },
       "BlueBlaze.Client.Core": {
-        "type": "Project"
-      },
-      "BlueBlaze.Models.Bluesky": {
         "type": "Project"
       }
     },

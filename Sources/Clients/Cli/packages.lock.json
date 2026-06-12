@@ -42,14 +42,10 @@
         "type": "Project",
         "dependencies": {
           "BlueBlaze.Client.AtProtocol": "[1.0.0, )",
-          "BlueBlaze.Client.Core": "[1.0.0, )",
-          "BlueBlaze.Models.Bluesky": "[1.0.0, )"
+          "BlueBlaze.Client.Core": "[1.0.0, )"
         }
       },
       "BlueBlaze.Client.Core": {
-        "type": "Project"
-      },
-      "BlueBlaze.Models.Bluesky": {
         "type": "Project"
       }
     },

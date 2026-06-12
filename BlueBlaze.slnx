@@ -17,14 +17,14 @@
     <Project Path="Sources/Clients/Cli/Client.Cli.csproj" />
     <Project Path="Sources/Clients/Core/Client.Core.csproj" />
   </Folder>
-  <Folder Name="/Sources/Models/">
-    <Project Path="Sources/Models/AtProtocol/Models.AtProtocol.csproj" />
-    <Project Path="Sources/Models/Bluesky/Models.Bluesky.csproj" />
-  </Folder>
+  <Folder Name="/Sources/Clients/Core/" />
   <Folder Name="/Tests/" />
   <Folder Name="/Tests/Clients/">
     <Project Path="Tests/Clients/AtProtocol/Client.AtProtocol.Tests.csproj" />
     <Project Path="Tests/Clients/Bluesky/Client.Bluesky.Tests.csproj" />
+  </Folder>
+  <Folder Name="/Tests/Clients/Core/">
+    <Project Path="Tests/Clients/Core/Client.Core.Tests.csproj" />
   </Folder>
   <Folder Name="/Tests/Generators/" />
   <Folder Name="/Tests/Generators/LexiconGenerator/">
