@@ -81,6 +81,66 @@ public sealed class LexiconCodeGenerator
         return new GenerateResult(files, diagnostics);
     }
 
+    public static GenerateResult GenerateClientExtensions(
+        IReadOnlyList<ParseResult> parseResults,
+        string generatedCodeNamespace)
+    {
+        ArgumentNullException.ThrowIfNull(parseResults);
+
+        var files = new List<GeneratedSourceFile>();
+        var diagnostics = new List<Diagnostic>();
+
+        var documents = new List<LexiconDocumentWithInfo>(parseResults.Count);
+        foreach (var pr in parseResults)
+        {
+            diagnostics.AddRange(pr.Diagnostics);
+            if (pr.Document != null)
+            {
+                documents.Add(pr.Document);
+            }
+        }
+
+        // query / procedure を持つ Lexicon から NSID プレフィックスを収集
+        var seenPrefixes = new System.Collections.Generic.HashSet<string>(StringComparer.Ordinal);
+
+        foreach (var docInfo in documents)
+        {
+            var nsid = docInfo.Document.Id;
+            if (!docInfo.Document.Definitions.TryGetValue("main", out var mainDef))
+            {
+                continue;
+            }
+
+            if (mainDef is not (QueryDefinition or ProcedureDefinition))
+            {
+                continue;
+            }
+
+            var segments = Generation.LexiconNameHelper.NsidToSegments(nsid);
+            for (var i = 1; i < segments.Length; i++)
+            {
+                seenPrefixes.Add(string.Join(".", segments, 0, i));
+            }
+        }
+
+        // 短い順（親から子の順）でプレフィックスファイルを生成
+        var sortedPrefixes = new List<string>(seenPrefixes);
+        sortedPrefixes.Sort(StringComparer.Ordinal);
+
+        foreach (var prefix in sortedPrefixes)
+        {
+            Generation.ClientPrefixEmitter.Emit(prefix.Split('.'), generatedCodeNamespace, files);
+        }
+
+        // Lexicon メソッドファイルを生成
+        foreach (var docInfo in documents)
+        {
+            Generation.ClientMethodEmitter.Emit(docInfo, generatedCodeNamespace, generatedCodeNamespace, files);
+        }
+
+        return new GenerateResult(files, diagnostics);
+    }
+
     private static Dictionary<string, LexiconType?> BuildNsidIndex(
         IReadOnlyList<LexiconDocumentWithInfo> documents)
     {
