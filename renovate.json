@@ -19,27 +19,16 @@
   "git-submodules": {
     "enabled": true
   },
-  "ignorePaths": [
-    "PackageTest/**"
-  ],
   "nuget": {
-    "ignorePaths": [
-      "PackageTest/**",
-      "Generators/Generators.Core/**",
-      "Generators/Generators.MSBuild/**",
-      "Generators/Generators.Roslyn/**"
-    ]
+    "lockFileMaintenance": {
+      "enabled": false
+    }
   },
   "packageRules": [
     {
       "matchDepNames": ["node"],
       "allowedVersions": "/^(\\d*[02468])\\./",
       "description": "Node.js LTS (even major) only"
-    },
-    {
-      "matchDepNames": ["/^BlueBlaze\\./"],
-      "enabled": false,
-      "description": "Exclude self-produced packages from Renovate management"
     },
     {
       "matchDatasources": ["nuget"],
