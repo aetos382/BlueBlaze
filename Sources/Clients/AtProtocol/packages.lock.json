@@ -96,12 +96,6 @@
           "System.Text.Json": "[10.0.9, )"
         }
       },
-      "BlueBlaze.Models.AtProtocol": {
-        "type": "Project",
-        "dependencies": {
-          "System.Text.Json": "[10.0.9, )"
-        }
-      },
       "System.Net.Http.Json": {
         "type": "CentralTransitive",
         "requested": "[10.0.9, )",
@@ -152,9 +146,6 @@
         "contentHash": "i5z+cNu/cOcdO0AgFB8aXk8w6In2H+haaDfSgd9ImvQIK+rSHavHZIogVoAZLL8jLwYx4bAcs5b7EyuMMG4mQQ=="
       },
       "BlueBlaze.Client.Core": {
-        "type": "Project"
-      },
-      "BlueBlaze.Models.AtProtocol": {
         "type": "Project"
       }
     },

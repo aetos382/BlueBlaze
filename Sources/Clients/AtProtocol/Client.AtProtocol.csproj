@@ -14,13 +14,11 @@
 
   <PropertyGroup>
     <BlueBlazeGeneratorRunAsBuildTask>true</BlueBlazeGeneratorRunAsBuildTask>
-    <BlueBlazeGeneratorGenerateClientExtensions>true</BlueBlazeGeneratorGenerateClientExtensions>
-    <BlueBlazeGeneratedCodeNamespace>BlueBlaze.Models.AtProtocol.Generated</BlueBlazeGeneratedCodeNamespace>
+    <BlueBlazeGeneratedCodeNamespace>BlueBlaze.Client.AtProtocol.Generated</BlueBlazeGeneratedCodeNamespace>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="../Core/Client.Core.csproj" />
-    <ProjectReference Include="../../Models/AtProtocol/Models.AtProtocol.csproj" />
     <ProjectReference Include="../../../Generators/LexiconGenerator/MSBuild/LexiconGenerator.MSBuild.csproj">
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>

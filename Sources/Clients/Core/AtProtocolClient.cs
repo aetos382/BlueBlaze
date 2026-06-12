@@ -1,13 +1,13 @@
-using System.Collections.Generic;
+using System;
 using System.Net.Http;
 using System.Net.Http.Json;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace BlueBlaze.Client.Core;
 
-public class AtProtocolClient : IAtProtocolClient
+public class AtProtocolClient :
+    IAtProtocolClient
 {
     private readonly HttpClient _httpClient;
 
@@ -16,69 +16,55 @@ public class AtProtocolClient : IAtProtocolClient
         this._httpClient = httpClient;
     }
 
-    public async ValueTask<TResponse> SendQueryAsync<TResponse>(
-        string nsid,
-        IReadOnlyDictionary<string, string?>? queryParameters,
-        CancellationToken cancellationToken)
+    public async ValueTask<LexiconResponse<TOutput>> SendAsync<TOutput>(
+        ILexiconRequest request,
+        IResponseDeserializer<TOutput> responseDeserializer,
+        CancellationToken cancellationToken = default)
     {
-        var uri = new System.Uri(BuildUriString(nsid, queryParameters), System.UriKind.Relative);
-        var response = await this._httpClient.GetAsync(uri, cancellationToken).ConfigureAwait(false);
-        response.EnsureSuccessStatusCode();
-        var result = await response.Content.ReadFromJsonAsync<TResponse>(cancellationToken: cancellationToken).ConfigureAwait(false);
-        return result!;
-    }
+        ArgumentNullException.ThrowIfNull(request);
+        ArgumentNullException.ThrowIfNull(responseDeserializer);
 
-    public async ValueTask<TResponse> SendProcedureAsync<TRequest, TResponse>(
-        string nsid,
-        TRequest request,
-        CancellationToken cancellationToken)
-    {
-        var response = await this._httpClient.PostAsJsonAsync($"xrpc/{nsid}", request, cancellationToken).ConfigureAwait(false);
-        response.EnsureSuccessStatusCode();
-        var result = await response.Content.ReadFromJsonAsync<TResponse>(cancellationToken: cancellationToken).ConfigureAwait(false);
-        return result!;
-    }
+        var queryParameters = request.Parameters?.ToDictionary().ToUriParameterString();
 
-    public async ValueTask SendProcedureAsync<TRequest>(
-        string nsid,
-        TRequest request,
-        CancellationToken cancellationToken)
-    {
-        var response = await this._httpClient.PostAsJsonAsync($"xrpc/{nsid}", request, cancellationToken).ConfigureAwait(false);
-        response.EnsureSuccessStatusCode();
-    }
-
-    private static string BuildUriString(string nsid, IReadOnlyDictionary<string, string?>? queryParameters)
-    {
-        if (queryParameters == null || queryParameters.Count == 0)
+        var uriBuilder = new UriBuilder(this._httpClient.BaseAddress!)
         {
-            return $"xrpc/{nsid}";
+            Path = $"/xrpc/{request.Nsid}",
+            Query = queryParameters
+        };
+
+        var requestUri = uriBuilder.Uri;
+
+        using var requestMessage = new HttpRequestMessage(request.Method, requestUri)
+        {
+            Content = request.Input?.ToHttpContent()
+        };
+
+        using var responseMessage = await this._httpClient
+            .SendAsync(requestMessage, cancellationToken)
+            .ConfigureAwait(false);
+
+        if (!responseMessage.IsSuccessStatusCode)
+        {
+            var error = await responseMessage.Content
+                .ReadFromJsonAsync(ErrorSerializerContext.Default.LexiconError, cancellationToken)
+                .ConfigureAwait(false);
+
+            throw new LexiconException(
+                requestUri,
+                responseMessage.StatusCode,
+                responseMessage.Headers,
+                error!);
         }
 
-        var sb = new StringBuilder();
-        sb.Append("xrpc/");
-        sb.Append(nsid);
-        sb.Append('?');
+        var output = await responseDeserializer
+            .DeserializeAsync(responseMessage.Content, cancellationToken)
+            .ConfigureAwait(false);
 
-        var first = true;
-        foreach (var kv in queryParameters)
+        return new LexiconResponse<TOutput>
         {
-            if (kv.Value == null)
-            {
-                continue;
-            }
-
-            if (!first)
-            {
-                sb.Append('&');
-            }
-
-            sb.Append(System.Uri.EscapeDataString(kv.Key));
-            sb.Append('=');
-            sb.Append(System.Uri.EscapeDataString(kv.Value));
-            first = false;
-        }
-
-        return sb.ToString();
+            StatusCode = responseMessage.StatusCode,
+            Headers = responseMessage.Headers,
+            Output = output
+        };
     }
 }

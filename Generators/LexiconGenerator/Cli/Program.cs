@@ -22,11 +22,18 @@ var namespaceOption = new Option<string>("--namespace", ["-n"])
     Required = true
 };
 
+var generateTypeInfoOption = new Option<bool>("--generate-type-info")
+{
+    Description = "JsonTypeInfo ベースのデシリアライザーを生成する（AOT/トリミング対応）",
+    DefaultValueFactory = _ => false
+};
+
 var rootCommand = new RootCommand("BlueBlaze Lexicon コードジェネレーター")
 {
     inputArgument,
     outputOption,
-    namespaceOption
+    namespaceOption,
+    generateTypeInfoOption
 };
 
 rootCommand.SetAction(async (parseResult, ct) =>
@@ -34,11 +41,12 @@ rootCommand.SetAction(async (parseResult, ct) =>
     var inputs = parseResult.GetRequiredValue(inputArgument);
     var outputDir = parseResult.GetRequiredValue(outputOption);
     var ns = parseResult.GetRequiredValue(namespaceOption);
+    var generateTypeInfo = parseResult.GetValue(generateTypeInfoOption);
 
     var config = parseResult.InvocationConfiguration;
 
     return await GenerateHandler
-        .RunAsync(inputs, outputDir, ns, config.Error, ct)
+        .RunAsync(inputs, outputDir, ns, generateTypeInfo, config.Error, ct)
         .ConfigureAwait(false);
 });
 

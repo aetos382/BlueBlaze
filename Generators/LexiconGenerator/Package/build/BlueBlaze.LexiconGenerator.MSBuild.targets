@@ -42,7 +42,7 @@
       LexiconDocuments="@(LexiconDocument)"
       OutputPath="$(IntermediateOutputPath)GeneratedSources/BlueBlaze.LexiconGenerator/"
       GeneratedCodeNamespace="$(BlueBlazeGeneratedCodeNamespace)"
-      GenerateClientExtensions="$(BlueBlazeGeneratorGenerateClientExtensions)"
+      GenerateTypeInfo="$(BlueBlazeGeneratorGenerateTypeInfo)"
       DebugBreakOnExecute="$(BlueBlazeGenerateLexiconSourceCodeTaskDebugBreakOnExecute)">
 
       <Output TaskParameter="GeneratedFiles" ItemName="GeneratedLexiconSources" />

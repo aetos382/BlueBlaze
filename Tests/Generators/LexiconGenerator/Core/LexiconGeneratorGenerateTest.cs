@@ -72,14 +72,14 @@ public sealed class LexiconGeneratorGenerateTest
 
         var file = result.Files[0];
         Assert.AreEqual($"{Namespace}.Com.Atproto.Repo.Defs.CommitMeta.g.cs", file.HintName);
-        StringAssert.Contains(file.SourceText, "public static partial class Defs", StringComparison.Ordinal);
+        StringAssert.Contains(file.SourceText, "public sealed partial class Defs", StringComparison.Ordinal);
         StringAssert.Contains(file.SourceText, "public sealed partial class CommitMeta", StringComparison.Ordinal);
         StringAssert.Contains(file.SourceText, "public required string Cid { get; init; }", StringComparison.Ordinal);
         StringAssert.Contains(file.SourceText, "public required string Rev { get; init; }", StringComparison.Ordinal);
     }
 
     [TestMethod]
-    public void Query型_ResponseクラスとSubDefが兄弟クラスとして生成される()
+    public void Query型_OutputクラスとSubDefが兄弟クラスとして生成される()
     {
         var json = /*lang=json*/ """
         {
@@ -116,16 +116,15 @@ public sealed class LexiconGeneratorGenerateTest
         var result = Generate(json);
 
         AssertNoErrors(result);
-        Assert.AreEqual(2, result.Files.Count);
 
-        var responseFile = result.Files.Single(f => f.HintName == $"{Namespace}.Com.Example.DoQuery.Response.g.cs");
-        StringAssert.Contains(responseFile.SourceText, "public sealed partial class Response", StringComparison.Ordinal);
-        // ResponseItem は Response にネストされず兄弟クラスとして global:: 修飾で参照される
-        StringAssert.Contains(responseFile.SourceText, $"global::{Namespace}.Com.Example.DoQuery.ResponseItem", StringComparison.Ordinal);
+        var outputFile = result.Files.Single(f => f.HintName == $"{Namespace}.Com.Example.DoQuery.Output.g.cs");
+        StringAssert.Contains(outputFile.SourceText, "public sealed partial class Output", StringComparison.Ordinal);
+        // OutputItem は Output にネストされず兄弟クラスとして global:: 修飾で参照される
+        StringAssert.Contains(outputFile.SourceText, $"global::{Namespace}.Com.Example.DoQuery.OutputItem", StringComparison.Ordinal);
 
-        // ResponseItem は Response にネストされず DoQuery の直下に配置される (ファイル名がフラット構造を示す)
-        var itemFile = result.Files.Single(f => f.HintName == $"{Namespace}.Com.Example.DoQuery.ResponseItem.g.cs");
-        StringAssert.Contains(itemFile.SourceText, "public sealed partial class ResponseItem", StringComparison.Ordinal);
+        // OutputItem は Output にネストされず DoQuery の直下に配置される (ファイル名がフラット構造を示す)
+        var itemFile = result.Files.Single(f => f.HintName == $"{Namespace}.Com.Example.DoQuery.OutputItem.g.cs");
+        StringAssert.Contains(itemFile.SourceText, "public sealed partial class OutputItem", StringComparison.Ordinal);
         StringAssert.Contains(itemFile.SourceText, "public required string Name { get; init; }", StringComparison.Ordinal);
     }
 
