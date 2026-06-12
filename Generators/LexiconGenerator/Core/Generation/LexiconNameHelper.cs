@@ -61,7 +61,7 @@ internal static class LexiconNameHelper
     internal static string GetMainClassName(string nsid)
     {
         var dot = nsid.LastIndexOf('.');
-        return ToPascalCase(dot < 0 ? nsid : nsid.Substring(dot + 1));
+        return ToPascalCase(dot < 0 ? nsid : nsid[(dot + 1)..]);
     }
 
     // Returns the C# type name for a non-main def in a defs-only file.
@@ -86,7 +86,7 @@ internal static class LexiconNameHelper
         if (refStr.StartsWith("#", StringComparison.Ordinal))
         {
             targetNsid = currentNsid;
-            defKey = refStr.Substring(1);
+            defKey = refStr[1..];
         }
         else
         {
@@ -98,8 +98,8 @@ internal static class LexiconNameHelper
             }
             else
             {
-                targetNsid = refStr.Substring(0, hash);
-                defKey = refStr.Substring(hash + 1);
+                targetNsid = refStr[..hash];
+                defKey = refStr[(hash + 1)..];
             }
         }
 
@@ -163,7 +163,7 @@ internal static class LexiconNameHelper
     {
         if (refStr.StartsWith("#", StringComparison.Ordinal))
         {
-            return (currentNsid, refStr.Substring(1));
+            return (currentNsid, refStr[1..]);
         }
 
         var hash = refStr.IndexOf('#');
@@ -172,7 +172,7 @@ internal static class LexiconNameHelper
             return (refStr, "main");
         }
 
-        return (refStr.Substring(0, hash), refStr.Substring(hash + 1));
+        return (refStr[..hash], refStr[(hash + 1)..]);
     }
 
     // Builds the $type discriminator value for a ref (NSID form without #main).
@@ -180,7 +180,7 @@ internal static class LexiconNameHelper
     {
         if (refStr.EndsWith("#main", StringComparison.Ordinal))
         {
-            return refStr.Substring(0, refStr.Length - 5);
+            return refStr[..^5];
         }
 
         return refStr;

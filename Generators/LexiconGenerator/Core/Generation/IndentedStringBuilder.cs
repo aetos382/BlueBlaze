@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Text;
 
@@ -36,8 +37,13 @@ internal sealed class IndentedStringBuilder
         return new IndentScope(this);
     }
 
-    private void Dedent()
+    internal void Dedent()
     {
+        if (this._indentLevel == 0)
+        {
+            throw new InvalidOperationException("Cannot dedent below zero.");
+        }
+
         this._indentLevel--;
     }
 

@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="Microsoft.Bcl.Memory" />
     <PackageReference Include="System.Memory" />
     <PackageReference Include="System.Text.Json" />
   </ItemGroup>

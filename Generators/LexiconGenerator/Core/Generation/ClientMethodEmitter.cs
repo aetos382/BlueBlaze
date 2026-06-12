@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace BlueBlaze.LexiconGenerator.Core.Generation;
 
@@ -23,19 +22,23 @@ internal static class ClientMethodEmitter
 
         if (mainDef is QueryDefinition queryDef)
         {
-            EmitMethod(nsid,
+            EmitMethod(
+                nsid,
                 hasParameters: queryDef.Parameters?.Properties?.Count > 0,
                 hasInput: false,
                 hasOutput: queryDef.Output?.Schema is ObjectDefinition,
-                generatedCodeNamespace, files);
+                generatedCodeNamespace,
+                files);
         }
         else if (mainDef is ProcedureDefinition procDef)
         {
-            EmitMethod(nsid,
+            EmitMethod(
+                nsid,
                 hasParameters: false,
                 hasInput: procDef.Input?.Schema is ObjectDefinition,
                 hasOutput: procDef.Output?.Schema is ObjectDefinition,
-                generatedCodeNamespace, files);
+                generatedCodeNamespace,
+                files);
         }
     }
 
@@ -51,7 +54,7 @@ internal static class ClientMethodEmitter
         var containerSegments = new string[segments.Length - 1];
         Array.Copy(segments, containerSegments, segments.Length - 1);
 
-        var methodName = segments[segments.Length - 1] + "Async";
+        var methodName = segments[^1] + "Async";
         var modelPath = string.Join(".", segments);
         var modelType = $"global::{generatedCodeNamespace}.{modelPath}";
 
@@ -71,76 +74,97 @@ internal static class ClientMethodEmitter
             ? $"{modelType}.Deserializer.Instance"
             : $"{CoreNs}.VoidOutputDeserializer.Instance";
 
-        var sb = new StringBuilder();
-        EmitFileHeader(sb, generatedCodeNamespace);
+        var isb = new IndentedStringBuilder();
+        EmitFileHeader(isb, generatedCodeNamespace);
 
-        sb.AppendLine("public static partial class AtProtocolClientExtensions");
-        sb.AppendLine("{");
-
-        OpenPartialStructContainers(sb, containerSegments);
-
-        var methodIndent = new string(' ', (containerSegments.Length + 1) * 4);
-        var callIndent = methodIndent + "    ";
-
-        sb.Append($"{methodIndent}public {returnType} {methodName}(");
-
-        if (hasInput)
+        isb.AppendLine("public static partial class AtProtocolClientExtensions");
+        isb.AppendLine("{");
+        using (isb.Indent())
         {
-            sb.AppendLine();
-            sb.Append($"{callIndent}{modelType}.Input input,");
-        }
-        else if (hasParameters)
-        {
-            sb.AppendLine();
-            sb.Append($"{callIndent}{modelType}.Parameters? parameters = null,");
-        }
+            OpenPartialStructContainers(isb, containerSegments);
 
-        if (hasInput || hasParameters)
-        {
-            sb.AppendLine();
-            sb.Append($"{callIndent}");
+            if (hasInput)
+            {
+                isb.AppendLine($"public {returnType} {methodName}(");
+                using (isb.Indent())
+                {
+                    isb.AppendLine($"{modelType}.Input input,");
+                    isb.AppendLine($"global::System.Threading.CancellationToken cancellationToken = default) =>");
+                    isb.AppendLine("client.SendAsync(");
+                    using (isb.Indent())
+                    {
+                        isb.AppendLine($"{requestExpr},");
+                        isb.AppendLine($"{deserializerExpr},");
+                        isb.AppendLine("cancellationToken);");
+                    }
+                }
+            }
+            else if (hasParameters)
+            {
+                isb.AppendLine($"public {returnType} {methodName}(");
+                using (isb.Indent())
+                {
+                    isb.AppendLine($"{modelType}.Parameters? parameters = null,");
+                    isb.AppendLine($"global::System.Threading.CancellationToken cancellationToken = default) =>");
+                    isb.AppendLine("client.SendAsync(");
+                    using (isb.Indent())
+                    {
+                        isb.AppendLine($"{requestExpr},");
+                        isb.AppendLine($"{deserializerExpr},");
+                        isb.AppendLine("cancellationToken);");
+                    }
+                }
+            }
+            else
+            {
+                isb.AppendLine($"public {returnType} {methodName}(global::System.Threading.CancellationToken cancellationToken = default) =>");
+                using (isb.Indent())
+                {
+                    isb.AppendLine("client.SendAsync(");
+                    using (isb.Indent())
+                    {
+                        isb.AppendLine($"{requestExpr},");
+                        isb.AppendLine($"{deserializerExpr},");
+                        isb.AppendLine("cancellationToken);");
+                    }
+                }
+            }
+
+            ClosePartialStructContainers(isb, containerSegments);
         }
-
-        sb.AppendLine($"global::System.Threading.CancellationToken cancellationToken = default) =>");
-        sb.AppendLine($"{callIndent}client.SendAsync(");
-        sb.AppendLine($"{callIndent}    {requestExpr},");
-        sb.AppendLine($"{callIndent}    {deserializerExpr},");
-        sb.AppendLine($"{callIndent}    cancellationToken);");
-
-        ClosePartialStructContainers(sb, containerSegments);
-        sb.AppendLine("}");
+        isb.AppendLine("}");
 
         var hintName = LexiconNameHelper.GetHintNameBase(generatedCodeNamespace, modelPath + ".Client") + ".g.cs";
-        files.Add(new GeneratedSourceFile(hintName, sb.ToString()));
+        files.Add(new GeneratedSourceFile(hintName, isb.ToString()));
     }
 
-    private static void EmitFileHeader(StringBuilder sb, string generatedCodeNamespace)
+    private static void EmitFileHeader(IndentedStringBuilder isb, string generatedCodeNamespace)
     {
-        sb.AppendLine("// <auto-generated/>");
-        sb.AppendLine("#nullable enable");
-        sb.AppendLine("#pragma warning disable CS1591");
-        sb.AppendLine();
-        sb.AppendLine($"namespace {generatedCodeNamespace};");
-        sb.AppendLine();
+        isb.AppendLine("// <auto-generated/>");
+        isb.AppendLine("#nullable enable");
+        isb.AppendLine("#pragma warning disable CS1591");
+        isb.AppendLine();
+        isb.AppendLine($"namespace {generatedCodeNamespace};");
+        isb.AppendLine();
     }
 
-    private static void OpenPartialStructContainers(StringBuilder sb, string[] containerSegments)
+    private static void OpenPartialStructContainers(IndentedStringBuilder isb, string[] containerSegments)
     {
         for (var i = 0; i < containerSegments.Length; i++)
         {
-            var indent = new string(' ', (i + 1) * 4);
             var structName = ClientPrefixEmitter.ConcatSegments(containerSegments, i + 1);
-            sb.AppendLine($"{indent}public readonly partial struct {structName}");
-            sb.AppendLine($"{indent}{{");
+            isb.AppendLine($"public readonly partial struct {structName}");
+            isb.AppendLine("{");
+            isb.Indent();
         }
     }
 
-    private static void ClosePartialStructContainers(StringBuilder sb, string[] containerSegments)
+    private static void ClosePartialStructContainers(IndentedStringBuilder isb, string[] containerSegments)
     {
         for (var i = containerSegments.Length - 1; i >= 0; i--)
         {
-            var indent = new string(' ', (i + 1) * 4);
-            sb.AppendLine($"{indent}}}");
+            isb.Dedent();
+            isb.AppendLine("}");
         }
     }
 }
