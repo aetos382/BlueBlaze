@@ -31,7 +31,7 @@ public sealed class LexiconException : Exception
     {
         if (error is null)
         {
-            return "Unknown error.";
+            return "unknown error";
         }
         return !string.IsNullOrEmpty(error.Description)
             ? $"Error: {error.Error}, Description: {error.Description}"
