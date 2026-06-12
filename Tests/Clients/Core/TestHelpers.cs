@@ -1,11 +1,10 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-
-using BlueBlaze.Client.Core;
 
 namespace BlueBlaze.Client.Core.Tests;
 
@@ -63,7 +62,10 @@ internal sealed class JsonDeserializer<T> : IResponseDeserializer<T>
 {
     public async ValueTask<T> DeserializeAsync(HttpContent content, CancellationToken cancellationToken = default)
     {
-        var result = await content.ReadFromJsonAsync<T>(cancellationToken).ConfigureAwait(false);
+        var result = await content
+            .ReadFromJsonAsync<T>(cancellationToken)
+            .ConfigureAwait(false);
+
         return result!;
     }
 }
