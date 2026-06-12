@@ -13,6 +13,11 @@ public class AtProtocolClient :
 
     public AtProtocolClient(HttpClient httpClient)
     {
+        ArgumentNullException.ThrowIfNull(httpClient);
+        if (httpClient.BaseAddress is null)
+        {
+            throw new ArgumentException("BaseAddress must be set.", nameof(httpClient));
+        }
         this._httpClient = httpClient;
     }
 
@@ -26,7 +31,7 @@ public class AtProtocolClient :
 
         var queryParameters = request.Parameters?.ToDictionary().ToUriParameterString();
 
-        var uriBuilder = new UriBuilder(this._httpClient.BaseAddress!)
+        var uriBuilder = new UriBuilder(this._httpClient.BaseAddress)
         {
             Path = $"/xrpc/{request.Nsid}",
             Query = queryParameters
