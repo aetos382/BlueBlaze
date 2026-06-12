@@ -10,7 +10,7 @@ public sealed class LexiconException : Exception
         Uri requestUri,
         HttpStatusCode statusCode,
         HttpResponseHeaders responseHeaders,
-        LexiconError error)
+        LexiconError? error)
         : base(CreateMessage(error))
     {
         this.RequestUri = requestUri;
@@ -25,10 +25,14 @@ public sealed class LexiconException : Exception
 
     public HttpResponseHeaders ResponseHeaders { get; }
 
-    public LexiconError Error { get; }
+    public LexiconError? Error { get; }
 
-    private static string CreateMessage(LexiconError error)
+    private static string CreateMessage(LexiconError? error)
     {
+        if (error is null)
+        {
+            return "Unknown error.";
+        }
         return !string.IsNullOrEmpty(error.Description)
             ? $"Error: {error.Error}, Description: {error.Description}"
             : $"Error: {error.Error}";

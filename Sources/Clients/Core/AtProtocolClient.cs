@@ -58,7 +58,7 @@ public class AtProtocolClient :
                 requestUri,
                 responseMessage.StatusCode,
                 responseMessage.Headers,
-                error!);
+                error);
         }
 
         var output = await responseDeserializer
