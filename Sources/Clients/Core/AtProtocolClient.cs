@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BlueBlaze.Client.Core;
 
-public class AtProtocolClient
+public class AtProtocolClient : IAtProtocolClient
 {
     private readonly HttpClient _httpClient;
 
