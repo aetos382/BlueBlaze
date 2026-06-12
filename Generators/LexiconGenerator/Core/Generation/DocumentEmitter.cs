@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Text;
 
 namespace BlueBlaze.LexiconGenerator.Core.Generation;
 
@@ -108,7 +107,7 @@ internal static class DocumentEmitter
         if (isMain && mainType is LexiconType.Record or LexiconType.Object)
         {
             // Case 1: main class — last segment is the class name
-            className = segments[segments.Length - 1];
+            className = segments[^1];
             classPath = string.Join(".", segments);
             hintSuffix = classPath;
         }
@@ -138,34 +137,34 @@ internal static class DocumentEmitter
         // Collect union properties for interface generation
         var unionProps = CollectUnionProperties(objDef);
 
-        var sb = new StringBuilder();
-        EmitFileHeader(sb, generatedCodeNamespace);
+        var isb = new IndentedStringBuilder();
+        EmitFileHeader(isb, generatedCodeNamespace);
 
         if (isMain && mainType is LexiconType.Record or LexiconType.Object)
         {
             // Wrap in parent sealed classes (all segments except last)
-            OpenSealedContainers(sb, segments, 0, segments.Length - 1);
-            ObjectClassEmitter.EmitClass(sb, className, classPath, objDef, nsid, nsidIndex,
-                diagnostics, filePath, defKey, segments.Length - 1,
+            OpenSealedContainers(isb, segments, 0, segments.Length - 1);
+            ObjectClassEmitter.EmitClass(isb, className, classPath, objDef, nsid, nsidIndex,
+                diagnostics, filePath, defKey,
                 isPartial: true, emitJsonAttributes: emitJsonAttributes,
                 defIndex: defIndex, generatedCodeNamespace: generatedCodeNamespace,
                 unionProperties: unionProps);
-            CloseContainers(sb, segments.Length - 1);
+            CloseContainers(isb, segments.Length - 1);
         }
         else
         {
             // Case 1 sub-def, Case 2, Case 3, defs-only
-            OpenSealedContainers(sb, segments, 0, segments.Length);
-            ObjectClassEmitter.EmitClass(sb, className, classPath, objDef, nsid, nsidIndex,
-                diagnostics, filePath, defKey, segments.Length,
+            OpenSealedContainers(isb, segments, 0, segments.Length);
+            ObjectClassEmitter.EmitClass(isb, className, classPath, objDef, nsid, nsidIndex,
+                diagnostics, filePath, defKey,
                 isPartial: true, emitJsonAttributes: emitJsonAttributes,
                 defIndex: defIndex, generatedCodeNamespace: generatedCodeNamespace,
                 unionProperties: unionProps);
-            CloseContainers(sb, segments.Length);
+            CloseContainers(isb, segments.Length);
         }
 
         var hintName = LexiconNameHelper.GetHintNameBase(generatedCodeNamespace, hintSuffix) + ".g.cs";
-        files.Add(new GeneratedSourceFile(hintName, sb.ToString()));
+        files.Add(new GeneratedSourceFile(hintName, isb.ToString()));
 
         // Queue union member partial class files (interfacePath は相対パスで格納し EmitUnionMemberImpl でグローバル化する)
         foreach (var up in unionProps)
@@ -268,59 +267,52 @@ internal static class DocumentEmitter
         List<Diagnostic> diagnostics,
         IReadOnlyDictionary<string, LexiconDefinition>? defIndex = null)
     {
-        var sb = new StringBuilder();
-        EmitFileHeader(sb, generatedCodeNamespace);
-        OpenSealedContainers(sb, segments, 0, segments.Length);
+        var isb = new IndentedStringBuilder();
+        EmitFileHeader(isb, generatedCodeNamespace);
+        OpenSealedContainers(isb, segments, 0, segments.Length);
 
-        var indent = new string(' ', segments.Length * 4);
-        var indent1 = new string(' ', (segments.Length + 1) * 4);
-
-        sb.AppendLine($"{indent}public sealed partial class Parameters");
-        sb.AppendLine($"{indent}{{");
-
-        if (paramsDef.Properties != null)
+        isb.AppendLine("public sealed partial class Parameters");
+        isb.AppendLine("{");
+        using (isb.Indent())
         {
-            var requiredSet = new HashSet<string>(paramsDef.Required ?? []);
-            foreach (var kv in paramsDef.Properties)
+            if (paramsDef.Properties != null)
             {
-                var propName = kv.Key;
-                var isReq = requiredSet.Contains(propName);
-                var result = LexiconTypeMapper.Map(kv.Value, isReq, false, nsid, nsidIndex, out var unknownFormat, defIndex, generatedCodeNamespace);
-
-                if (unknownFormat != null)
+                var requiredSet = new HashSet<string>(paramsDef.Required ?? []);
+                foreach (var kv in paramsDef.Properties)
                 {
-                    diagnostics.Add(new Diagnostic(
-                        DiagnosticSeverity.Warning,
-                        DiagnosticMessages.FormatUnknownStringFormat(unknownFormat, nsid, "main"),
-                        filePath, nsid, "main"));
-                }
+                    var propName = kv.Key;
+                    var isReq = requiredSet.Contains(propName);
+                    var result = LexiconTypeMapper.Map(kv.Value, isReq, false, nsid, nsidIndex, out var unknownFormat, defIndex, generatedCodeNamespace);
 
-                if (result == null)
-                {
-                    continue;
-                }
+                    if (unknownFormat != null)
+                    {
+                        diagnostics.Add(new Diagnostic(
+                            DiagnosticSeverity.Warning,
+                            DiagnosticMessages.FormatUnknownStringFormat(unknownFormat, nsid, "main"),
+                            filePath, nsid, "main"));
+                    }
 
-                var csPropName = LexiconNameHelper.ToPascalCase(propName);
-                // No [JsonPropertyName] for URL query string parameters
-                if (isReq)
-                {
-                    sb.AppendLine($"{indent1}public required {result.CSharpType} {csPropName} {{ get; init; }}");
-                }
-                else
-                {
-                    sb.AppendLine($"{indent1}public {result.CSharpType} {csPropName} {{ get; init; }}");
-                }
+                    if (result == null)
+                    {
+                        continue;
+                    }
 
-                sb.AppendLine();
+                    var csPropName = LexiconNameHelper.ToPascalCase(propName);
+                    // No [JsonPropertyName] for URL query string parameters
+                    isb.AppendLine(isReq
+                        ? $"public required {result.CSharpType} {csPropName} {{ get; init; }}"
+                        : $"public {result.CSharpType} {csPropName} {{ get; init; }}");
+
+                    isb.AppendLine();
+                }
             }
         }
-
-        sb.AppendLine($"{indent}}}");
-        CloseContainers(sb, segments.Length);
+        isb.AppendLine("}");
+        CloseContainers(isb, segments.Length);
 
         var classPath = string.Join(".", segments) + ".Parameters";
         var hintName = LexiconNameHelper.GetHintNameBase(generatedCodeNamespace, classPath) + ".g.cs";
-        files.Add(new GeneratedSourceFile(hintName, sb.ToString()));
+        files.Add(new GeneratedSourceFile(hintName, isb.ToString()));
     }
 
     private static void EmitOperationDataClass(
@@ -339,21 +331,21 @@ internal static class DocumentEmitter
     {
         var unionProps = CollectUnionProperties(objDef);
 
-        var sb = new StringBuilder();
-        EmitFileHeader(sb, generatedCodeNamespace);
-        OpenSealedContainers(sb, segments, 0, segments.Length);
+        var isb = new IndentedStringBuilder();
+        EmitFileHeader(isb, generatedCodeNamespace);
+        OpenSealedContainers(isb, segments, 0, segments.Length);
 
         var classPath = string.Join(".", segments) + "." + className;
-        ObjectClassEmitter.EmitClass(sb, className, classPath, objDef, nsid, nsidIndex,
-            diagnostics, filePath, "main", segments.Length,
+        ObjectClassEmitter.EmitClass(isb, className, classPath, objDef, nsid, nsidIndex,
+            diagnostics, filePath, "main",
             isPartial: true, emitJsonAttributes: emitJsonAttributes,
             defIndex: defIndex, generatedCodeNamespace: generatedCodeNamespace,
             unionProperties: unionProps);
 
-        CloseContainers(sb, segments.Length);
+        CloseContainers(isb, segments.Length);
 
         var hintName = LexiconNameHelper.GetHintNameBase(generatedCodeNamespace, classPath) + ".g.cs";
-        files.Add(new GeneratedSourceFile(hintName, sb.ToString()));
+        files.Add(new GeneratedSourceFile(hintName, isb.ToString()));
 
         // Queue union member partial class files (interfacePath は相対パスで格納し EmitUnionMemberImpl でグローバル化する)
         foreach (var up in unionProps)
@@ -382,26 +374,25 @@ internal static class DocumentEmitter
             return;
         }
 
-        var sb = new StringBuilder();
-        EmitFileHeader(sb, generatedCodeNamespace);
+        var isb = new IndentedStringBuilder();
+        EmitFileHeader(isb, generatedCodeNamespace);
 
-        OpenSealedContainers(sb, parts, 0, parts.Length - 1);
+        OpenSealedContainers(isb, parts, 0, parts.Length - 1);
 
-        var indent = new string(' ', (parts.Length - 1) * 4);
-        var className = parts[parts.Length - 1];
+        var className = parts[^1];
         var globalInterfacePath = LexiconNameHelper.GlobalizeTypePath(interfacePath, generatedCodeNamespace);
-        sb.AppendLine($"{indent}public sealed partial class {className} : {globalInterfacePath} {{ }}");
-        sb.AppendLine();
+        isb.AppendLine($"public sealed partial class {className} : {globalInterfacePath} {{ }}");
+        isb.AppendLine();
 
-        CloseContainers(sb, parts.Length - 1);
+        CloseContainers(isb, parts.Length - 1);
 
         // HintName encodes both member path and interface
-        var interfaceShort = interfacePath.Replace(".", "_");
+        var interfaceShort = interfacePath.Replace('.', '_');
         var hintName = LexiconNameHelper.GetHintNameBase(
             generatedCodeNamespace,
             memberTypePath + "." + interfaceShort) + ".g.cs";
 
-        files.Add(new GeneratedSourceFile(hintName, sb.ToString()));
+        files.Add(new GeneratedSourceFile(hintName, isb.ToString()));
     }
 
     private static Dictionary<string, UnionDefinition> CollectUnionProperties(ObjectDefinition objDef)
@@ -422,34 +413,34 @@ internal static class DocumentEmitter
         return result;
     }
 
-    private static void EmitFileHeader(StringBuilder sb, string? generatedCodeNamespace)
+    private static void EmitFileHeader(IndentedStringBuilder isb, string? generatedCodeNamespace)
     {
-        sb.AppendLine("// <auto-generated/>");
-        sb.AppendLine("#nullable enable");
-        sb.AppendLine();
+        isb.AppendLine("// <auto-generated/>");
+        isb.AppendLine("#nullable enable");
+        isb.AppendLine();
         if (!string.IsNullOrEmpty(generatedCodeNamespace))
         {
-            sb.AppendLine($"namespace {generatedCodeNamespace};");
-            sb.AppendLine();
+            isb.AppendLine($"namespace {generatedCodeNamespace};");
+            isb.AppendLine();
         }
     }
 
-    private static void OpenSealedContainers(StringBuilder sb, string[] segments, int start, int end)
+    private static void OpenSealedContainers(IndentedStringBuilder isb, string[] segments, int start, int end)
     {
         for (var i = start; i < end; i++)
         {
-            var indent = new string(' ', i * 4);
-            sb.AppendLine($"{indent}public sealed partial class {segments[i]}");
-            sb.AppendLine($"{indent}{{");
+            isb.AppendLine($"public sealed partial class {segments[i]}");
+            isb.AppendLine("{");
+            isb.Indent();
         }
     }
 
-    private static void CloseContainers(StringBuilder sb, int count)
+    private static void CloseContainers(IndentedStringBuilder isb, int count)
     {
         for (var i = count - 1; i >= 0; i--)
         {
-            var indent = new string(' ', i * 4);
-            sb.AppendLine($"{indent}}}");
+            isb.Dedent();
+            isb.AppendLine("}");
         }
     }
 

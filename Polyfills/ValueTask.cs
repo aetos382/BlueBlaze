@@ -2,6 +2,8 @@
 
 namespace System.Threading.Tasks;
 
+#pragma warning disable CA1034
+
 public static class ValueTaskExtensions
 {
     extension(ValueTask)
