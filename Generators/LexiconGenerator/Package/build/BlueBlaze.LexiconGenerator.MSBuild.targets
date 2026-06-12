@@ -1,5 +1,9 @@
 <Project>
   <PropertyGroup>
+    <BlueBlazeGeneratorGenerateTypeInfo Condition="'$(BlueBlazeGeneratorGenerateTypeInfo)' == ''">true</BlueBlazeGeneratorGenerateTypeInfo>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <_BlueBlazeGeneratorBuildTaskRuntime>CurrentRuntime</_BlueBlazeGeneratorBuildTaskRuntime>
     <_BlueBlazeGeneratorBuildTaskRuntime Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(MSBuildVersion)', '18.0'))">NET</_BlueBlazeGeneratorBuildTaskRuntime>
 

@@ -9,6 +9,7 @@ internal static class ClientMethodEmitter
 
     internal static void Emit(
         LexiconDocumentWithInfo docInfo,
+        bool generateTypeInfo,
         string generatedCodeNamespace,
         List<GeneratedSourceFile> files)
     {
@@ -27,6 +28,7 @@ internal static class ClientMethodEmitter
                 hasParameters: queryDef.Parameters?.Properties?.Count > 0,
                 hasInput: false,
                 hasOutput: queryDef.Output?.Schema is ObjectDefinition,
+                generateTypeInfo,
                 generatedCodeNamespace,
                 files);
         }
@@ -37,6 +39,7 @@ internal static class ClientMethodEmitter
                 hasParameters: false,
                 hasInput: procDef.Input?.Schema is ObjectDefinition,
                 hasOutput: procDef.Output?.Schema is ObjectDefinition,
+                generateTypeInfo,
                 generatedCodeNamespace,
                 files);
         }
@@ -47,6 +50,7 @@ internal static class ClientMethodEmitter
         bool hasParameters,
         bool hasInput,
         bool hasOutput,
+        bool generateTypeInfo,
         string generatedCodeNamespace,
         List<GeneratedSourceFile> files)
     {
@@ -83,6 +87,11 @@ internal static class ClientMethodEmitter
         {
             OpenPartialStructContainers(isb, containerSegments);
 
+            if (!generateTypeInfo)
+            {
+                isb.AppendLine("[global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode(\"JSON serialization and deserialization might require types that cannot be statically analyzed. Use the overload that takes a JsonTypeInfo or JsonSerializerContext.\")]");
+                isb.AppendLine("[global::System.Diagnostics.CodeAnalysis.RequiresDynamicCode(\"JSON serialization and deserialization might require types that cannot be statically analyzed. Use the overload that takes a JsonTypeInfo or JsonSerializerContext.\")]");
+            }
             if (hasInput)
             {
                 isb.AppendLine($"public {returnType} {methodName}(");

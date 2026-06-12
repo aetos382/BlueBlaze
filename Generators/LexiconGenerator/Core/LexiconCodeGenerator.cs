@@ -113,7 +113,7 @@ public sealed class LexiconCodeGenerator
 
                 if (hasInput)
                 {
-                    InputEmitter.Emit(nsid, generatedCodeNamespace, files);
+                    InputEmitter.Emit(nsid, generateTypeInfo, generatedCodeNamespace, files);
                 }
             }
             else
@@ -145,7 +145,13 @@ public sealed class LexiconCodeGenerator
         // Phase 5: Emit client extension methods
         foreach (var docInfo in documents)
         {
-            ClientMethodEmitter.Emit(docInfo, generatedCodeNamespace, files);
+            ClientMethodEmitter.Emit(docInfo, generateTypeInfo, generatedCodeNamespace, files);
+        }
+
+        // Phase 6: Emit JSON serializer context (generateTypeInfo = true のみ)
+        if (generateTypeInfo)
+        {
+            JsonSerializerContextEmitter.Emit(documents, generatedCodeNamespace, files);
         }
 
         return new GenerateResult(files, diagnostics);
