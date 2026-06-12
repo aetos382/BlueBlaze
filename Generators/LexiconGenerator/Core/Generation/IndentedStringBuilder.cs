@@ -22,7 +22,7 @@ internal sealed class IndentedStringBuilder
         {
             if (line.Length > 0)
             {
-                this._sb.Append(this.CurrentIndent);
+                this._sb.Append(' ', this._indentLevel * 4);
             }
 
             this._sb.AppendLine(line);
@@ -46,8 +46,6 @@ internal sealed class IndentedStringBuilder
 
         this._indentLevel--;
     }
-
-    private string CurrentIndent => new(' ', this._indentLevel * 4);
 
     public override string ToString()
     {
