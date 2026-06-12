@@ -2,11 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
+namespace BlueBlaze.Client.Core;
+
 internal static class HttpQueryParameterDictionaryExtensions
 {
     public static string? ToUriParameterString(
         this IReadOnlyDictionary<string, string[]> parameters)
     {
+        ArgumentNullException.ThrowIfNull(parameters);
+
         if (parameters.Count == 0)
         {
             return null;
@@ -21,6 +25,7 @@ internal static class HttpQueryParameterDictionaryExtensions
                 {
                     sb.Append('&');
                 }
+
                 sb.Append(Uri.EscapeDataString(kvp.Key));
                 sb.Append('=');
                 sb.Append(Uri.EscapeDataString(value));
