@@ -3,6 +3,8 @@ using System.Resources;
 
 namespace BlueBlaze.LexiconGenerator.Core;
 
+#pragma warning disable CA1863
+
 internal static class DiagnosticMessages
 {
     private static readonly ResourceManager ResourceManager =

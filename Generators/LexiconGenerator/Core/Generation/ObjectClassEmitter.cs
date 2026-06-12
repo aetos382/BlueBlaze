@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Text;
 
 namespace BlueBlaze.LexiconGenerator.Core.Generation;
 
@@ -150,6 +151,10 @@ internal static class ObjectClassEmitter
 
     private static string EscapeXml(string s)
     {
-        return s.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
+        return new StringBuilder(s)
+            .Replace("&", "&amp;")
+            .Replace("<", "&lt;")
+            .Replace(">", "&gt;")
+            .ToString();
     }
 }

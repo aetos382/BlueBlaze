@@ -83,14 +83,16 @@ internal static class LexiconNameHelper
         string targetNsid;
         string defKey;
 
-        if (refStr.StartsWith("#", StringComparison.Ordinal))
+        if (refStr.StartsWith('#'))
         {
             targetNsid = currentNsid;
             defKey = refStr[1..];
         }
         else
         {
+#pragma warning disable CA1307
             var hash = refStr.IndexOf('#');
+#pragma warning restore CA1307
             if (hash < 0)
             {
                 targetNsid = refStr;
@@ -161,12 +163,14 @@ internal static class LexiconNameHelper
     // Parses a ref string into (targetNsid, defKey).
     internal static (string Nsid, string DefKey) ParseRef(string refStr, string currentNsid)
     {
-        if (refStr.StartsWith("#", StringComparison.Ordinal))
+        if (refStr.StartsWith('#'))
         {
             return (currentNsid, refStr[1..]);
         }
 
+#pragma warning disable CA1307
         var hash = refStr.IndexOf('#');
+#pragma warning restore CA1307
         if (hash < 0)
         {
             return (refStr, "main");

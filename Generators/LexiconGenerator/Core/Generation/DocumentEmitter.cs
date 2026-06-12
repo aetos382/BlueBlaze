@@ -387,7 +387,7 @@ internal static class DocumentEmitter
         CloseContainers(isb, parts.Length - 1);
 
         // HintName encodes both member path and interface
-        var interfaceShort = interfacePath.Replace(".", "_");
+        var interfaceShort = interfacePath.Replace('.', '_');
         var hintName = LexiconNameHelper.GetHintNameBase(
             generatedCodeNamespace,
             memberTypePath + "." + interfaceShort) + ".g.cs";
