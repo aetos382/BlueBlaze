@@ -12,9 +12,7 @@ internal static class ObjectClassEmitter
         string CsType,
         bool IsRequired,
         bool IsValueType,
-        string? Initializer,
-        string[]? EnumValues,
-        string? EnumTypeName);
+        string? Initializer);
 
     internal static void EmitClass(
         IndentedStringBuilder isb,
@@ -48,7 +46,6 @@ internal static class ObjectClassEmitter
                 diagnostics, filePath, defKey, defIndex, generatedCodeNamespace,
                 nullableAnnotationsEnabled);
 
-            EmitNestedEnumTypes(isb, propInfos, emitJsonAttributes);
             EmitProperties(isb, propInfos, emitJsonAttributes);
             EmitConstructor(isb, className, propInfos, emitJsonAttributes);
             EmitNestedUnionInterfaces(isb, unionProperties, nsid, nsidIndex, generatedCodeNamespace, emitJsonAttributes);
@@ -88,21 +85,12 @@ internal static class ObjectClassEmitter
 
             string baseType;
             bool isValueType;
-            string[]? enumValues = null;
-            string? enumTypeName = null;
 
             if (propDef is UnionDefinition)
             {
                 var interfaceName = "I" + LexiconNameHelper.ToPascalCase(propName);
                 baseType = interfaceName;
                 isValueType = false;
-            }
-            else if (propDef is StringDefinition { Enum: { Length: > 0 } enumVals })
-            {
-                enumValues = enumVals;
-                enumTypeName = LexiconNameHelper.ToPascalCase(propName);
-                baseType = enumTypeName;
-                isValueType = true;
             }
             else
             {
@@ -133,25 +121,20 @@ internal static class ObjectClassEmitter
             {
                 csPropName += "Value";
             }
-            else if (enumTypeName == null)
+            else
             {
-                // CS0102: プロパティ名が同クラス内のネスト型と同じ場合はリネーム（non-enum のみ）
+                // CS0102: プロパティ名が同クラス内のネスト型と同じ場合はリネーム
                 var globalClassPath = LexiconNameHelper.GlobalizeTypePath(classPath, generatedCodeNamespace);
                 if (baseType == globalClassPath + "." + csPropName)
                 {
                     csPropName += "Value";
                 }
             }
-            else
-            {
-                // enum プロパティ: 型名とプロパティ名が常に衝突するためリネーム
-                csPropName += "Value";
-            }
 
             var csType = ComputeType(baseType, isValueType, isRequired, isInNullable, nullableAnnotationsEnabled);
-            var initializer = ComputeInitializer(propDef, enumTypeName);
+            var initializer = ComputeInitializer(propDef);
 
-            result.Add(new PropInfo(propName, csPropName, csType, isRequired, isValueType, initializer, enumValues, enumTypeName));
+            result.Add(new PropInfo(propName, csPropName, csType, isRequired, isValueType, initializer));
         }
 
         return result;
@@ -186,7 +169,7 @@ internal static class ObjectClassEmitter
         return addQuestion ? baseType + "?" : baseType;
     }
 
-    private static string? ComputeInitializer(LexiconDefinition propDef, string? enumTypeName)
+    private static string? ComputeInitializer(LexiconDefinition propDef)
     {
         switch (propDef)
         {
@@ -206,50 +189,10 @@ internal static class ObjectClassEmitter
                 {
                     return null;
                 }
-                if (enumTypeName != null)
-                {
-                    return $" = {enumTypeName}.{LexiconNameHelper.ToPascalCase(constVal)};";
-                }
                 return $" = \"{EscapeString(constVal)}\";";
 
             default:
                 return null;
-        }
-    }
-
-    private static void EmitNestedEnumTypes(
-        IndentedStringBuilder isb,
-        List<PropInfo> propInfos,
-        bool emitJsonAttributes)
-    {
-        foreach (var prop in propInfos)
-        {
-            if (prop.EnumValues == null || prop.EnumTypeName == null)
-            {
-                continue;
-            }
-
-            if (emitJsonAttributes)
-            {
-                isb.AppendLine($"[global::System.Text.Json.Serialization.JsonConverter(typeof(global::System.Text.Json.Serialization.JsonStringEnumConverter<{prop.EnumTypeName}>))]");
-            }
-
-            isb.AppendLine($"public enum {prop.EnumTypeName}");
-            isb.AppendLine("{");
-            using (isb.Indent())
-            {
-                foreach (var val in prop.EnumValues)
-                {
-                    var memberName = LexiconNameHelper.ToPascalCase(val);
-                    if (emitJsonAttributes)
-                    {
-                        isb.AppendLine($"[global::System.Text.Json.Serialization.JsonStringEnumMemberName(\"{val}\")]");
-                    }
-                    isb.AppendLine($"{memberName},");
-                }
-            }
-            isb.AppendLine("}");
-            isb.AppendLine();
         }
     }
 

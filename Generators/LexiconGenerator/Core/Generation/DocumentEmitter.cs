@@ -289,13 +289,13 @@ internal static class DocumentEmitter
         EmitFileHeader(isb, generatedCodeNamespace);
         OpenSealedContainers(isb, segments, 0, segments.Length);
 
+        var requiredSet = new HashSet<string>(paramsDef.Required ?? []);
+        var requiredProps = new List<(string JsonKey, string CsPropName, string CsType)>();
+
         isb.AppendLine("public sealed partial class Parameters");
         isb.AppendLine("{");
         using (isb.Indent())
         {
-            var requiredSet = new HashSet<string>(paramsDef.Required ?? []);
-            var requiredProps = new List<(string JsonKey, string CsPropName, string CsType)>();
-
             if (paramsDef.Properties != null)
             {
                 foreach (var kv in paramsDef.Properties)

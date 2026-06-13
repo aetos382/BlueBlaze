@@ -7,7 +7,6 @@ internal static class LexiconTypeMapper
     // Maps a lexicon definition to its base C# type (without ? annotation).
     // Nullability is determined by the emitter based on context.
     // Returns null for UnionDefinition (caller handles separately).
-    // StringDefinition with Enum is NOT handled here — caller checks directly.
     internal static MapResult? Map(
         LexiconDefinition def,
         string currentNsid,
@@ -78,36 +77,31 @@ internal static class LexiconTypeMapper
         StringDefinition sd,
         ref string? unknownFormatName)
     {
-        // StringDefinition with Enum is handled by the emitter, not here.
-        if (sd.Format == null)
+        // Lexicon の string 型はフォーマット・enum 制約に関わらず C# の string にマップする。
+        // datetime → DateTimeOffset / uri → Uri のような変換は行わない。
+        if (sd.Format != null)
         {
-            return new MapResult("string", IsValueType: false);
+            // 既知のフォーマット以外は診断警告を出す
+            switch (sd.Format)
+            {
+                case StringFormat.DateTime:
+                case StringFormat.Uri:
+                case StringFormat.AtIdentifier:
+                case StringFormat.AtUri:
+                case StringFormat.Cid:
+                case StringFormat.Did:
+                case StringFormat.Handle:
+                case StringFormat.Nsid:
+                case StringFormat.Tid:
+                case StringFormat.RecordKey:
+                case StringFormat.Language:
+                    break;
+                default:
+                    unknownFormatName = $"{sd.Format}";
+                    break;
+            }
         }
 
-        return sd.Format switch
-        {
-            StringFormat.DateTime => new MapResult("global::System.DateTimeOffset", IsValueType: true),
-
-            StringFormat.Uri => new MapResult("global::System.Uri", IsValueType: false),
-
-            StringFormat.AtIdentifier or
-            StringFormat.AtUri or
-            StringFormat.Cid or
-            StringFormat.Did or
-            StringFormat.Handle or
-            StringFormat.Nsid or
-            StringFormat.Tid or
-            StringFormat.RecordKey or
-            StringFormat.Language =>
-                new MapResult("string", IsValueType: false),
-
-            _ => FallbackString($"{sd.Format}", ref unknownFormatName)
-        };
-    }
-
-    private static MapResult FallbackString(string formatName, ref string? unknownFormatName)
-    {
-        unknownFormatName = formatName;
         return new MapResult("string", IsValueType: false);
     }
 
