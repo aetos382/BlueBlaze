@@ -47,21 +47,34 @@ jobs:
         with:
           files: artifacts/bin/**/TestResults/*.trx
 
+      - name: Merge Coverage Reports
+        if: '!cancelled()'
+        # dotnet test --coverage-output-format cobertura が生成する Cobertura ファイルは
+        # ルートの <coverage> 要素に lines-covered / lines-valid 属性を含まない場合があり、
+        # irongut/CodeCoverageSummary がパースエラーで終了してしまう。
+        # dotnet-coverage merge で統合することでこれらの属性が補完される。
+        run: |
+          dotnet tool install --global dotnet-coverage
+          shopt -s globstar
+          dotnet-coverage merge artifacts/bin/**/TestResults/*.cobertura.xml \
+            --output coverage.cobertura.xml \
+            --output-format cobertura
+
       - name: Generate Coverage Report
-        uses: danielpalme/ReportGenerator-GitHub-Action@049f7ec958c672fd31d5cc1cb01622dc8d2e23ab # 5.5.10
+        uses: irongut/CodeCoverageSummary@51cc3a756ddcd398d447c044c02cb6aa83fdae95 # v1.3.0
         if: '!cancelled()'
         with:
-          reports: artifacts/bin/**/TestResults/*.cobertura.xml
-          targetdir: coverage-report
-          reporttypes: MarkdownSummaryGithub
+          filename: coverage.cobertura.xml
+          format: markdown
+          output: both
 
       - name: Add Coverage Summary
         if: '!cancelled()'
-        run: cat coverage-report/SummaryGithub.md >> "$GITHUB_STEP_SUMMARY"
+        run: cat code-coverage-results.md >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload Coverage Report
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: '!cancelled()'
         with:
           name: coverage
-          path: artifacts/bin/**/TestResults/*.cobertura.xml
+          path: coverage.cobertura.xml
