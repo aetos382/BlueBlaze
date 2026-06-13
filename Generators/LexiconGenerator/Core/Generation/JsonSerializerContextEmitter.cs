@@ -152,7 +152,7 @@ internal static class JsonSerializerContextEmitter
         string typeInfoPropName,
         string currentNsid,
         IReadOnlyDictionary<string, LexiconType?> nsidIndex,
-        IReadOnlyDictionary<string, string> registeredTypes,
+        Dictionary<string, string> registeredTypes,
         HashSet<string> emittedListTypeInfoNames)
     {
         isb.AppendLine($"[global::System.Text.Json.Serialization.JsonSerializable(typeof({typePath}), TypeInfoPropertyName = \"{typeInfoPropName}\")]");

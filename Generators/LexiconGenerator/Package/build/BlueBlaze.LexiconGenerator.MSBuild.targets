@@ -47,6 +47,8 @@
       OutputPath="$(IntermediateOutputPath)GeneratedSources/BlueBlaze.LexiconGenerator/"
       GeneratedCodeNamespace="$(BlueBlazeGeneratedCodeNamespace)"
       GenerateTypeInfo="$(BlueBlazeGeneratorGenerateTypeInfo)"
+      TargetFramework="$(TargetFramework)"
+      ForceEmitAotAttributes="$(BlueBlazeGeneratorForceEmitAotAttributes)"
       DebugBreakOnExecute="$(BlueBlazeGenerateLexiconSourceCodeTaskDebugBreakOnExecute)">
 
       <Output TaskParameter="GeneratedFiles" ItemName="GeneratedLexiconSources" />

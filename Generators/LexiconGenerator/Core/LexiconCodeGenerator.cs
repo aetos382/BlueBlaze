@@ -39,9 +39,11 @@ public sealed class LexiconCodeGenerator
     public static GenerateResult Generate(
         IReadOnlyList<ParseResult> parseResults,
         string generatedCodeNamespace,
-        bool generateTypeInfo = false)
+        GeneratorOptions? options = null)
     {
         ArgumentNullException.ThrowIfNull(parseResults);
+
+        options ??= GeneratorOptions.Default;
 
         var files = new List<GeneratedSourceFile>();
         var diagnostics = new List<Diagnostic>();
@@ -113,7 +115,7 @@ public sealed class LexiconCodeGenerator
 
                 if (hasInput)
                 {
-                    InputEmitter.Emit(nsid, generateTypeInfo, generatedCodeNamespace, files);
+                    InputEmitter.Emit(nsid, options, generatedCodeNamespace, files);
                 }
             }
             else
@@ -125,7 +127,7 @@ public sealed class LexiconCodeGenerator
 
             if (hasOutput)
             {
-                DeserializerEmitter.Emit(segments, generateTypeInfo, generatedCodeNamespace, files);
+                DeserializerEmitter.Emit(segments, options, generatedCodeNamespace, files);
             }
 
             for (var i = 1; i < segments.Length; i++)
@@ -145,11 +147,11 @@ public sealed class LexiconCodeGenerator
         // Phase 5: Emit client extension methods
         foreach (var docInfo in documents)
         {
-            ClientMethodEmitter.Emit(docInfo, generateTypeInfo, generatedCodeNamespace, files);
+            ClientMethodEmitter.Emit(docInfo, options, generatedCodeNamespace, files);
         }
 
         // Phase 6: Emit JSON serializer context (generateTypeInfo = true のみ)
-        if (generateTypeInfo)
+        if (options.GenerateTypeInfo)
         {
             JsonSerializerContextEmitter.Emit(documents, generatedCodeNamespace, nsidIndex, files);
         }

@@ -28,12 +28,24 @@ var generateTypeInfoOption = new Option<bool>("--generate-type-info")
     DefaultValueFactory = _ => false
 };
 
+var targetFrameworkOption = new Option<string?>("--target-framework", ["-f"])
+{
+    Description = "生成コードのターゲットフレームワーク（例: net10.0、netstandard2.0）。BCL がサポートする場合、AOT 属性を自動的に出力します。"
+};
+
+var forceEmitAotAttributesOption = new Option<bool>("--force-emit-aot-attributes")
+{
+    Description = "AOT 属性（[RequiresDynamicCode] / [RequiresUnreferencedCode]）を強制的に出力します。BCL がサポートしないフレームワーク（netstandard2.0 など）でポリフィルを使用する場合に指定します。"
+};
+
 var rootCommand = new RootCommand("BlueBlaze Lexicon コードジェネレーター")
 {
     inputArgument,
     outputOption,
     namespaceOption,
-    generateTypeInfoOption
+    generateTypeInfoOption,
+    targetFrameworkOption,
+    forceEmitAotAttributesOption
 };
 
 rootCommand.SetAction(async (parseResult, ct) =>
@@ -41,12 +53,18 @@ rootCommand.SetAction(async (parseResult, ct) =>
     var inputs = parseResult.GetRequiredValue(inputArgument);
     var outputDir = parseResult.GetRequiredValue(outputOption);
     var ns = parseResult.GetRequiredValue(namespaceOption);
-    var generateTypeInfo = parseResult.GetValue(generateTypeInfoOption);
+
+    var options = new BlueBlaze.LexiconGenerator.Core.GeneratorOptions
+    {
+        GenerateTypeInfo = parseResult.GetValue(generateTypeInfoOption),
+        TargetFramework = parseResult.GetValue(targetFrameworkOption),
+        ForceEmitAotAttributes = parseResult.GetValue(forceEmitAotAttributesOption)
+    };
 
     var config = parseResult.InvocationConfiguration;
 
     return await GenerateHandler
-        .RunAsync(inputs, outputDir, ns, generateTypeInfo, config.Error, ct)
+        .RunAsync(inputs, outputDir, ns, options, config.Error, ct)
         .ConfigureAwait(false);
 });
 

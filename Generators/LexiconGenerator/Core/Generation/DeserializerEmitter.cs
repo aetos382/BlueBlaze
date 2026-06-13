@@ -8,7 +8,7 @@ internal static class DeserializerEmitter
 
     internal static void Emit(
         string[] segments,
-        bool generateTypeInfo,
+        GeneratorOptions options,
         string? generatedCodeNamespace,
         List<GeneratedSourceFile> files)
     {
@@ -30,11 +30,12 @@ internal static class DeserializerEmitter
 
         OpenSealedContainers(isb, segments);
 
-        if (!generateTypeInfo)
+        if (options.ShouldEmitAotAttributes)
         {
             isb.AppendLine("[global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode(\"JSON serialization and deserialization might require types that cannot be statically analyzed. Use the overload that takes a JsonTypeInfo or JsonSerializerContext.\")]");
             isb.AppendLine("[global::System.Diagnostics.CodeAnalysis.RequiresDynamicCode(\"JSON serialization and deserialization might require types that cannot be statically analyzed. Use the overload that takes a JsonTypeInfo or JsonSerializerContext.\")]");
         }
+
         isb.AppendLine($"public sealed class {ClassName} : {ClientCoreNamespace}.IResponseDeserializer<{outputType}>");
         isb.AppendLine("{");
         using (isb.Indent())
@@ -44,7 +45,7 @@ internal static class DeserializerEmitter
             isb.AppendLine($"private {ClassName}() {{ }}");
             isb.AppendLine();
 
-            if (generateTypeInfo)
+            if (options.GenerateTypeInfo)
             {
                 var typeInfoPropName = BuildTypeInfoPropertyName(segments);
                 var contextType = GlobalType(generatedCodeNamespace, "LexiconJsonSerializerContext");

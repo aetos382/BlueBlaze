@@ -27,6 +27,10 @@ public sealed class BlueBlazeGenerateSourceCode : Task
 
     public bool GenerateTypeInfo { get; set; }
 
+    public string? TargetFramework { get; set; }
+
+    public string? ForceEmitAotAttributes { get; set; }
+
     [Output]
     public ITaskItem[] GeneratedFiles { get; set; } = [];
 
@@ -56,7 +60,17 @@ public sealed class BlueBlazeGenerateSourceCode : Task
             items.Add(item);
         }
 
-        var result = LexiconCodeGenerator.Generate(items, this.GeneratedCodeNamespace, this.GenerateTypeInfo);
+        var forceEmitAotAttributes =
+            bool.TryParse(this.ForceEmitAotAttributes, out var parsedForceEmitAot) && parsedForceEmitAot;
+
+        var options = new GeneratorOptions
+        {
+            GenerateTypeInfo = this.GenerateTypeInfo,
+            TargetFramework = string.IsNullOrEmpty(this.TargetFramework) ? null : this.TargetFramework,
+            ForceEmitAotAttributes = forceEmitAotAttributes
+        };
+
+        var result = LexiconCodeGenerator.Generate(items, this.GeneratedCodeNamespace, options);
 
         foreach (var diag in result.Diagnostics)
         {
