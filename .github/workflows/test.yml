@@ -1,0 +1,67 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          submodules: true
+          persist-credentials: false
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@9a946fdbd5fb07b82b2f5a4466058b876ab72bb2 # v5.3.0
+        with:
+          dotnet-version: 10.0.x
+          cache: false
+          cache-dependency-path: '**/packages.lock.json'
+
+      - name: Test
+        run: >
+          dotnet test BlueBlaze.slnx
+          --framework net10.0
+          --ignore-exit-code 8
+          --coverage
+          --coverage-output-format cobertura
+          --report-trx
+
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@c950f6fb443cb5af20a377fd0dfaa78838901040 # v2.23.0
+        if: '!cancelled()'
+        with:
+          files: artifacts/bin/**/TestResults/*.trx
+
+      - name: Generate Coverage Report
+        uses: danielpalme/ReportGenerator-GitHub-Action@049f7ec958c672fd31d5cc1cb01622dc8d2e23ab # 5.5.10
+        if: '!cancelled()'
+        with:
+          reports: artifacts/bin/**/TestResults/*.cobertura.xml
+          targetdir: coverage-report
+          reporttypes: MarkdownSummaryGithub
+
+      - name: Add Coverage Summary
+        if: '!cancelled()'
+        run: cat coverage-report/SummaryGithub.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload Coverage Report
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: '!cancelled()'
+        with:
+          name: coverage
+          path: artifacts/bin/**/TestResults/*.cobertura.xml

@@ -1,11 +1,12 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
-
-using BlueBlaze.Client.Core;
 
 namespace BlueBlaze.Client.Core.Tests;
 
@@ -48,7 +49,7 @@ internal sealed class FakeInput : ILexiconInput
 {
     private readonly string _json;
 
-    internal FakeInput(string json)
+    internal FakeInput([StringSyntax(StringSyntaxAttribute.Json)] string json)
     {
         this._json = json;
     }
@@ -59,11 +60,14 @@ internal sealed class FakeInput : ILexiconInput
     }
 }
 
-internal sealed class JsonDeserializer<T> : IResponseDeserializer<T>
+internal sealed class SimpleOutputJsonDeserializer : IResponseDeserializer<SimpleOutput>
 {
-    public async ValueTask<T> DeserializeAsync(HttpContent content, CancellationToken cancellationToken = default)
+    public async ValueTask<SimpleOutput> DeserializeAsync(HttpContent content, CancellationToken cancellationToken = default)
     {
-        var result = await content.ReadFromJsonAsync<T>(cancellationToken).ConfigureAwait(false);
+        var result = await content
+            .ReadFromJsonAsync(TestSerializerContext.Default.SimpleOutput, cancellationToken)
+            .ConfigureAwait(false);
+
         return result!;
     }
 }
@@ -71,6 +75,24 @@ internal sealed class JsonDeserializer<T> : IResponseDeserializer<T>
 #pragma warning disable CA1812
 internal sealed class SimpleOutput
 {
+    [JsonPropertyName("value")]
     public int Value { get; set; }
 }
 #pragma warning restore CA1812
+
+internal static class HttpContentExtensions
+{
+    extension(HttpContent)
+    {
+        public static HttpContent CreateJsonStringContent(
+            [StringSyntax(StringSyntaxAttribute.Json)] string json)
+        {
+            return new StringContent(json, Encoding.UTF8, "application/json");
+        }
+    }
+}
+
+[JsonSourceGenerationOptions(
+    JsonSerializerDefaults.Web)]
+[JsonSerializable(typeof(SimpleOutput))]
+internal sealed partial class TestSerializerContext : JsonSerializerContext;

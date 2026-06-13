@@ -9,6 +9,7 @@ internal static class ClientMethodEmitter
 
     internal static void Emit(
         LexiconDocumentWithInfo docInfo,
+        GeneratorOptions options,
         string generatedCodeNamespace,
         List<GeneratedSourceFile> files)
     {
@@ -27,6 +28,7 @@ internal static class ClientMethodEmitter
                 hasParameters: queryDef.Parameters?.Properties?.Count > 0,
                 hasInput: false,
                 hasOutput: queryDef.Output?.Schema is ObjectDefinition,
+                options,
                 generatedCodeNamespace,
                 files);
         }
@@ -37,6 +39,7 @@ internal static class ClientMethodEmitter
                 hasParameters: false,
                 hasInput: procDef.Input?.Schema is ObjectDefinition,
                 hasOutput: procDef.Output?.Schema is ObjectDefinition,
+                options,
                 generatedCodeNamespace,
                 files);
         }
@@ -47,6 +50,7 @@ internal static class ClientMethodEmitter
         bool hasParameters,
         bool hasInput,
         bool hasOutput,
+        GeneratorOptions options,
         string generatedCodeNamespace,
         List<GeneratedSourceFile> files)
     {
@@ -82,6 +86,12 @@ internal static class ClientMethodEmitter
         using (isb.Indent())
         {
             OpenPartialStructContainers(isb, containerSegments);
+
+            if (options.ShouldEmitAotAttributes)
+            {
+                isb.AppendLine("[global::System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode(\"JSON serialization and deserialization might require types that cannot be statically analyzed. Use the overload that takes a JsonTypeInfo or JsonSerializerContext.\")]");
+                isb.AppendLine("[global::System.Diagnostics.CodeAnalysis.RequiresDynamicCode(\"JSON serialization and deserialization might require types that cannot be statically analyzed. Use the overload that takes a JsonTypeInfo or JsonSerializerContext.\")]");
+            }
 
             if (hasInput)
             {

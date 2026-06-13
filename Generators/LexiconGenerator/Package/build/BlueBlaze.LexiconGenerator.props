@@ -18,6 +18,8 @@
     <CompilerVisibleProperty Include="BlueBlazeGeneratorRunAsBuildTask" />
     <CompilerVisibleProperty Include="BlueBlazeGeneratedCodeNamespace"/>
     <CompilerVisibleProperty Include="BlueBlazeGeneratorGenerateTypeInfo"/>
+    <CompilerVisibleProperty Include="BlueBlazeGeneratorForceEmitAotAttributes"/>
+    <CompilerVisibleProperty Include="TargetFramework"/>
     <CompilerVisibleItemMetadata Include="LexiconDocument" MetadataName="IsLexiconDocument"/>
   </ItemGroup>
 

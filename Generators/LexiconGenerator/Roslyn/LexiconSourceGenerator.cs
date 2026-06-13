@@ -117,13 +117,37 @@ public sealed class LexiconSourceGenerator :
                 return (Value: value, Diagnostic: diagnostic);
             });
 
+        var generatorOptionsProvider = context.AnalyzerConfigOptionsProvider
+            .Select(static (opts, _) =>
+            {
+                var generateTypeInfo =
+                    opts.GlobalOptions.TryGetValue("build_property.BlueBlazeGeneratorGenerateTypeInfo", out var generateTypeInfoStr) &&
+                    bool.TryParse(generateTypeInfoStr, out var parsedGenerateTypeInfo) &&
+                    parsedGenerateTypeInfo;
+
+                opts.GlobalOptions.TryGetValue("build_property.TargetFramework", out var targetFramework);
+
+                var forceEmitAotAttributes =
+                    opts.GlobalOptions.TryGetValue("build_property.BlueBlazeGeneratorForceEmitAotAttributes", out var forceEmitAotStr) &&
+                    bool.TryParse(forceEmitAotStr, out var parsedForceEmitAot) &&
+                    parsedForceEmitAot;
+
+                return new GeneratorOptions
+                {
+                    GenerateTypeInfo = generateTypeInfo,
+                    TargetFramework = string.IsNullOrEmpty(targetFramework) ? null : targetFramework,
+                    ForceEmitAotAttributes = forceEmitAotAttributes
+                };
+            });
+
         context.RegisterSourceOutput(
             lexiconFilesProvider.Collect()
                 .Combine(runAsBuildTaskProvider)
-                .Combine(generatedCodeNamespaceProvider),
+                .Combine(generatedCodeNamespaceProvider)
+                .Combine(generatorOptionsProvider),
             static (spc, pair) =>
             {
-                var ((fileResults, (runAsBuildTask, runAsBuildTaskDiag)), (generatedCodeNamespace, namespaceDiag)) = pair;
+                var (((fileResults, (runAsBuildTask, runAsBuildTaskDiag)), (generatedCodeNamespace, namespaceDiag)), generatorOptions) = pair;
 
                 if (runAsBuildTaskDiag is not null)
                 {
@@ -157,7 +181,7 @@ public sealed class LexiconSourceGenerator :
                     }
                 }
 
-                var result = LexiconCodeGenerator.Generate(parseResults, generatedCodeNamespace!);
+                var result = LexiconCodeGenerator.Generate(parseResults, generatedCodeNamespace!, generatorOptions);
 
                 foreach (var diag in result.Diagnostics)
                 {

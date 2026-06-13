@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <BlueBlazeGeneratedCodeNamespace Condition="'$(BlueBlazeGeneratedCodeNamespace)' == ''">$(RootNamespace).Generated</BlueBlazeGeneratedCodeNamespace>
+    <BlueBlazeGeneratorForceEmitAotAttributes Condition="'$(BlueBlazeGeneratorForceEmitAotAttributes)' == ''">false</BlueBlazeGeneratorForceEmitAotAttributes>
   </PropertyGroup>
 
   <Import Project="BlueBlaze.LexiconGenerator.MSBuild.targets" Condition="'$(BlueBlazeGeneratorRunAsBuildTask)' == 'true'" />

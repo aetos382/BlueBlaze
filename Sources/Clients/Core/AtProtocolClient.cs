@@ -10,15 +10,19 @@ public class AtProtocolClient :
     IAtProtocolClient
 {
     private readonly HttpClient _httpClient;
+    private readonly Uri _baseAddress;
 
     public AtProtocolClient(HttpClient httpClient)
     {
         ArgumentNullException.ThrowIfNull(httpClient);
-        if (httpClient.BaseAddress is null)
+
+        if (httpClient.BaseAddress is not { } baseAddress)
         {
             throw new ArgumentException("BaseAddress must be set.", nameof(httpClient));
         }
+
         this._httpClient = httpClient;
+        this._baseAddress = baseAddress;
     }
 
     public async ValueTask<LexiconResponse<TOutput>> SendAsync<TOutput>(
@@ -31,7 +35,7 @@ public class AtProtocolClient :
 
         var queryParameters = request.Parameters?.ToDictionary().ToUriParameterString();
 
-        var uriBuilder = new UriBuilder(this._httpClient.BaseAddress)
+        var uriBuilder = new UriBuilder(this._baseAddress)
         {
             Path = $"/xrpc/{request.Nsid}",
             Query = queryParameters
