@@ -128,6 +128,12 @@
         "contentHash": "dxOZt8/LWuiox7rugInJoIa5Mmu3pBmXdfaoZOx/mxx8+sUFFpjBXPlWXQXGeWzpkVPNC3x1Jf7rt2h2Zjyvvg=="
       },
       "BlueBlaze.Client.Core": {
+        "type": "Project",
+        "dependencies": {
+          "BlueBlaze.LexiconMetadata": "[1.0.0, )"
+        }
+      },
+      "BlueBlaze.LexiconMetadata": {
         "type": "Project"
       }
     },

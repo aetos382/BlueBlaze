@@ -18,6 +18,9 @@
     <Project Path="Sources/Clients/Core/Client.Core.csproj" />
   </Folder>
   <Folder Name="/Sources/Clients/Core/" />
+  <Folder Name="/Sources/Metadata/">
+    <Project Path="Sources/Metadata/LexiconMetadata.csproj" />
+  </Folder>
   <Folder Name="/Tests/" />
   <Folder Name="/Tests/Clients/">
     <Project Path="Tests/Clients/AtProtocol/Client.AtProtocol.Tests.csproj" />

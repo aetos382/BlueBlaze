@@ -71,14 +71,6 @@
           "System.Runtime.CompilerServices.Unsafe": "6.1.2"
         }
       },
-      "System.Threading.Tasks.Extensions": {
-        "type": "Transitive",
-        "resolved": "4.6.3",
-        "contentHash": "7sCiwilJLYbTZELaKnc7RecBBXWXA+xMLQWZKWawBxYjp6DBlSE3v9/UcvKBvr1vv2tTOhipiogM8rRmxlhrVA==",
-        "dependencies": {
-          "System.Runtime.CompilerServices.Unsafe": "6.1.2"
-        }
-      },
       "BlueBlaze.Client.AtProtocol": {
         "type": "Project",
         "dependencies": {
@@ -88,9 +80,14 @@
       "BlueBlaze.Client.Core": {
         "type": "Project",
         "dependencies": {
+          "BlueBlaze.LexiconMetadata": "[1.0.0, )",
           "System.Net.Http.Json": "[10.0.9, )",
-          "System.Text.Json": "[10.0.9, )"
+          "System.Text.Json": "[10.0.9, )",
+          "System.Threading.Tasks.Extensions": "[4.6.3, )"
         }
+      },
+      "BlueBlaze.LexiconMetadata": {
+        "type": "Project"
       },
       "System.Memory": {
         "type": "CentralTransitive",
@@ -129,6 +126,15 @@
           "System.Text.Encodings.Web": "10.0.9",
           "System.Threading.Tasks.Extensions": "4.6.3"
         }
+      },
+      "System.Threading.Tasks.Extensions": {
+        "type": "CentralTransitive",
+        "requested": "[4.6.3, )",
+        "resolved": "4.6.3",
+        "contentHash": "7sCiwilJLYbTZELaKnc7RecBBXWXA+xMLQWZKWawBxYjp6DBlSE3v9/UcvKBvr1vv2tTOhipiogM8rRmxlhrVA==",
+        "dependencies": {
+          "System.Runtime.CompilerServices.Unsafe": "6.1.2"
+        }
       }
     },
     ".NETStandard,Version=v2.0/linux-x64": {},
@@ -159,6 +165,12 @@
         }
       },
       "BlueBlaze.Client.Core": {
+        "type": "Project",
+        "dependencies": {
+          "BlueBlaze.LexiconMetadata": "[1.0.0, )"
+        }
+      },
+      "BlueBlaze.LexiconMetadata": {
         "type": "Project"
       }
     },

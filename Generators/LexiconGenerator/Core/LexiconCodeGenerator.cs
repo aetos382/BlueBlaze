@@ -66,9 +66,15 @@ public sealed class LexiconCodeGenerator
         foreach (var docInfo in documents)
         {
             DocumentEmitter.Emit(
-                docInfo, nsidIndex, generatedCodeNamespace,
-                files, diagnostics, unionMemberImpls, defIndex,
-                options.NullableAnnotationsEnabled);
+                docInfo,
+                nsidIndex,
+                generatedCodeNamespace,
+                files,
+                diagnostics,
+                unionMemberImpls,
+                defIndex,
+                options.NullableAnnotationsEnabled,
+                options.EmitMetadataAttributes);
         }
 
         // Phase 2: Emit union member partial class files

@@ -16,7 +16,8 @@ internal static class DocumentEmitter
         // Collects (unionInterfaceFqn, refStr) pairs for partial class generation
         List<(string MemberTypePath, string InterfacePath)> unionMemberImpls,
         IReadOnlyDictionary<string, LexiconDefinition>? defIndex = null,
-        bool nullableAnnotationsEnabled = true)
+        bool nullableAnnotationsEnabled = true,
+        bool emitMetadataAttributes = false)
     {
         var doc = docInfo.Document;
         var nsid = doc.Id;
@@ -45,7 +46,8 @@ internal static class DocumentEmitter
                     nsidIndex, generatedCodeNamespace,
                     filePath, files, diagnostics, unionMemberImpls,
                     emitJsonAttributes: emitJson, defIndex: defIndex,
-                    nullableAnnotationsEnabled: nullableAnnotationsEnabled);
+                    nullableAnnotationsEnabled: nullableAnnotationsEnabled,
+                    emitMetadataAttributes: emitMetadataAttributes);
             }
             else if (def is RecordDefinition recDef)
             {
@@ -54,25 +56,26 @@ internal static class DocumentEmitter
                     nsidIndex, generatedCodeNamespace,
                     filePath, files, diagnostics, unionMemberImpls,
                     emitJsonAttributes: true, defIndex: defIndex,
-                    nullableAnnotationsEnabled: nullableAnnotationsEnabled);
+                    nullableAnnotationsEnabled: nullableAnnotationsEnabled,
+                    emitMetadataAttributes: emitMetadataAttributes);
             }
             else if (def is QueryDefinition queryDef && isMain)
             {
                 EmitQueryProcedure(nsid, queryDef.Parameters, null, queryDef.Output, queryDef.Errors,
                     nsidIndex, generatedCodeNamespace, filePath, files, diagnostics, unionMemberImpls, defIndex,
-                    nullableAnnotationsEnabled);
+                    nullableAnnotationsEnabled, emitMetadataAttributes);
             }
             else if (def is ProcedureDefinition procDef && isMain)
             {
                 EmitQueryProcedure(nsid, procDef.Parameters, procDef.Input, procDef.Output, procDef.Errors,
                     nsidIndex, generatedCodeNamespace, filePath, files, diagnostics, unionMemberImpls, defIndex,
-                    nullableAnnotationsEnabled);
+                    nullableAnnotationsEnabled, emitMetadataAttributes);
             }
             else if (def is SubscriptionDefinition subDef && isMain)
             {
                 EmitSubscription(nsid, subDef, nsidIndex, generatedCodeNamespace,
                     filePath, files, diagnostics, unionMemberImpls, defIndex,
-                    nullableAnnotationsEnabled);
+                    nullableAnnotationsEnabled, emitMetadataAttributes);
             }
             else if (isMain && def.Type == LexiconType.PermissionSet)
             {
@@ -105,7 +108,8 @@ internal static class DocumentEmitter
         List<(string, string)> unionMemberImpls,
         bool emitJsonAttributes,
         IReadOnlyDictionary<string, LexiconDefinition>? defIndex = null,
-        bool nullableAnnotationsEnabled = true)
+        bool nullableAnnotationsEnabled = true,
+        bool emitMetadataAttributes = false)
     {
         var segments = LexiconNameHelper.NsidToSegments(nsid);
         string className;
@@ -157,7 +161,7 @@ internal static class DocumentEmitter
                 isPartial: true, emitJsonAttributes: emitJsonAttributes,
                 nullableAnnotationsEnabled: nullableAnnotationsEnabled,
                 defIndex: defIndex, generatedCodeNamespace: generatedCodeNamespace,
-                unionProperties: unionProps);
+                unionProperties: unionProps, emitMetadataAttributes: emitMetadataAttributes);
             CloseContainers(isb, segments.Length - 1);
         }
         else
@@ -169,7 +173,7 @@ internal static class DocumentEmitter
                 isPartial: true, emitJsonAttributes: emitJsonAttributes,
                 nullableAnnotationsEnabled: nullableAnnotationsEnabled,
                 defIndex: defIndex, generatedCodeNamespace: generatedCodeNamespace,
-                unionProperties: unionProps);
+                unionProperties: unionProps, emitMetadataAttributes: emitMetadataAttributes);
             CloseContainers(isb, segments.Length);
         }
 
@@ -201,7 +205,8 @@ internal static class DocumentEmitter
         List<Diagnostic> diagnostics,
         List<(string, string)> unionMemberImpls,
         IReadOnlyDictionary<string, LexiconDefinition>? defIndex = null,
-        bool nullableAnnotationsEnabled = true)
+        bool nullableAnnotationsEnabled = true,
+        bool emitMetadataAttributes = false)
     {
         var segments = LexiconNameHelper.NsidToSegments(nsid);
 
@@ -224,7 +229,8 @@ internal static class DocumentEmitter
             EmitOperationDataClass(nsid, segments, "Input", inputObj, nsidIndex,
                 generatedCodeNamespace, filePath, files, diagnostics, unionMemberImpls,
                 emitJsonAttributes: true, defIndex: defIndex,
-                nullableAnnotationsEnabled: nullableAnnotationsEnabled);
+                nullableAnnotationsEnabled: nullableAnnotationsEnabled,
+                emitMetadataAttributes: emitMetadataAttributes);
         }
 
         if (output?.Schema is ObjectDefinition outputObj)
@@ -232,7 +238,8 @@ internal static class DocumentEmitter
             EmitOperationDataClass(nsid, segments, "Output", outputObj, nsidIndex,
                 generatedCodeNamespace, filePath, files, diagnostics, unionMemberImpls,
                 emitJsonAttributes: true, defIndex: defIndex,
-                nullableAnnotationsEnabled: nullableAnnotationsEnabled);
+                nullableAnnotationsEnabled: nullableAnnotationsEnabled,
+                emitMetadataAttributes: emitMetadataAttributes);
         }
     }
 
@@ -246,7 +253,8 @@ internal static class DocumentEmitter
         List<Diagnostic> diagnostics,
         List<(string, string)> unionMemberImpls,
         IReadOnlyDictionary<string, LexiconDefinition>? defIndex = null,
-        bool nullableAnnotationsEnabled = true)
+        bool nullableAnnotationsEnabled = true,
+        bool emitMetadataAttributes = false)
     {
         var segments = LexiconNameHelper.NsidToSegments(nsid);
 
@@ -269,7 +277,8 @@ internal static class DocumentEmitter
             EmitOperationDataClass(nsid, segments, "Message", msgObj, nsidIndex,
                 generatedCodeNamespace, filePath, files, diagnostics, unionMemberImpls,
                 emitJsonAttributes: false, defIndex: defIndex,
-                nullableAnnotationsEnabled: nullableAnnotationsEnabled);
+                nullableAnnotationsEnabled: nullableAnnotationsEnabled,
+                emitMetadataAttributes: emitMetadataAttributes);
         }
     }
 
@@ -378,7 +387,8 @@ internal static class DocumentEmitter
         List<(string, string)> unionMemberImpls,
         bool emitJsonAttributes,
         IReadOnlyDictionary<string, LexiconDefinition>? defIndex = null,
-        bool nullableAnnotationsEnabled = true)
+        bool nullableAnnotationsEnabled = true,
+        bool emitMetadataAttributes = false)
     {
         var unionProps = CollectUnionProperties(objDef);
 
@@ -392,7 +402,7 @@ internal static class DocumentEmitter
             isPartial: true, emitJsonAttributes: emitJsonAttributes,
             nullableAnnotationsEnabled: nullableAnnotationsEnabled,
             defIndex: defIndex, generatedCodeNamespace: generatedCodeNamespace,
-            unionProperties: unionProps);
+            unionProperties: unionProps, emitMetadataAttributes: emitMetadataAttributes);
 
         CloseContainers(isb, segments.Length);
 

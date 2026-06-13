@@ -6,13 +6,16 @@ namespace BlueBlaze.LexiconGenerator.Core.Generation;
 
 internal static class ObjectClassEmitter
 {
+    private const string MetadataNs = "global::BlueBlaze.LexiconMetadata";
+
     private sealed record PropInfo(
         string JsonKey,
         string CsPropName,
         string CsType,
         bool IsRequired,
         bool IsValueType,
-        string? Initializer);
+        string? Initializer,
+        IReadOnlyList<string> MetadataAttributeLines);
 
     internal static void EmitClass(
         IndentedStringBuilder isb,
@@ -29,11 +32,17 @@ internal static class ObjectClassEmitter
         bool nullableAnnotationsEnabled,
         IReadOnlyDictionary<string, LexiconDefinition>? defIndex,
         string? generatedCodeNamespace,
-        IReadOnlyDictionary<string, UnionDefinition>? unionProperties = null)
+        IReadOnlyDictionary<string, UnionDefinition>? unionProperties = null,
+        bool emitMetadataAttributes = false)
     {
         if (!string.IsNullOrEmpty(def.Description))
         {
             isb.AppendLine($"/// <summary>{EscapeXml(def.Description)}</summary>");
+        }
+
+        if (emitMetadataAttributes && def.Description is { Length: > 0 } classDesc)
+        {
+            isb.AppendLine($"[{MetadataNs}.LexiconDescription(\"{EscapeString(classDesc)}\")]");
         }
 
         var partialKeyword = isPartial ? "partial " : "";
@@ -44,11 +53,12 @@ internal static class ObjectClassEmitter
             var propInfos = CollectProperties(
                 def, className, classPath, nsid, nsidIndex,
                 diagnostics, filePath, defKey, defIndex, generatedCodeNamespace,
-                nullableAnnotationsEnabled);
+                nullableAnnotationsEnabled, emitMetadataAttributes);
 
             EmitProperties(isb, propInfos, emitJsonAttributes);
             EmitConstructor(isb, className, propInfos, emitJsonAttributes);
-            EmitNestedUnionInterfaces(isb, unionProperties, nsid, nsidIndex, generatedCodeNamespace, emitJsonAttributes);
+            EmitNestedUnionInterfaces(isb, unionProperties, nsid, nsidIndex, generatedCodeNamespace,
+                emitJsonAttributes, emitMetadataAttributes);
         }
         isb.AppendLine("}");
     }
@@ -64,7 +74,8 @@ internal static class ObjectClassEmitter
         string? defKey,
         IReadOnlyDictionary<string, LexiconDefinition>? defIndex,
         string? generatedCodeNamespace,
-        bool nullableAnnotationsEnabled)
+        bool nullableAnnotationsEnabled,
+        bool emitMetadataAttributes)
     {
         var result = new List<PropInfo>();
 
@@ -133,8 +144,11 @@ internal static class ObjectClassEmitter
 
             var csType = ComputeType(baseType, isValueType, isRequired, isInNullable, nullableAnnotationsEnabled);
             var initializer = ComputeInitializer(propDef);
+            var metadataLines = emitMetadataAttributes
+                ? BuildMetadataAttributeLines(propDef, nsid, nsidIndex, generatedCodeNamespace)
+                : [];
 
-            result.Add(new PropInfo(propName, csPropName, csType, isRequired, isValueType, initializer));
+            result.Add(new PropInfo(propName, csPropName, csType, isRequired, isValueType, initializer, metadataLines));
         }
 
         return result;
@@ -208,6 +222,11 @@ internal static class ObjectClassEmitter
                 isb.AppendLine($"[global::System.Text.Json.Serialization.JsonPropertyName(\"{prop.JsonKey}\")]");
             }
 
+            foreach (var attrLine in prop.MetadataAttributeLines)
+            {
+                isb.AppendLine(attrLine);
+            }
+
             var initPart = prop.Initializer ?? "";
             isb.AppendLine($"public {prop.CsType} {prop.CsPropName} {{ get; set; }}{initPart}");
             isb.AppendLine();
@@ -251,7 +270,8 @@ internal static class ObjectClassEmitter
         string nsid,
         IReadOnlyDictionary<string, LexiconType?> nsidIndex,
         string? generatedCodeNamespace,
-        bool emitJsonAttributes)
+        bool emitJsonAttributes,
+        bool emitMetadataAttributes)
     {
         if (unionProperties == null)
         {
@@ -276,9 +296,157 @@ internal static class ObjectClassEmitter
                 }
             }
 
+            if (emitMetadataAttributes)
+            {
+                var typeArgs = string.Join(", ", ud.Refs.Select(r =>
+                {
+                    var resolved = LexiconNameHelper.ResolveRef(nsid, r, nsidIndex);
+                    return $"typeof({LexiconNameHelper.GlobalizeTypePath(resolved, generatedCodeNamespace)})";
+                }));
+                var closedPart = ud.Closed == true ? ", Closed = true" : "";
+                isb.AppendLine($"[{MetadataNs}.LexiconUnion({typeArgs}{closedPart})]");
+            }
+
             isb.AppendLine($"public interface {interfaceName} {{ }}");
             isb.AppendLine();
         }
+    }
+
+    private static List<string> BuildMetadataAttributeLines(
+        LexiconDefinition def,
+        string nsid,
+        IReadOnlyDictionary<string, LexiconType?> nsidIndex,
+        string? generatedCodeNamespace)
+    {
+        var lines = new List<string>();
+
+        if (def.Description is { Length: > 0 } propDesc)
+        {
+            lines.Add($"[{MetadataNs}.LexiconDescription(\"{EscapeString(propDesc)}\")]");
+        }
+
+        switch (def)
+        {
+            case BooleanDefinition bd:
+                if (bd.Const.HasValue)
+                {
+                    lines.Add($"[{MetadataNs}.LexiconConst(typeof(bool), {(bd.Const.Value ? "true" : "false")})]");
+                }
+                else if (bd.Default.HasValue)
+                {
+                    lines.Add($"[{MetadataNs}.LexiconDefault(typeof(bool), {(bd.Default.Value ? "true" : "false")})]");
+                }
+                break;
+
+            case IntegerDefinition id:
+                if (id.Minimum.HasValue)
+                {
+                    lines.Add($"[{MetadataNs}.LexiconMinimum(typeof(int), {id.Minimum.Value})]");
+                }
+                if (id.Maximum.HasValue)
+                {
+                    lines.Add($"[{MetadataNs}.LexiconMaximum(typeof(int), {id.Maximum.Value})]");
+                }
+                if (id.Const.HasValue)
+                {
+                    lines.Add($"[{MetadataNs}.LexiconConst(typeof(int), {id.Const.Value})]");
+                }
+                else if (id.Default.HasValue)
+                {
+                    lines.Add($"[{MetadataNs}.LexiconDefault(typeof(int), {id.Default.Value})]");
+                }
+                if (id.Enum is { Length: > 0 } intEnum)
+                {
+                    lines.Add($"[{MetadataNs}.LexiconEnum(typeof(int), {string.Join(", ", intEnum)})]");
+                }
+                break;
+
+            case StringDefinition sd:
+                if (sd.Format.HasValue)
+                {
+                    lines.Add($"[{MetadataNs}.LexiconFormat(\"{FormatToString(sd.Format.Value)}\")]");
+                }
+                if (sd.MinLength.HasValue)
+                {
+                    lines.Add($"[{MetadataNs}.LexiconMinLength({sd.MinLength.Value})]");
+                }
+                if (sd.MaxLength.HasValue)
+                {
+                    lines.Add($"[{MetadataNs}.LexiconMaxLength({sd.MaxLength.Value})]");
+                }
+                if (sd.MinGraphemes.HasValue)
+                {
+                    lines.Add($"[{MetadataNs}.LexiconMinGraphemes({sd.MinGraphemes.Value})]");
+                }
+                if (sd.MaxGraphemes.HasValue)
+                {
+                    lines.Add($"[{MetadataNs}.LexiconMaxGraphemes({sd.MaxGraphemes.Value})]");
+                }
+                if (sd.Const != null)
+                {
+                    lines.Add($"[{MetadataNs}.LexiconConst(typeof(string), \"{EscapeString(sd.Const)}\")]");
+                }
+                else if (sd.Default != null)
+                {
+                    lines.Add($"[{MetadataNs}.LexiconDefault(typeof(string), \"{EscapeString(sd.Default)}\")]");
+                }
+                if (sd.KnownValues is { Length: > 0 } knownVals)
+                {
+                    lines.Add($"[{MetadataNs}.LexiconKnownValues({string.Join(", ", knownVals.Select(v => $"\"{EscapeString(v)}\""))})]");
+                }
+                if (sd.Enum is { Length: > 0 } strEnum)
+                {
+                    lines.Add($"[{MetadataNs}.LexiconEnum(typeof(string), {string.Join(", ", strEnum.Select(v => $"\"{EscapeString(v)}\""))})]");
+                }
+                break;
+
+            case ArrayDefinition ad:
+                if (ad.MinLength.HasValue)
+                {
+                    lines.Add($"[{MetadataNs}.LexiconMinLength({ad.MinLength.Value})]");
+                }
+                if (ad.MaxLength.HasValue)
+                {
+                    lines.Add($"[{MetadataNs}.LexiconMaxLength({ad.MaxLength.Value})]");
+                }
+                break;
+
+            case UnionDefinition ud:
+            {
+                var typeArgs = string.Join(", ", ud.Refs.Select(r =>
+                {
+                    var resolved = LexiconNameHelper.ResolveRef(nsid, r, nsidIndex);
+                    return $"typeof({LexiconNameHelper.GlobalizeTypePath(resolved, generatedCodeNamespace)})";
+                }));
+                var closedPart = ud.Closed == true ? ", Closed = true" : "";
+                lines.Add($"[{MetadataNs}.LexiconUnion({typeArgs}{closedPart})]");
+                break;
+            }
+
+            default:
+                break;
+        }
+
+        return lines;
+    }
+
+    private static string FormatToString(StringFormat format)
+    {
+        return format switch
+        {
+            StringFormat.AtIdentifier => "at-identifier",
+            StringFormat.AtUri => "at-uri",
+            StringFormat.Cid => "cid",
+            StringFormat.DateTime => "datetime",
+            StringFormat.Did => "did",
+            StringFormat.Handle => "handle",
+            StringFormat.Language => "language",
+            StringFormat.Nsid => "nsid",
+            StringFormat.RecordKey => "record-key",
+            StringFormat.Tid => "tid",
+            StringFormat.Uri => "uri",
+            _ => $"{format}"
+        };
     }
 
     private static string EscapeXml(string? s)

@@ -17,6 +17,6 @@ public sealed class VoidOutputDeserializer :
         HttpContent content,
         CancellationToken cancellationToken = default)
     {
-        return ValueTask.FromResult(VoidOutput.Instance);
+        return new ValueTask<VoidOutput>(VoidOutput.Instance);
     }
 }

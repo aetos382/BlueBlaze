@@ -46,6 +46,12 @@
         }
       },
       "BlueBlaze.Client.Core": {
+        "type": "Project",
+        "dependencies": {
+          "BlueBlaze.LexiconMetadata": "[1.0.0, )"
+        }
+      },
+      "BlueBlaze.LexiconMetadata": {
         "type": "Project"
       }
     },
