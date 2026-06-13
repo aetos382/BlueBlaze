@@ -151,7 +151,7 @@ public sealed class LexiconCodeGenerator
         // Phase 6: Emit JSON serializer context (generateTypeInfo = true のみ)
         if (generateTypeInfo)
         {
-            JsonSerializerContextEmitter.Emit(documents, generatedCodeNamespace, files);
+            JsonSerializerContextEmitter.Emit(documents, generatedCodeNamespace, nsidIndex, files);
         }
 
         return new GenerateResult(files, diagnostics);
