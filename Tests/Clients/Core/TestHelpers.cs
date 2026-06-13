@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
@@ -74,9 +75,24 @@ internal sealed class SimpleOutputJsonDeserializer : IResponseDeserializer<Simpl
 #pragma warning disable CA1812
 internal sealed class SimpleOutput
 {
+    [JsonPropertyName("value")]
     public int Value { get; set; }
 }
 #pragma warning restore CA1812
 
+internal static class HttpContentExtensions
+{
+    extension(HttpContent)
+    {
+        public static HttpContent CreateJsonStringContent(
+            [StringSyntax(StringSyntaxAttribute.Json)] string json)
+        {
+            return new StringContent(json, Encoding.UTF8, "application/json");
+        }
+    }
+}
+
+[JsonSourceGenerationOptions(
+    JsonSerializerDefaults.Web)]
 [JsonSerializable(typeof(SimpleOutput))]
 internal sealed partial class TestSerializerContext : JsonSerializerContext;

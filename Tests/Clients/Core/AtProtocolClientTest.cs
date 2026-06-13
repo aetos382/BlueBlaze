@@ -26,11 +26,11 @@ public sealed class AtProtocolClientTest
     [TestMethod]
     public async Task GETリクエスト_200レスポンスをOutputに変換して返す()
     {
-        var responseJson = /*lang=json,strict*/ """{"value":42}""";
         using var responseMessage = new HttpResponseMessage(HttpStatusCode.OK)
         {
-            Content = new StringContent(responseJson, Encoding.UTF8, "application/json")
+            Content = HttpContent.CreateJsonStringContent("""{"value":42}""")
         };
+
         using var handler = new MockHttpMessageHandler(responseMessage);
         using var httpClient = CreateHttpClient(handler);
         var client = new AtProtocolClient(httpClient);
@@ -47,8 +47,9 @@ public sealed class AtProtocolClientTest
     {
         using var responseMessage = new HttpResponseMessage(HttpStatusCode.OK)
         {
-            Content = new StringContent("{}", Encoding.UTF8, "application/json")
+            Content = HttpContent.CreateJsonStringContent("{}")
         };
+
         using var handler = new MockHttpMessageHandler(responseMessage);
         using var httpClient = CreateHttpClient(handler);
         var client = new AtProtocolClient(httpClient);
@@ -64,8 +65,9 @@ public sealed class AtProtocolClientTest
     {
         using var responseMessage = new HttpResponseMessage(HttpStatusCode.OK)
         {
-            Content = new StringContent("{}", Encoding.UTF8, "application/json")
+            Content = HttpContent.CreateJsonStringContent("{}")
         };
+
         using var handler = new MockHttpMessageHandler(responseMessage);
         using var httpClient = CreateHttpClient(handler);
         var client = new AtProtocolClient(httpClient);
@@ -75,6 +77,7 @@ public sealed class AtProtocolClientTest
             ["q"] = ["hello world"],
             ["limit"] = ["50"]
         });
+
         var request = new FakeRequest("com.example.search", HttpMethod.Get, parameters: parameters);
         await client.SendAsync(request, new SimpleOutputJsonDeserializer()).ConfigureAwait(false);
 
@@ -88,8 +91,9 @@ public sealed class AtProtocolClientTest
     {
         using var responseMessage = new HttpResponseMessage(HttpStatusCode.OK)
         {
-            Content = new StringContent("{}", Encoding.UTF8, "application/json")
+            Content = HttpContent.CreateJsonStringContent("{}")
         };
+
         using var handler = new MockHttpMessageHandler(responseMessage);
         using var httpClient = CreateHttpClient(handler);
         var client = new AtProtocolClient(httpClient);
@@ -105,8 +109,9 @@ public sealed class AtProtocolClientTest
     {
         using var responseMessage = new HttpResponseMessage(HttpStatusCode.OK)
         {
-            Content = new StringContent("{}", Encoding.UTF8, "application/json")
+            Content = HttpContent.CreateJsonStringContent("{}")
         };
+
         using var handler = new MockHttpMessageHandler(responseMessage);
         using var httpClient = CreateHttpClient(handler);
         var client = new AtProtocolClient(httpClient);
@@ -122,8 +127,9 @@ public sealed class AtProtocolClientTest
     {
         using var responseMessage = new HttpResponseMessage(HttpStatusCode.OK)
         {
-            Content = new StringContent("{}", Encoding.UTF8, "application/json")
+            Content = HttpContent.CreateJsonStringContent("{}")
         };
+
         using var handler = new MockHttpMessageHandler(responseMessage);
         using var httpClient = CreateHttpClient(handler);
         var client = new AtProtocolClient(httpClient);
@@ -156,10 +162,9 @@ public sealed class AtProtocolClientTest
     [TestMethod]
     public async Task エラーレスポンス_LexiconExceptionをスローする()
     {
-        var errorJson = /*lang=json,strict*/ """{"error":"InvalidToken","description":"Token has expired"}""";
         using var responseMessage = new HttpResponseMessage(HttpStatusCode.Unauthorized)
         {
-            Content = new StringContent(errorJson, Encoding.UTF8, "application/json")
+            Content = HttpContent.CreateJsonStringContent("""{"error":"InvalidToken","description":"Token has expired"}""")
         };
 
         using var handler = new MockHttpMessageHandler(responseMessage);
@@ -180,11 +185,11 @@ public sealed class AtProtocolClientTest
     [TestMethod]
     public async Task エラーレスポンス_RequestUriがLexiconExceptionに含まれる()
     {
-        var errorJson = /*lang=json,strict*/ """{"error":"NotFound"}""";
         using var responseMessage = new HttpResponseMessage(HttpStatusCode.NotFound)
         {
-            Content = new StringContent(errorJson, Encoding.UTF8, "application/json")
+            Content = HttpContent.CreateJsonStringContent("""{"error":"NotFound"}""")
         };
+
         using var handler = new MockHttpMessageHandler(responseMessage);
         using var httpClient = CreateHttpClient(handler);
         var client = new AtProtocolClient(httpClient);
@@ -202,8 +207,9 @@ public sealed class AtProtocolClientTest
     {
         using var responseMessage = new HttpResponseMessage(HttpStatusCode.OK)
         {
-            Content = new StringContent("{}", Encoding.UTF8, "application/json")
+            Content = HttpContent.CreateJsonStringContent("{}")
         };
+
         using var handler = new MockHttpMessageHandler(responseMessage);
         using var httpClient = CreateHttpClient(handler);
         var client = new AtProtocolClient(httpClient);
@@ -222,7 +228,7 @@ public sealed class AtProtocolClientTest
     {
         using var responseMessage = new HttpResponseMessage(HttpStatusCode.OK)
         {
-            Content = new StringContent("{}", Encoding.UTF8, "application/json")
+            Content = HttpContent.CreateJsonStringContent("{}")
         };
 
         using var handler = new MockHttpMessageHandler(responseMessage);
