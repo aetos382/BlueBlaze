@@ -36,7 +36,7 @@ public sealed class AtProtocolClientTest
         var client = new AtProtocolClient(httpClient);
 
         var request = new FakeRequest("com.example.getStuff", HttpMethod.Get);
-        var response = await client.SendAsync(request, new JsonDeserializer<SimpleOutput>()).ConfigureAwait(false);
+        var response = await client.SendAsync(request, new SimpleOutputJsonDeserializer()).ConfigureAwait(false);
 
         Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
         Assert.AreEqual(42, response.Output.Value);
@@ -54,7 +54,7 @@ public sealed class AtProtocolClientTest
         var client = new AtProtocolClient(httpClient);
 
         var request = new FakeRequest("com.atproto.server.createSession", HttpMethod.Get);
-        await client.SendAsync(request, new JsonDeserializer<SimpleOutput>()).ConfigureAwait(false);
+        await client.SendAsync(request, new SimpleOutputJsonDeserializer()).ConfigureAwait(false);
 
         Assert.AreEqual("/xrpc/com.atproto.server.createSession", handler.LastRequest!.RequestUri!.AbsolutePath);
     }
@@ -76,7 +76,7 @@ public sealed class AtProtocolClientTest
             ["limit"] = ["50"]
         });
         var request = new FakeRequest("com.example.search", HttpMethod.Get, parameters: parameters);
-        await client.SendAsync(request, new JsonDeserializer<SimpleOutput>()).ConfigureAwait(false);
+        await client.SendAsync(request, new SimpleOutputJsonDeserializer()).ConfigureAwait(false);
 
         var query = handler.LastRequest!.RequestUri!.Query;
         StringAssert.Contains(query, "q=hello%20world", StringComparison.Ordinal);
@@ -95,7 +95,7 @@ public sealed class AtProtocolClientTest
         var client = new AtProtocolClient(httpClient);
 
         var request = new FakeRequest("com.example.getStuff", HttpMethod.Get);
-        await client.SendAsync(request, new JsonDeserializer<SimpleOutput>()).ConfigureAwait(false);
+        await client.SendAsync(request, new SimpleOutputJsonDeserializer()).ConfigureAwait(false);
 
         Assert.AreEqual(string.Empty, handler.LastRequest!.RequestUri!.Query);
     }
@@ -112,7 +112,7 @@ public sealed class AtProtocolClientTest
         var client = new AtProtocolClient(httpClient);
 
         var request = new FakeRequest("com.example.createSession", HttpMethod.Post);
-        await client.SendAsync(request, new JsonDeserializer<SimpleOutput>()).ConfigureAwait(false);
+        await client.SendAsync(request, new SimpleOutputJsonDeserializer()).ConfigureAwait(false);
 
         Assert.AreEqual(HttpMethod.Post, handler.LastRequest!.Method);
     }
@@ -128,9 +128,9 @@ public sealed class AtProtocolClientTest
         using var httpClient = CreateHttpClient(handler);
         var client = new AtProtocolClient(httpClient);
 
-        var input = new FakeInput(/*lang=json,strict*/ """{"handle":"test.bsky.social"}""");
+        var input = new FakeInput("""{"handle":"test.bsky.social"}""");
         var request = new FakeRequest("com.example.createSession", HttpMethod.Post, input: input);
-        await client.SendAsync(request, new JsonDeserializer<SimpleOutput>()).ConfigureAwait(false);
+        await client.SendAsync(request, new SimpleOutputJsonDeserializer()).ConfigureAwait(false);
 
         Assert.AreEqual(/*lang=json,strict*/ """{"handle":"test.bsky.social"}""", handler.LastRequestBody);
     }
@@ -142,6 +142,7 @@ public sealed class AtProtocolClientTest
         {
             Content = new StringContent(string.Empty, Encoding.UTF8)
         };
+
         using var handler = new MockHttpMessageHandler(responseMessage);
         using var httpClient = CreateHttpClient(handler);
         var client = new AtProtocolClient(httpClient);
@@ -160,6 +161,7 @@ public sealed class AtProtocolClientTest
         {
             Content = new StringContent(errorJson, Encoding.UTF8, "application/json")
         };
+
         using var handler = new MockHttpMessageHandler(responseMessage);
         using var httpClient = CreateHttpClient(handler);
         var client = new AtProtocolClient(httpClient);
@@ -167,7 +169,7 @@ public sealed class AtProtocolClientTest
         var request = new FakeRequest("com.example.getProfile", HttpMethod.Get);
 
         var ex = await Assert.ThrowsAsync<LexiconException>(
-            () => client.SendAsync(request, new JsonDeserializer<SimpleOutput>()).AsTask()).ConfigureAwait(false);
+            () => client.SendAsync(request, new SimpleOutputJsonDeserializer()).AsTask()).ConfigureAwait(false);
 
         Assert.AreEqual(HttpStatusCode.Unauthorized, ex.StatusCode);
         Assert.AreEqual("InvalidToken", ex.Error.Error);
@@ -189,7 +191,7 @@ public sealed class AtProtocolClientTest
         var request = new FakeRequest("com.example.getRepo", HttpMethod.Get);
 
         var ex = await Assert.ThrowsAsync<LexiconException>(
-            () => client.SendAsync(request, new JsonDeserializer<SimpleOutput>()).AsTask()).ConfigureAwait(false);
+            () => client.SendAsync(request, new SimpleOutputJsonDeserializer()).AsTask()).ConfigureAwait(false);
 
         StringAssert.Contains(ex.RequestUri.AbsolutePath, "com.example.getRepo", StringComparison.Ordinal);
     }
@@ -211,7 +213,7 @@ public sealed class AtProtocolClientTest
         var request = new FakeRequest("com.example.getStuff", HttpMethod.Get);
 
         await Assert.ThrowsAsync<OperationCanceledException>(
-            () => client.SendAsync(request, new JsonDeserializer<SimpleOutput>(), cts.Token).AsTask()).ConfigureAwait(false);
+            () => client.SendAsync(request, new SimpleOutputJsonDeserializer(), cts.Token).AsTask()).ConfigureAwait(false);
     }
 
     [TestMethod]
@@ -221,12 +223,13 @@ public sealed class AtProtocolClientTest
         {
             Content = new StringContent("{}", Encoding.UTF8, "application/json")
         };
+
         using var handler = new MockHttpMessageHandler(responseMessage);
         using var httpClient = CreateHttpClient(handler, new Uri("https://custom.example.com"));
         var client = new AtProtocolClient(httpClient);
 
         var request = new FakeRequest("com.example.getStuff", HttpMethod.Get);
-        await client.SendAsync(request, new JsonDeserializer<SimpleOutput>()).ConfigureAwait(false);
+        await client.SendAsync(request, new SimpleOutputJsonDeserializer()).ConfigureAwait(false);
 
         Assert.AreEqual("custom.example.com", handler.LastRequest!.RequestUri!.Host);
     }
