@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace BlueBlaze.Client.Core;
+namespace BlueBlaze.Core;
 
 internal static class HttpQueryParameterDictionaryExtensions
 {

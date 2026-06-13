@@ -3,9 +3,12 @@
     "allow": [
       "WebFetch",
       "WebSearch",
+      "Bash(dotnet build *)",
       "Bash(dotnet nuget why *)",
       "Bash(dotnet package list *)",
       "Bash(dotnet package search *)",
+      "Bash(dotnet restore *)",
+      "Bash(dotnet test *)",
       "Bash(git config get *)",
       "Bash(git config list *)",
       "Bash(git remote get-url *)",

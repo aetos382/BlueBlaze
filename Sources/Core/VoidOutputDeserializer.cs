@@ -2,7 +2,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace BlueBlaze.Client.Core;
+namespace BlueBlaze.Core;
 
 public sealed class VoidOutputDeserializer :
     IResponseDeserializer<VoidOutput>
@@ -17,6 +17,6 @@ public sealed class VoidOutputDeserializer :
         HttpContent content,
         CancellationToken cancellationToken = default)
     {
-        return ValueTask.FromResult(VoidOutput.Instance);
+        return new ValueTask<VoidOutput>(VoidOutput.Instance);
     }
 }

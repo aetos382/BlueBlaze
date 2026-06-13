@@ -2,7 +2,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace BlueBlaze.Client.Core;
+namespace BlueBlaze.Core;
 
 public interface IResponseDeserializer<TOutput>
 {

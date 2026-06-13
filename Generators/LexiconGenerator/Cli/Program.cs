@@ -38,6 +38,16 @@ var forceEmitAotAttributesOption = new Option<bool>("--force-emit-aot-attributes
     Description = "AOT 属性（[RequiresDynamicCode] / [RequiresUnreferencedCode]）を強制的に出力します。BCL がサポートしないフレームワーク（netstandard2.0 など）でポリフィルを使用する場合に指定します。"
 };
 
+var disableNullableAnnotationsOption = new Option<bool>("--disable-nullable-annotations")
+{
+    Description = "nullable 参照型アノテーション（T?）を生成コードに出力しません。プロジェクトで <Nullable>enable</Nullable> を設定していない場合に指定してください。"
+};
+
+var emitMetadataAttributesOption = new Option<bool>("--emit-metadata-attributes")
+{
+    Description = "Lexicon スキーマのメタデータ情報を BlueBlaze.Core 属性として生成コードに出力します。"
+};
+
 var rootCommand = new RootCommand("BlueBlaze Lexicon コードジェネレーター")
 {
     inputArgument,
@@ -45,7 +55,9 @@ var rootCommand = new RootCommand("BlueBlaze Lexicon コードジェネレータ
     namespaceOption,
     generateTypeInfoOption,
     targetFrameworkOption,
-    forceEmitAotAttributesOption
+    forceEmitAotAttributesOption,
+    disableNullableAnnotationsOption,
+    emitMetadataAttributesOption
 };
 
 rootCommand.SetAction(async (parseResult, ct) =>
@@ -58,7 +70,9 @@ rootCommand.SetAction(async (parseResult, ct) =>
     {
         GenerateTypeInfo = parseResult.GetValue(generateTypeInfoOption),
         TargetFramework = parseResult.GetValue(targetFrameworkOption),
-        ForceEmitAotAttributes = parseResult.GetValue(forceEmitAotAttributesOption)
+        ForceEmitAotAttributes = parseResult.GetValue(forceEmitAotAttributesOption),
+        NullableAnnotationsEnabled = !parseResult.GetValue(disableNullableAnnotationsOption),
+        EmitMetadataAttributes = parseResult.GetValue(emitMetadataAttributesOption)
     };
 
     var config = parseResult.InvocationConfiguration;

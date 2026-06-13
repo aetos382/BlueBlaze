@@ -2,7 +2,7 @@ using System;
 using System.Net;
 using System.Net.Http.Headers;
 
-namespace BlueBlaze.Client.Core;
+namespace BlueBlaze.Core;
 
 public sealed class LexiconException : Exception
 {

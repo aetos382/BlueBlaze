@@ -1,4 +1,4 @@
-namespace BlueBlaze.Client.Core;
+namespace BlueBlaze.Core;
 
 public sealed class VoidOutput
 {

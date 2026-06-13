@@ -4,7 +4,7 @@ namespace BlueBlaze.LexiconGenerator.Core.Generation;
 
 internal static class ParametersEmitter
 {
-    private const string ClientCoreNamespace = "global::BlueBlaze.Client.Core";
+    private const string ClientCoreNamespace = "global::BlueBlaze.Core";
 
     internal static void Emit(
         string[] segments,
@@ -45,8 +45,14 @@ internal static class ParametersEmitter
                     foreach (var kv in paramsDef.Properties)
                     {
                         var propName = kv.Key;
-                        var csPropName = LexiconNameHelper.ToPascalCase(propName);
                         var isRequired = requiredSet.Contains(propName);
+
+                        var csPropName = LexiconNameHelper.ToPascalCase(propName);
+                        if (csPropName == "Parameters")
+                        {
+                            csPropName += "Value";
+                        }
+
                         EmitEntry(isb, propName, csPropName, kv.Value, isRequired);
                     }
                 }
@@ -117,32 +123,10 @@ internal static class ParametersEmitter
             return;
         }
 
-        // DateTimeOffset (datetime format) — value type, requires .HasValue
-        if (def is StringDefinition { Format: StringFormat.DateTime })
-        {
-            const string FmtExpr = ".ToString(\"O\", global::System.Globalization.CultureInfo.InvariantCulture)";
-            if (isRequired)
-            {
-                isb.AppendLine($"dict[\"{jsonKey}\"] = [this.{csPropName}{FmtExpr}];");
-            }
-            else
-            {
-                isb.AppendLine($"if (this.{csPropName}.HasValue)");
-                isb.AppendLine("{");
-                {
-                    using var ifScope = isb.Indent();
-                    isb.AppendLine($"dict[\"{jsonKey}\"] = [this.{csPropName}.Value{FmtExpr}];");
-                }
-                isb.AppendLine("}");
-            }
-            return;
-        }
-
-        // Uri and other reference string types — use ToString() or direct
-        var toStringExpr = def is StringDefinition { Format: StringFormat.Uri } ? ".ToString()" : "";
+        // string (全フォーマット統一)・その他の参照型
         if (isRequired)
         {
-            isb.AppendLine($"dict[\"{jsonKey}\"] = [this.{csPropName}{toStringExpr}];");
+            isb.AppendLine($"dict[\"{jsonKey}\"] = [this.{csPropName}];");
         }
         else
         {
@@ -150,7 +134,7 @@ internal static class ParametersEmitter
             isb.AppendLine("{");
             using (isb.Indent())
             {
-                isb.AppendLine($"dict[\"{jsonKey}\"] = [this.{csPropName}{toStringExpr}];");
+                isb.AppendLine($"dict[\"{jsonKey}\"] = [this.{csPropName}];");
             }
             isb.AppendLine("}");
         }
@@ -172,9 +156,6 @@ internal static class ParametersEmitter
         {
             BooleanDefinition => $"{varName} ? \"true\" : \"false\"",
             IntegerDefinition => $"{varName}.ToString(global::System.Globalization.CultureInfo.InvariantCulture)",
-            StringDefinition { Format: StringFormat.DateTime } =>
-                $"{varName}.ToString(\"O\", global::System.Globalization.CultureInfo.InvariantCulture)",
-            StringDefinition { Format: StringFormat.Uri } => $"{varName}.ToString()",
             _ => varName
         };
     }

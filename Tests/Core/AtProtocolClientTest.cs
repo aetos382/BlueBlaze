@@ -6,9 +6,9 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-using BlueBlaze.Client.Core;
+using BlueBlaze.Core;
 
-namespace BlueBlaze.Client.Core.Tests;
+namespace BlueBlaze.Core.Tests;
 
 [TestClass]
 public sealed class AtProtocolClientTest

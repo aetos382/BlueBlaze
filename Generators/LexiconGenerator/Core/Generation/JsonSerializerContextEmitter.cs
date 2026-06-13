@@ -24,6 +24,7 @@ internal static class JsonSerializerContextEmitter
         isb.AppendLine();
 
         var emittedListTypeInfoNames = new HashSet<string>(StringComparer.Ordinal);
+        bool hasSerializableTypes = false;
 
         foreach (var docInfo in documents)
         {
@@ -44,11 +45,13 @@ internal static class JsonSerializerContextEmitter
                 if (procDef.Input?.Schema is ObjectDefinition inputObj)
                 {
                     EmitTypeWithUnions(isb, inputObj, $"{modelPath}.Input", $"{segmentsConcat}Input", currentNsid, nsidIndex, registeredTypes, emittedListTypeInfoNames);
+                    hasSerializableTypes = true;
                 }
 
                 if (procDef.Output?.Schema is ObjectDefinition outputObj)
                 {
                     EmitTypeWithUnions(isb, outputObj, $"{modelPath}.Output", $"{segmentsConcat}Output", currentNsid, nsidIndex, registeredTypes, emittedListTypeInfoNames);
+                    hasSerializableTypes = true;
                 }
             }
             else if (mainDef is QueryDefinition queryDef)
@@ -56,6 +59,7 @@ internal static class JsonSerializerContextEmitter
                 if (queryDef.Output?.Schema is ObjectDefinition outputObj)
                 {
                     EmitTypeWithUnions(isb, outputObj, $"{modelPath}.Output", $"{segmentsConcat}Output", currentNsid, nsidIndex, registeredTypes, emittedListTypeInfoNames);
+                    hasSerializableTypes = true;
                 }
             }
             else
@@ -78,7 +82,13 @@ internal static class JsonSerializerContextEmitter
 
                 var siblingClassName = "Output" + LexiconNameHelper.ToPascalCase(defKey);
                 EmitTypeWithUnions(isb, siblingObjDef, $"{modelPath}.{siblingClassName}", $"{segmentsConcat}{siblingClassName}", currentNsid, nsidIndex, registeredTypes, emittedListTypeInfoNames);
+                hasSerializableTypes = true;
             }
+        }
+
+        if (!hasSerializableTypes)
+        {
+            return;
         }
 
         isb.AppendLine($"internal sealed partial class LexiconJsonSerializerContext : global::System.Text.Json.Serialization.JsonSerializerContext");

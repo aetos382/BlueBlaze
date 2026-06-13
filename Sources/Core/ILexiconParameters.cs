@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace BlueBlaze.Client.Core;
+namespace BlueBlaze.Core;
 
 public interface ILexiconParameters
 {

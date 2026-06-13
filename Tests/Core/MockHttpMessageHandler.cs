@@ -3,7 +3,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace BlueBlaze.Client.Core.Tests;
+namespace BlueBlaze.Core.Tests;
 
 internal sealed class MockHttpMessageHandler : HttpMessageHandler
 {

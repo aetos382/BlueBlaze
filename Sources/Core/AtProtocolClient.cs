@@ -4,7 +4,7 @@ using System.Net.Http.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace BlueBlaze.Client.Core;
+namespace BlueBlaze.Core;
 
 public class AtProtocolClient :
     IAtProtocolClient

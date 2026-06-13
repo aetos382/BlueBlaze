@@ -12,7 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="../AtProtocol/Client.AtProtocol.csproj" />
-    <ProjectReference Include="../Core/Client.Core.csproj" />
+    <ProjectReference Include="..\..\Core\Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>

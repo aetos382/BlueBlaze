@@ -4,7 +4,7 @@ namespace BlueBlaze.LexiconGenerator.Core.Generation;
 
 internal static class DeserializerEmitter
 {
-    private const string ClientCoreNamespace = "global::BlueBlaze.Client.Core";
+    private const string ClientCoreNamespace = "global::BlueBlaze.Core";
 
     internal static void Emit(
         string[] segments,
@@ -53,8 +53,12 @@ internal static class DeserializerEmitter
                 using (isb.Indent())
                 {
                     isb.AppendLine("global::System.Net.Http.HttpContent content,");
-                    isb.AppendLine("global::System.Threading.CancellationToken cancellationToken = default) =>");
-                    isb.AppendLine($"new global::System.Threading.Tasks.ValueTask<{outputType}>(");
+                    isb.AppendLine("global::System.Threading.CancellationToken cancellationToken = default)");
+                }
+                isb.AppendLine("{");
+                using (isb.Indent())
+                {
+                    isb.AppendLine($"return new global::System.Threading.Tasks.ValueTask<{outputType}>(");
                     using (isb.Indent())
                     {
                         isb.AppendLine("global::System.Net.Http.Json.HttpContentJsonExtensions.ReadFromJsonAsync(");
@@ -64,6 +68,7 @@ internal static class DeserializerEmitter
                         }
                     }
                 }
+                isb.AppendLine("}");
             }
             else
             {

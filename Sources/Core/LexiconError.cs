@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace BlueBlaze.Client.Core;
+namespace BlueBlaze.Core;
 
 public sealed class LexiconError
 {

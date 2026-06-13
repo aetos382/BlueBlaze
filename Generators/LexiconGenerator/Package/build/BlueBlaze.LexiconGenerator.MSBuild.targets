@@ -49,6 +49,7 @@
       GenerateTypeInfo="$(BlueBlazeGeneratorGenerateTypeInfo)"
       TargetFramework="$(TargetFramework)"
       ForceEmitAotAttributes="$(BlueBlazeGeneratorForceEmitAotAttributes)"
+      Nullable="$(Nullable)"
       DebugBreakOnExecute="$(BlueBlazeGenerateLexiconSourceCodeTaskDebugBreakOnExecute)">
 
       <Output TaskParameter="GeneratedFiles" ItemName="GeneratedLexiconSources" />

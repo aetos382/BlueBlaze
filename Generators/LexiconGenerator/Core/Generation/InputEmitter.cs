@@ -4,7 +4,7 @@ namespace BlueBlaze.LexiconGenerator.Core.Generation;
 
 internal static class InputEmitter
 {
-    private const string ClientCoreNamespace = "global::BlueBlaze.Client.Core";
+    private const string ClientCoreNamespace = "global::BlueBlaze.Core";
 
     internal static void Emit(
         string nsid,
@@ -44,19 +44,23 @@ internal static class InputEmitter
             {
                 var typeInfoPropName = BuildTypeInfoPropertyName(segments);
                 var contextType = GlobalType(generatedCodeNamespace, "LexiconJsonSerializerContext");
-                isb.AppendLine("public global::System.Net.Http.HttpContent ToHttpContent() =>");
+                isb.AppendLine("public global::System.Net.Http.HttpContent ToHttpContent()");
+                isb.AppendLine("{");
                 using (isb.Indent())
                 {
-                    isb.AppendLine($"global::System.Net.Http.Json.JsonContent.Create(this, {contextType}.Default.{typeInfoPropName});");
+                    isb.AppendLine($"return global::System.Net.Http.Json.JsonContent.Create(this, {contextType}.Default.{typeInfoPropName});");
                 }
+                isb.AppendLine("}");
             }
             else
             {
-                isb.AppendLine("public global::System.Net.Http.HttpContent ToHttpContent() =>");
+                isb.AppendLine("public global::System.Net.Http.HttpContent ToHttpContent()");
+                isb.AppendLine("{");
                 using (isb.Indent())
                 {
-                    isb.AppendLine("global::System.Net.Http.Json.JsonContent.Create(this, this.GetType());");
+                    isb.AppendLine("return global::System.Net.Http.Json.JsonContent.Create(this, this.GetType());");
                 }
+                isb.AppendLine("}");
             }
         }
         isb.AppendLine("}");

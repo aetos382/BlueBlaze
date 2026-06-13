@@ -8,7 +8,7 @@ using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace BlueBlaze.Client.Core.Tests;
+namespace BlueBlaze.Core.Tests;
 
 internal sealed class FakeRequest : ILexiconRequest
 {

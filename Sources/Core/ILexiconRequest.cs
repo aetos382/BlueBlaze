@@ -1,6 +1,6 @@
 using System.Net.Http;
 
-namespace BlueBlaze.Client.Core;
+namespace BlueBlaze.Core;
 
 public interface ILexiconRequest
 {

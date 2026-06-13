@@ -5,7 +5,7 @@ namespace BlueBlaze.LexiconGenerator.Core.Generation;
 
 internal static class ClientMethodEmitter
 {
-    private const string CoreNs = "global::BlueBlaze.Client.Core";
+    private const string CoreNs = "global::BlueBlaze.Core";
 
     internal static void Emit(
         LexiconDocumentWithInfo docInfo,
@@ -99,14 +99,7 @@ internal static class ClientMethodEmitter
                 using (isb.Indent())
                 {
                     isb.AppendLine($"{modelType}.Input input,");
-                    isb.AppendLine($"global::System.Threading.CancellationToken cancellationToken = default) =>");
-                    isb.AppendLine("client.SendAsync(");
-                    using (isb.Indent())
-                    {
-                        isb.AppendLine($"{requestExpr},");
-                        isb.AppendLine($"{deserializerExpr},");
-                        isb.AppendLine("cancellationToken);");
-                    }
+                    isb.AppendLine("global::System.Threading.CancellationToken cancellationToken = default)");
                 }
             }
             else if (hasParameters)
@@ -115,30 +108,26 @@ internal static class ClientMethodEmitter
                 using (isb.Indent())
                 {
                     isb.AppendLine($"{modelType}.Parameters? parameters = null,");
-                    isb.AppendLine($"global::System.Threading.CancellationToken cancellationToken = default) =>");
-                    isb.AppendLine("client.SendAsync(");
-                    using (isb.Indent())
-                    {
-                        isb.AppendLine($"{requestExpr},");
-                        isb.AppendLine($"{deserializerExpr},");
-                        isb.AppendLine("cancellationToken);");
-                    }
+                    isb.AppendLine("global::System.Threading.CancellationToken cancellationToken = default)");
                 }
             }
             else
             {
-                isb.AppendLine($"public {returnType} {methodName}(global::System.Threading.CancellationToken cancellationToken = default) =>");
+                isb.AppendLine($"public {returnType} {methodName}(global::System.Threading.CancellationToken cancellationToken = default)");
+            }
+
+            isb.AppendLine("{");
+            using (isb.Indent())
+            {
+                isb.AppendLine("return client.SendAsync(");
                 using (isb.Indent())
                 {
-                    isb.AppendLine("client.SendAsync(");
-                    using (isb.Indent())
-                    {
-                        isb.AppendLine($"{requestExpr},");
-                        isb.AppendLine($"{deserializerExpr},");
-                        isb.AppendLine("cancellationToken);");
-                    }
+                    isb.AppendLine($"{requestExpr},");
+                    isb.AppendLine($"{deserializerExpr},");
+                    isb.AppendLine("cancellationToken);");
                 }
             }
+            isb.AppendLine("}");
 
             ClosePartialStructContainers(isb, containerSegments);
         }

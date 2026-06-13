@@ -5,7 +5,7 @@ namespace BlueBlaze.LexiconGenerator.Core.Generation;
 
 internal static class ClientPrefixEmitter
 {
-    private const string AtpClientType = "global::BlueBlaze.Client.Core.IAtProtocolClient";
+    private const string AtpClientType = "global::BlueBlaze.Core.IAtProtocolClient";
 
     internal static void Emit(
         string[] prefixSegments,
