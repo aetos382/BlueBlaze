@@ -130,23 +130,17 @@
       "BlueBlaze.Client.AtProtocol": {
         "type": "Project",
         "dependencies": {
-          "BlueBlaze.Client.Core": "[1.0.0, )"
+          "BlueBlaze.Core": "[1.0.0, )"
         }
       },
       "BlueBlaze.Client.Bluesky": {
         "type": "Project",
         "dependencies": {
           "BlueBlaze.Client.AtProtocol": "[1.0.0, )",
-          "BlueBlaze.Client.Core": "[1.0.0, )"
+          "BlueBlaze.Core": "[1.0.0, )"
         }
       },
-      "BlueBlaze.Client.Core": {
-        "type": "Project",
-        "dependencies": {
-          "BlueBlaze.LexiconMetadata": "[1.0.0, )"
-        }
-      },
-      "BlueBlaze.LexiconMetadata": {
+      "BlueBlaze.Core": {
         "type": "Project"
       }
     },

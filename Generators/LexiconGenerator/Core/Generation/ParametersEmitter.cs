@@ -4,7 +4,7 @@ namespace BlueBlaze.LexiconGenerator.Core.Generation;
 
 internal static class ParametersEmitter
 {
-    private const string ClientCoreNamespace = "global::BlueBlaze.Client.Core";
+    private const string ClientCoreNamespace = "global::BlueBlaze.Core";
 
     internal static void Emit(
         string[] segments,

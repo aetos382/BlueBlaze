@@ -6,7 +6,7 @@ namespace BlueBlaze.LexiconGenerator.Core.Generation;
 
 internal static class ObjectClassEmitter
 {
-    private const string MetadataNs = "global::BlueBlaze.LexiconMetadata";
+    private const string MetadataNs = "global::BlueBlaze.Core";
 
     private sealed record PropInfo(
         string JsonKey,

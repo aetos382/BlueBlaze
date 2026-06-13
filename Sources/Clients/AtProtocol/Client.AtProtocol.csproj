@@ -18,10 +18,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../Core/Client.Core.csproj" />
     <ProjectReference Include="../../../Generators/LexiconGenerator/MSBuild/LexiconGenerator.MSBuild.csproj">
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
+    <ProjectReference Include="..\..\Core\Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -45,7 +45,7 @@ var disableNullableAnnotationsOption = new Option<bool>("--disable-nullable-anno
 
 var emitMetadataAttributesOption = new Option<bool>("--emit-metadata-attributes")
 {
-    Description = "Lexicon スキーマのメタデータ情報を BlueBlaze.LexiconMetadata 属性として生成コードに出力します。"
+    Description = "Lexicon スキーマのメタデータ情報を BlueBlaze.Core 属性として生成コードに出力します。"
 };
 
 var rootCommand = new RootCommand("BlueBlaze Lexicon コードジェネレーター")

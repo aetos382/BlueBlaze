@@ -10,24 +10,21 @@
     <Project Path="Generators/LexiconGenerator/Package/LexiconGenerator.Package.csproj" />
     <Project Path="Generators/LexiconGenerator/Roslyn/LexiconGenerator.Roslyn.csproj" />
   </Folder>
-  <Folder Name="/Sources/" />
+  <Folder Name="/Sources/">
+    <Project Path="Sources/Core/Core.csproj" />
+  </Folder>
   <Folder Name="/Sources/Clients/">
     <Project Path="Sources/Clients/AtProtocol/Client.AtProtocol.csproj" />
     <Project Path="Sources/Clients/Bluesky/Client.Bluesky.csproj" />
     <Project Path="Sources/Clients/Cli/Client.Cli.csproj" />
-    <Project Path="Sources/Clients/Core/Client.Core.csproj" />
-  </Folder>
-  <Folder Name="/Sources/Clients/Core/" />
-  <Folder Name="/Sources/Metadata/">
-    <Project Path="Sources/Metadata/LexiconMetadata.csproj" />
   </Folder>
   <Folder Name="/Tests/" />
   <Folder Name="/Tests/Clients/">
     <Project Path="Tests/Clients/AtProtocol/Client.AtProtocol.Tests.csproj" />
     <Project Path="Tests/Clients/Bluesky/Client.Bluesky.Tests.csproj" />
   </Folder>
-  <Folder Name="/Tests/Clients/Core/">
-    <Project Path="Tests/Clients/Core/Client.Core.Tests.csproj" />
+  <Folder Name="/Tests/Core/">
+    <Project Path="Tests/Core/Core.Tests.csproj" />
   </Folder>
   <Folder Name="/Tests/Generators/" />
   <Folder Name="/Tests/Generators/LexiconGenerator/">
