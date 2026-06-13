@@ -11,6 +11,7 @@
     "security:openssf-scorecard",
     "schedule:automergeDaily"
   ],
+  "ignorePaths": ["PackageTest/**"],
   "timezone": "Asia/Tokyo",
   "minimumReleaseAge": "3 days",
   "osvVulnerabilityAlerts": true,
