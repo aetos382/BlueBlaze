@@ -6,12 +6,30 @@ namespace BlueBlaze.Client.Core;
 
 public sealed class LexiconException : Exception
 {
+    public LexiconException()
+        : base("Lexicon error")
+    {
+    }
+
+    public LexiconException(string message)
+        : base(message)
+    {
+    }
+
+    public LexiconException(
+        string message,
+        Exception innerException)
+        : base(message, innerException)
+    {
+    }
+
     public LexiconException(
         Uri requestUri,
         HttpStatusCode statusCode,
         HttpResponseHeaders responseHeaders,
-        LexiconError? error)
-        : base(CreateMessage(error))
+        LexiconError? error,
+        Exception? innerException = null)
+        : base(CreateMessage(error), innerException)
     {
         this.RequestUri = requestUri;
         this.StatusCode = statusCode;
@@ -19,11 +37,11 @@ public sealed class LexiconException : Exception
         this.Error = error;
     }
 
-    public Uri RequestUri { get; }
+    public Uri? RequestUri { get; }
 
-    public HttpStatusCode StatusCode { get; }
+    public HttpStatusCode? StatusCode { get; }
 
-    public HttpResponseHeaders ResponseHeaders { get; }
+    public HttpResponseHeaders? ResponseHeaders { get; }
 
     public LexiconError? Error { get; }
 
@@ -31,8 +49,9 @@ public sealed class LexiconException : Exception
     {
         if (error is null)
         {
-            return "unknown error";
+            return "Lexicon error";
         }
+
         return !string.IsNullOrEmpty(error.Description)
             ? $"Error: {error.Error}, Description: {error.Description}"
             : $"Error: {error.Error}";

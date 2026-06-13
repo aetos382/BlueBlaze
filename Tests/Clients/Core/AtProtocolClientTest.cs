@@ -172,6 +172,7 @@ public sealed class AtProtocolClientTest
             () => client.SendAsync(request, new SimpleOutputJsonDeserializer()).AsTask()).ConfigureAwait(false);
 
         Assert.AreEqual(HttpStatusCode.Unauthorized, ex.StatusCode);
+        Assert.IsNotNull(ex.Error);
         Assert.AreEqual("InvalidToken", ex.Error.Error);
         Assert.AreEqual("Token has expired", ex.Error.Description);
     }
