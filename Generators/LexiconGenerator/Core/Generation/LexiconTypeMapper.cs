@@ -4,12 +4,12 @@ namespace BlueBlaze.LexiconGenerator.Core.Generation;
 
 internal static class LexiconTypeMapper
 {
-    // Maps a lexicon definition to its C# type string.
-    // Returns null if the type is a union (handled separately by the caller) or unsupported.
+    // Maps a lexicon definition to its base C# type (without ? annotation).
+    // Nullability is determined by the emitter based on context.
+    // Returns null for UnionDefinition (caller handles separately).
+    // StringDefinition with Enum is NOT handled here — caller checks directly.
     internal static MapResult? Map(
         LexiconDefinition def,
-        bool isRequired,
-        bool isNullable,
         string currentNsid,
         IReadOnlyDictionary<string, LexiconType?> nsidIndex,
         out string? unknownFormatName,
@@ -18,54 +18,51 @@ internal static class LexiconTypeMapper
     {
         unknownFormatName = null;
 
-        var nullable = !isRequired || isNullable;
-
         switch (def)
         {
             case BooleanDefinition:
-                return new MapResult(nullable ? "bool?" : "bool", nullable);
+                return new MapResult("bool", IsValueType: true);
 
             case IntegerDefinition:
-                return new MapResult(nullable ? "int?" : "int", nullable);
+                return new MapResult("int", IsValueType: true);
 
             case StringDefinition sd:
-                return MapString(sd, nullable, ref unknownFormatName);
+                return MapString(sd, ref unknownFormatName);
 
             case TokenDefinition:
-                return new MapResult(nullable ? "string?" : "string", nullable);
+                return new MapResult("string", IsValueType: false);
 
             case BytesDefinition:
-                return new MapResult(nullable ? "byte[]?" : "byte[]", nullable);
+                return new MapResult("byte[]", IsValueType: false);
 
             case CidLinkDefinition:
-                return new MapResult(nullable ? "string?" : "string", nullable);
+                return new MapResult("string", IsValueType: false);
 
             case BlobDefinition:
-                return new MapResult(nullable ? "object?" : "object", nullable);
+                return new MapResult("object", IsValueType: false);
 
             case ArrayDefinition ad:
-                return MapArray(ad, isRequired, isNullable, currentNsid, nsidIndex, defIndex, generatedCodeNamespace, out unknownFormatName);
+                return MapArray(ad, currentNsid, nsidIndex, defIndex, generatedCodeNamespace, out unknownFormatName);
 
             case ReferenceDefinition rd:
-                // ref ターゲットが非クラス型 (string/token/integer 等) の場合はプリミティブ型を返す
                 if (defIndex != null)
                 {
                     var (targetNsid, targetDefKey) = LexiconNameHelper.ParseRef(rd.Ref, currentNsid);
                     var defKey = targetNsid + "#" + targetDefKey;
                     if (defIndex.TryGetValue(defKey, out var targetDef) && IsNonClassDef(targetDef))
                     {
-                        return Map(targetDef, isRequired, isNullable, targetNsid, nsidIndex, out unknownFormatName, defIndex, generatedCodeNamespace);
+                        return Map(targetDef, targetNsid, nsidIndex, out unknownFormatName, defIndex, generatedCodeNamespace);
                     }
                 }
                 var resolved = LexiconNameHelper.ResolveRef(currentNsid, rd.Ref, nsidIndex);
                 var globalResolved = LexiconNameHelper.GlobalizeTypePath(resolved, generatedCodeNamespace);
-                return new MapResult(nullable ? globalResolved + "?" : globalResolved, nullable);
+                return new MapResult(globalResolved, IsValueType: false);
 
             case UnionDefinition:
-                return null; // 呼び出し側が union を個別に処理する
+                return null;
 
             case UnknownDefinition:
-                return new MapResult(nullable ? "object?" : "object", nullable);
+                return new MapResult("object", IsValueType: false);
 
             default:
                 return null;
@@ -79,23 +76,19 @@ internal static class LexiconTypeMapper
 
     private static MapResult MapString(
         StringDefinition sd,
-        bool nullable,
         ref string? unknownFormatName)
     {
+        // StringDefinition with Enum is handled by the emitter, not here.
         if (sd.Format == null)
         {
-            return new MapResult(nullable ? "string?" : "string", nullable);
+            return new MapResult("string", IsValueType: false);
         }
 
         return sd.Format switch
         {
-            StringFormat.DateTime => new MapResult(
-                nullable ? "global::System.DateTimeOffset?" : "global::System.DateTimeOffset",
-                nullable),
+            StringFormat.DateTime => new MapResult("global::System.DateTimeOffset", IsValueType: true),
 
-            StringFormat.Uri => new MapResult(
-                nullable ? "global::System.Uri?" : "global::System.Uri",
-                nullable),
+            StringFormat.Uri => new MapResult("global::System.Uri", IsValueType: false),
 
             StringFormat.AtIdentifier or
             StringFormat.AtUri or
@@ -106,44 +99,36 @@ internal static class LexiconTypeMapper
             StringFormat.Tid or
             StringFormat.RecordKey or
             StringFormat.Language =>
-                new MapResult(nullable ? "string?" : "string", nullable),
+                new MapResult("string", IsValueType: false),
 
-            _ => FallbackString(sd.Format.ToString(), nullable, ref unknownFormatName)
+            _ => FallbackString($"{sd.Format}", ref unknownFormatName)
         };
     }
 
-    private static MapResult FallbackString(string formatName, bool nullable, ref string? unknownFormatName)
+    private static MapResult FallbackString(string formatName, ref string? unknownFormatName)
     {
         unknownFormatName = formatName;
-        return new MapResult(nullable ? "string?" : "string", nullable);
+        return new MapResult("string", IsValueType: false);
     }
 
     private static MapResult? MapArray(
         ArrayDefinition ad,
-        bool isRequired,
-        bool isNullable,
         string currentNsid,
         IReadOnlyDictionary<string, LexiconType?> nsidIndex,
         IReadOnlyDictionary<string, LexiconDefinition>? defIndex,
         string? generatedCodeNamespace,
         out string? unknownFormatName)
     {
-        var itemResult = Map(ad.Items, isRequired: true, isNullable: false, currentNsid,
-            nsidIndex, out unknownFormatName, defIndex, generatedCodeNamespace);
+        var itemResult = Map(ad.Items, currentNsid, nsidIndex, out unknownFormatName, defIndex, generatedCodeNamespace);
 
         if (itemResult == null)
         {
-            return null; // Union items — caller must handle
+            return null;
         }
 
-        var itemType = itemResult.IsNullable
-            ? itemResult.CSharpType.TrimEnd('?')
-            : itemResult.CSharpType;
-
-        var nullable = !isRequired || isNullable;
-        var listType = $"global::System.Collections.Generic.IReadOnlyList<{itemType}>";
-        return new MapResult(nullable ? listType + "?" : listType, nullable);
+        var listType = $"global::System.Collections.Generic.IReadOnlyList<{itemResult.BaseType}>";
+        return new MapResult(listType, IsValueType: false);
     }
 }
 
-internal sealed record MapResult(string CSharpType, bool IsNullable);
+internal sealed record MapResult(string BaseType, bool IsValueType);

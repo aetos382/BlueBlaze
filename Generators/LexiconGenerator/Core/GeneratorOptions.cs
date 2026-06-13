@@ -12,6 +12,8 @@ public sealed record GeneratorOptions
 
     public bool ForceEmitAotAttributes { get; init; }
 
+    public bool NullableAnnotationsEnabled { get; init; } = true;
+
     internal bool ShouldEmitAotAttributes
     {
         get

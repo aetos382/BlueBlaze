@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -31,6 +32,8 @@ public sealed class BlueBlazeGenerateSourceCode : Task
 
     public string? ForceEmitAotAttributes { get; set; }
 
+    public string? Nullable { get; set; }
+
     [Output]
     public ITaskItem[] GeneratedFiles { get; set; } = [];
 
@@ -63,11 +66,16 @@ public sealed class BlueBlazeGenerateSourceCode : Task
         var forceEmitAotAttributes =
             bool.TryParse(this.ForceEmitAotAttributes, out var parsedForceEmitAot) && parsedForceEmitAot;
 
+        var nullableAnnotationsEnabled =
+            string.Equals(this.Nullable, "enable", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(this.Nullable, "annotations", StringComparison.OrdinalIgnoreCase);
+
         var options = new GeneratorOptions
         {
             GenerateTypeInfo = this.GenerateTypeInfo,
             TargetFramework = string.IsNullOrEmpty(this.TargetFramework) ? null : this.TargetFramework,
-            ForceEmitAotAttributes = forceEmitAotAttributes
+            ForceEmitAotAttributes = forceEmitAotAttributes,
+            NullableAnnotationsEnabled = nullableAnnotationsEnabled
         };
 
         var result = LexiconCodeGenerator.Generate(items, this.GeneratedCodeNamespace, options);

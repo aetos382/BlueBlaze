@@ -67,7 +67,8 @@ public sealed class LexiconCodeGenerator
         {
             DocumentEmitter.Emit(
                 docInfo, nsidIndex, generatedCodeNamespace,
-                files, diagnostics, unionMemberImpls, defIndex);
+                files, diagnostics, unionMemberImpls, defIndex,
+                options.NullableAnnotationsEnabled);
         }
 
         // Phase 2: Emit union member partial class files

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace BlueBlaze.LexiconGenerator.Core.Generation;
 
@@ -14,7 +15,8 @@ internal static class DocumentEmitter
         List<Diagnostic> diagnostics,
         // Collects (unionInterfaceFqn, refStr) pairs for partial class generation
         List<(string MemberTypePath, string InterfacePath)> unionMemberImpls,
-        IReadOnlyDictionary<string, LexiconDefinition>? defIndex = null)
+        IReadOnlyDictionary<string, LexiconDefinition>? defIndex = null,
+        bool nullableAnnotationsEnabled = true)
     {
         var doc = docInfo.Document;
         var nsid = doc.Id;
@@ -42,7 +44,8 @@ internal static class DocumentEmitter
                     nsid, defKey, objDef, mainType, isMain,
                     nsidIndex, generatedCodeNamespace,
                     filePath, files, diagnostics, unionMemberImpls,
-                    emitJsonAttributes: emitJson, defIndex: defIndex);
+                    emitJsonAttributes: emitJson, defIndex: defIndex,
+                    nullableAnnotationsEnabled: nullableAnnotationsEnabled);
             }
             else if (def is RecordDefinition recDef)
             {
@@ -50,22 +53,26 @@ internal static class DocumentEmitter
                     nsid, defKey, recDef.Record, mainType, isMain,
                     nsidIndex, generatedCodeNamespace,
                     filePath, files, diagnostics, unionMemberImpls,
-                    emitJsonAttributes: true, defIndex: defIndex);
+                    emitJsonAttributes: true, defIndex: defIndex,
+                    nullableAnnotationsEnabled: nullableAnnotationsEnabled);
             }
             else if (def is QueryDefinition queryDef && isMain)
             {
                 EmitQueryProcedure(nsid, queryDef.Parameters, null, queryDef.Output, queryDef.Errors,
-                    nsidIndex, generatedCodeNamespace, filePath, files, diagnostics, unionMemberImpls, defIndex);
+                    nsidIndex, generatedCodeNamespace, filePath, files, diagnostics, unionMemberImpls, defIndex,
+                    nullableAnnotationsEnabled);
             }
             else if (def is ProcedureDefinition procDef && isMain)
             {
                 EmitQueryProcedure(nsid, procDef.Parameters, procDef.Input, procDef.Output, procDef.Errors,
-                    nsidIndex, generatedCodeNamespace, filePath, files, diagnostics, unionMemberImpls, defIndex);
+                    nsidIndex, generatedCodeNamespace, filePath, files, diagnostics, unionMemberImpls, defIndex,
+                    nullableAnnotationsEnabled);
             }
             else if (def is SubscriptionDefinition subDef && isMain)
             {
                 EmitSubscription(nsid, subDef, nsidIndex, generatedCodeNamespace,
-                    filePath, files, diagnostics, unionMemberImpls, defIndex);
+                    filePath, files, diagnostics, unionMemberImpls, defIndex,
+                    nullableAnnotationsEnabled);
             }
             else if (isMain && def.Type == LexiconType.PermissionSet)
             {
@@ -97,7 +104,8 @@ internal static class DocumentEmitter
         List<Diagnostic> diagnostics,
         List<(string, string)> unionMemberImpls,
         bool emitJsonAttributes,
-        IReadOnlyDictionary<string, LexiconDefinition>? defIndex = null)
+        IReadOnlyDictionary<string, LexiconDefinition>? defIndex = null,
+        bool nullableAnnotationsEnabled = true)
     {
         var segments = LexiconNameHelper.NsidToSegments(nsid);
         string className;
@@ -147,6 +155,7 @@ internal static class DocumentEmitter
             ObjectClassEmitter.EmitClass(isb, className, classPath, objDef, nsid, nsidIndex,
                 diagnostics, filePath, defKey,
                 isPartial: true, emitJsonAttributes: emitJsonAttributes,
+                nullableAnnotationsEnabled: nullableAnnotationsEnabled,
                 defIndex: defIndex, generatedCodeNamespace: generatedCodeNamespace,
                 unionProperties: unionProps);
             CloseContainers(isb, segments.Length - 1);
@@ -158,6 +167,7 @@ internal static class DocumentEmitter
             ObjectClassEmitter.EmitClass(isb, className, classPath, objDef, nsid, nsidIndex,
                 diagnostics, filePath, defKey,
                 isPartial: true, emitJsonAttributes: emitJsonAttributes,
+                nullableAnnotationsEnabled: nullableAnnotationsEnabled,
                 defIndex: defIndex, generatedCodeNamespace: generatedCodeNamespace,
                 unionProperties: unionProps);
             CloseContainers(isb, segments.Length);
@@ -190,7 +200,8 @@ internal static class DocumentEmitter
         List<GeneratedSourceFile> files,
         List<Diagnostic> diagnostics,
         List<(string, string)> unionMemberImpls,
-        IReadOnlyDictionary<string, LexiconDefinition>? defIndex = null)
+        IReadOnlyDictionary<string, LexiconDefinition>? defIndex = null,
+        bool nullableAnnotationsEnabled = true)
     {
         var segments = LexiconNameHelper.NsidToSegments(nsid);
 
@@ -204,21 +215,24 @@ internal static class DocumentEmitter
         if (parameters != null && parameters.Properties != null)
         {
             EmitParametersClass(nsid, segments, parameters, nsidIndex,
-                generatedCodeNamespace, filePath, files, diagnostics, defIndex);
+                generatedCodeNamespace, filePath, files, diagnostics, defIndex,
+                nullableAnnotationsEnabled);
         }
 
         if (input?.Schema is ObjectDefinition inputObj)
         {
             EmitOperationDataClass(nsid, segments, "Input", inputObj, nsidIndex,
                 generatedCodeNamespace, filePath, files, diagnostics, unionMemberImpls,
-                emitJsonAttributes: true, defIndex: defIndex);
+                emitJsonAttributes: true, defIndex: defIndex,
+                nullableAnnotationsEnabled: nullableAnnotationsEnabled);
         }
 
         if (output?.Schema is ObjectDefinition outputObj)
         {
             EmitOperationDataClass(nsid, segments, "Output", outputObj, nsidIndex,
                 generatedCodeNamespace, filePath, files, diagnostics, unionMemberImpls,
-                emitJsonAttributes: true, defIndex: defIndex);
+                emitJsonAttributes: true, defIndex: defIndex,
+                nullableAnnotationsEnabled: nullableAnnotationsEnabled);
         }
     }
 
@@ -231,7 +245,8 @@ internal static class DocumentEmitter
         List<GeneratedSourceFile> files,
         List<Diagnostic> diagnostics,
         List<(string, string)> unionMemberImpls,
-        IReadOnlyDictionary<string, LexiconDefinition>? defIndex = null)
+        IReadOnlyDictionary<string, LexiconDefinition>? defIndex = null,
+        bool nullableAnnotationsEnabled = true)
     {
         var segments = LexiconNameHelper.NsidToSegments(nsid);
 
@@ -244,7 +259,8 @@ internal static class DocumentEmitter
         if (subDef.Parameters != null && subDef.Parameters.Properties != null)
         {
             EmitParametersClass(nsid, segments, subDef.Parameters, nsidIndex,
-                generatedCodeNamespace, filePath, files, diagnostics, defIndex);
+                generatedCodeNamespace, filePath, files, diagnostics, defIndex,
+                nullableAnnotationsEnabled);
         }
 
         if (subDef.Message.Schema is ObjectDefinition msgObj)
@@ -252,7 +268,8 @@ internal static class DocumentEmitter
             // No JSON attributes for subscription message (CBOR encoded)
             EmitOperationDataClass(nsid, segments, "Message", msgObj, nsidIndex,
                 generatedCodeNamespace, filePath, files, diagnostics, unionMemberImpls,
-                emitJsonAttributes: false, defIndex: defIndex);
+                emitJsonAttributes: false, defIndex: defIndex,
+                nullableAnnotationsEnabled: nullableAnnotationsEnabled);
         }
     }
 
@@ -265,7 +282,8 @@ internal static class DocumentEmitter
         string? filePath,
         List<GeneratedSourceFile> files,
         List<Diagnostic> diagnostics,
-        IReadOnlyDictionary<string, LexiconDefinition>? defIndex = null)
+        IReadOnlyDictionary<string, LexiconDefinition>? defIndex = null,
+        bool nullableAnnotationsEnabled = true)
     {
         var isb = new IndentedStringBuilder();
         EmitFileHeader(isb, generatedCodeNamespace);
@@ -275,14 +293,18 @@ internal static class DocumentEmitter
         isb.AppendLine("{");
         using (isb.Indent())
         {
+            var requiredSet = new HashSet<string>(paramsDef.Required ?? []);
+            var requiredProps = new List<(string JsonKey, string CsPropName, string CsType)>();
+
             if (paramsDef.Properties != null)
             {
-                var requiredSet = new HashSet<string>(paramsDef.Required ?? []);
                 foreach (var kv in paramsDef.Properties)
                 {
                     var propName = kv.Key;
-                    var isReq = requiredSet.Contains(propName);
-                    var result = LexiconTypeMapper.Map(kv.Value, isReq, false, nsid, nsidIndex, out var unknownFormat, defIndex, generatedCodeNamespace);
+                    var isRequired = requiredSet.Contains(propName);
+
+                    var mapped = LexiconTypeMapper.Map(
+                        kv.Value, nsid, nsidIndex, out var unknownFormat, defIndex, generatedCodeNamespace);
 
                     if (unknownFormat != null)
                     {
@@ -292,19 +314,47 @@ internal static class DocumentEmitter
                             filePath, nsid, "main"));
                     }
 
-                    if (result == null)
+                    if (mapped == null)
                     {
                         continue;
                     }
 
-                    var csPropName = LexiconNameHelper.ToPascalCase(propName);
-                    // No [JsonPropertyName] for URL query string parameters
-                    isb.AppendLine(isReq
-                        ? $"public required {result.CSharpType} {csPropName} {{ get; init; }}"
-                        : $"public {result.CSharpType} {csPropName} {{ get; init; }}");
+                    // Non-required params always get T? so ToDictionary() can use HasValue/null checks
+                    var csType = isRequired
+                        ? ObjectClassEmitter.ComputeType(mapped.BaseType, mapped.IsValueType, isRequired: true, isInNullable: false, nullableAnnotationsEnabled)
+                        : mapped.BaseType + "?";
 
+                    var csPropName = LexiconNameHelper.ToPascalCase(propName);
+                    if (csPropName == "Parameters")
+                    {
+                        csPropName += "Value";
+                    }
+
+                    // No [JsonPropertyName] for URL query string parameters
+                    isb.AppendLine($"public {csType} {csPropName} {{ get; set; }}");
                     isb.AppendLine();
+
+                    if (isRequired)
+                    {
+                        requiredProps.Add((propName, csPropName, csType));
+                    }
                 }
+            }
+
+            if (requiredProps.Count > 0)
+            {
+                var paramList = string.Join(", ", requiredProps.Select(p => $"{p.CsType} {p.JsonKey}"));
+                isb.AppendLine($"public Parameters({paramList})");
+                isb.AppendLine("{");
+                using (isb.Indent())
+                {
+                    foreach (var (jsonKey, csPropName, _) in requiredProps)
+                    {
+                        isb.AppendLine($"this.{csPropName} = {jsonKey};");
+                    }
+                }
+                isb.AppendLine("}");
+                isb.AppendLine();
             }
         }
         isb.AppendLine("}");
@@ -327,7 +377,8 @@ internal static class DocumentEmitter
         List<Diagnostic> diagnostics,
         List<(string, string)> unionMemberImpls,
         bool emitJsonAttributes,
-        IReadOnlyDictionary<string, LexiconDefinition>? defIndex = null)
+        IReadOnlyDictionary<string, LexiconDefinition>? defIndex = null,
+        bool nullableAnnotationsEnabled = true)
     {
         var unionProps = CollectUnionProperties(objDef);
 
@@ -339,6 +390,7 @@ internal static class DocumentEmitter
         ObjectClassEmitter.EmitClass(isb, className, classPath, objDef, nsid, nsidIndex,
             diagnostics, filePath, "main",
             isPartial: true, emitJsonAttributes: emitJsonAttributes,
+            nullableAnnotationsEnabled: nullableAnnotationsEnabled,
             defIndex: defIndex, generatedCodeNamespace: generatedCodeNamespace,
             unionProperties: unionProps);
 

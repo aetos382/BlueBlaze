@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 using BlueBlaze.LexiconGenerator.Core;
@@ -132,11 +133,17 @@ public sealed class LexiconSourceGenerator :
                     bool.TryParse(forceEmitAotStr, out var parsedForceEmitAot) &&
                     parsedForceEmitAot;
 
+                opts.GlobalOptions.TryGetValue("build_property.Nullable", out var nullable);
+                var nullableAnnotationsEnabled =
+                    string.Equals(nullable, "enable", StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(nullable, "annotations", StringComparison.OrdinalIgnoreCase);
+
                 return new GeneratorOptions
                 {
                     GenerateTypeInfo = generateTypeInfo,
                     TargetFramework = string.IsNullOrEmpty(targetFramework) ? null : targetFramework,
-                    ForceEmitAotAttributes = forceEmitAotAttributes
+                    ForceEmitAotAttributes = forceEmitAotAttributes,
+                    NullableAnnotationsEnabled = nullableAnnotationsEnabled
                 };
             });
 

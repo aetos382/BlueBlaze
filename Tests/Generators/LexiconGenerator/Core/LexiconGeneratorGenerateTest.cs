@@ -40,9 +40,11 @@ public sealed class LexiconGeneratorGenerateTest
         StringAssert.Contains(file.SourceText, "/// <summary>A URI with a content-hash fingerprint.</summary>", StringComparison.Ordinal);
         StringAssert.Contains(file.SourceText, "public sealed partial class StrongRef", StringComparison.Ordinal);
         StringAssert.Contains(file.SourceText, "[global::System.Text.Json.Serialization.JsonPropertyName(\"uri\")]", StringComparison.Ordinal);
-        StringAssert.Contains(file.SourceText, "public required string Uri { get; init; }", StringComparison.Ordinal);
+        StringAssert.Contains(file.SourceText, "public string Uri { get; set; }", StringComparison.Ordinal);
         StringAssert.Contains(file.SourceText, "[global::System.Text.Json.Serialization.JsonPropertyName(\"cid\")]", StringComparison.Ordinal);
-        StringAssert.Contains(file.SourceText, "public required string Cid { get; init; }", StringComparison.Ordinal);
+        StringAssert.Contains(file.SourceText, "public string Cid { get; set; }", StringComparison.Ordinal);
+        StringAssert.Contains(file.SourceText, "[global::System.Text.Json.Serialization.JsonConstructor]", StringComparison.Ordinal);
+        StringAssert.Contains(file.SourceText, "public StrongRef(string uri, string cid)", StringComparison.Ordinal);
     }
 
     [TestMethod]
@@ -74,8 +76,10 @@ public sealed class LexiconGeneratorGenerateTest
         Assert.AreEqual($"{Namespace}.Com.Atproto.Repo.Defs.CommitMeta.g.cs", file.HintName);
         StringAssert.Contains(file.SourceText, "public sealed partial class Defs", StringComparison.Ordinal);
         StringAssert.Contains(file.SourceText, "public sealed partial class CommitMeta", StringComparison.Ordinal);
-        StringAssert.Contains(file.SourceText, "public required string Cid { get; init; }", StringComparison.Ordinal);
-        StringAssert.Contains(file.SourceText, "public required string Rev { get; init; }", StringComparison.Ordinal);
+        StringAssert.Contains(file.SourceText, "public string Cid { get; set; }", StringComparison.Ordinal);
+        StringAssert.Contains(file.SourceText, "public string Rev { get; set; }", StringComparison.Ordinal);
+        StringAssert.Contains(file.SourceText, "[global::System.Text.Json.Serialization.JsonConstructor]", StringComparison.Ordinal);
+        StringAssert.Contains(file.SourceText, "public CommitMeta(string cid, string rev)", StringComparison.Ordinal);
     }
 
     [TestMethod]
@@ -125,7 +129,8 @@ public sealed class LexiconGeneratorGenerateTest
         // OutputItem は Output にネストされず DoQuery の直下に配置される (ファイル名がフラット構造を示す)
         var itemFile = result.Files.Single(f => f.HintName == $"{Namespace}.Com.Example.DoQuery.OutputItem.g.cs");
         StringAssert.Contains(itemFile.SourceText, "public sealed partial class OutputItem", StringComparison.Ordinal);
-        StringAssert.Contains(itemFile.SourceText, "public required string Name { get; init; }", StringComparison.Ordinal);
+        StringAssert.Contains(itemFile.SourceText, "public string Name { get; set; }", StringComparison.Ordinal);
+        StringAssert.Contains(itemFile.SourceText, "public OutputItem(string name)", StringComparison.Ordinal);
     }
 
     [TestMethod]
@@ -170,7 +175,7 @@ public sealed class LexiconGeneratorGenerateTest
         Assert.AreEqual(3, result.Files.Count); // Post, Embed, Embed:IEmbed impl
 
         var postFile = result.Files.Single(f => f.HintName == $"{Namespace}.App.Test.Post.g.cs");
-        StringAssert.Contains(postFile.SourceText, "public IEmbed? Embed { get; init; }", StringComparison.Ordinal);
+        StringAssert.Contains(postFile.SourceText, "public IEmbed? Embed { get; set; }", StringComparison.Ordinal);
         StringAssert.Contains(postFile.SourceText, "[global::System.Text.Json.Serialization.JsonPolymorphic(TypeDiscriminatorPropertyName = \"$type\")]", StringComparison.Ordinal);
         StringAssert.Contains(postFile.SourceText, $"[global::System.Text.Json.Serialization.JsonDerivedType(typeof(global::{Namespace}.App.Test.Embed), \"app.test.embed\")]", StringComparison.Ordinal);
         StringAssert.Contains(postFile.SourceText, "public interface IEmbed { }", StringComparison.Ordinal);
@@ -217,7 +222,11 @@ public sealed class LexiconGeneratorGenerateTest
         // Subscription sub-defs は CBOR エンコードのため JsonPropertyName を付与しない
         Assert.IsFalse(commitFile.SourceText.Contains("JsonPropertyName", StringComparison.Ordinal),
             "Subscription のサブクラスに JsonPropertyName があってはならない");
-        StringAssert.Contains(commitFile.SourceText, "public required int Seq { get; init; }", StringComparison.Ordinal);
+        StringAssert.Contains(commitFile.SourceText, "public int Seq { get; set; }", StringComparison.Ordinal);
+        // JSON 属性なしのためコンストラクタには [JsonConstructor] はつかない
+        Assert.IsFalse(commitFile.SourceText.Contains("JsonConstructor", StringComparison.Ordinal),
+            "Subscription のサブクラスに JsonConstructor があってはならない");
+        StringAssert.Contains(commitFile.SourceText, "public MessageCommit(int seq)", StringComparison.Ordinal);
     }
 
     [TestMethod]
@@ -254,7 +263,8 @@ public sealed class LexiconGeneratorGenerateTest
         AssertNoErrors(result);
 
         var paramsFile = result.Files.Single(f => f.HintName == $"{Namespace}.Com.Example.Search.Parameters.g.cs");
-        StringAssert.Contains(paramsFile.SourceText, "public required string Q { get; init; }", StringComparison.Ordinal);
+        StringAssert.Contains(paramsFile.SourceText, "public string Q { get; set; }", StringComparison.Ordinal);
+        StringAssert.Contains(paramsFile.SourceText, "public Parameters(string q)", StringComparison.Ordinal);
         Assert.IsFalse(paramsFile.SourceText.Contains("JsonPropertyName", StringComparison.Ordinal),
             "Parameters クラスに JsonPropertyName があってはならない");
     }
