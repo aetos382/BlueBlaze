@@ -11,7 +11,6 @@
     "security:openssf-scorecard",
     "schedule:automergeDaily"
   ],
-  "ignorePaths": ["PackageTest/**"],
   "timezone": "Asia/Tokyo",
   "minimumReleaseAge": "3 days",
   "osvVulnerabilityAlerts": true,
@@ -23,7 +22,10 @@
   "nuget": {
     "lockFileMaintenance": {
       "enabled": false
-    }
+    },
+    "ignorePaths": [
+      "PackageTest/**"
+    ]
   },
   "packageRules": [
     {
@@ -43,7 +45,11 @@
       "description": "Auto-merge minor/patch updates from Microsoft GitHub organizations"
     },
     {
-      "matchDepNames": ["Microsoft.NETFramework.ReferenceAssemblies"],
+      "matchDepNames": [
+        "Microsoft.NETFramework.ReferenceAssemblies",
+        "System.Memory",
+        "System.Threading.Tasks.Extensions"
+      ],
       "abandonmentThreshold": null,
       "description": "Suppress abandonment alert - finished legacy package, not truly abandoned"
     },
