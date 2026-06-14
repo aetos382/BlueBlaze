@@ -9,7 +9,7 @@ RUN sed -i.bak 's|http://archive.ubuntu.com/ubuntu/|https://ftp.udx.icscoe.jp/Li
 ARG NODE_VERSION=24.16.0
 
 # renovate: datasource=npm depName=npm
-ARG NPM_VERSION=11.16.0
+ARG NPM_VERSION=11.17.0
 
 # renovate: datasource=github-releases depName=bluesky-social/goat
 ARG GOAT_VERSION=v0.2.3
