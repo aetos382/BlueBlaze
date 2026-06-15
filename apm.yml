@@ -22,6 +22,7 @@ devDependencies:
   - dotnet/skills/plugins/dotnet-test
   - dotnet/skills/plugins/dotnet-upgrade
   - MicrosoftDocs/mcp
+  - anthropics/claude-plugins-official/plugins/commit-commands
   mcp: []
 dependencies:
   mcp:
