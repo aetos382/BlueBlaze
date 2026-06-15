@@ -13,10 +13,12 @@
   <Folder Name="/Sources/">
     <Project Path="Sources/Core/Core.csproj" />
   </Folder>
+  <Folder Name="/Sources/Applications/">
+    <Project Path="Sources/Applications/Cli/Application.Cli.csproj" />
+  </Folder>
   <Folder Name="/Sources/Clients/">
     <Project Path="Sources/Clients/AtProtocol/Client.AtProtocol.csproj" />
     <Project Path="Sources/Clients/Bluesky/Client.Bluesky.csproj" />
-    <Project Path="Sources/Clients/Cli/Client.Cli.csproj" />
   </Folder>
   <Folder Name="/Tests/" />
   <Folder Name="/Tests/Clients/">
