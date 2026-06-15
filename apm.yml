@@ -40,5 +40,11 @@ dependencies:
     args:
     - NuGet.Mcp.Server@1.4.3
     - --yes
+  - name: github
+    registry: false
+    transport: http
+    url: https://api.githubcopilot.com/mcp
+    headers:
+      Authorization: Bearer ${GITHUB_TOKEN}
 includes: auto
 scripts: {}

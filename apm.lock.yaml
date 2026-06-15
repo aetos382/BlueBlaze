@@ -1,5 +1,5 @@
 lockfile_version: '1'
-generated_at: '2026-06-15T12:55:30.612283+00:00'
+generated_at: '2026-06-15T15:36:56.925318+00:00'
 apm_version: 0.20.0
 dependencies:
 - repo_url: MicrosoftDocs/mcp
@@ -779,6 +779,7 @@ dependencies:
   is_dev: true
 mcp_servers:
 - binlog
+- github
 - microsoft-learn
 - nuget
 - sequential-thinking
@@ -797,6 +798,13 @@ mcp_configs:
     tools:
     - '*'
     command: dotnet
+  github:
+    name: github
+    transport: http
+    registry: false
+    headers:
+      Authorization: Bearer ${GITHUB_TOKEN}
+    url: https://api.githubcopilot.com/mcp
   microsoft-learn:
     name: microsoft-learn
     transport: http
