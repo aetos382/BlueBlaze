@@ -1,5 +1,5 @@
 lockfile_version: '1'
-generated_at: '2026-06-15T17:34:06.084004+00:00'
+generated_at: '2026-06-15T17:42:25.895313+00:00'
 apm_version: 0.20.0
 dependencies:
 - repo_url: MicrosoftDocs/mcp
@@ -793,6 +793,7 @@ dependencies:
   is_dev: true
 mcp_servers:
 - binlog
+- context7
 - github
 - microsoft-learn
 - nuget
@@ -802,22 +803,27 @@ mcp_configs:
     name: binlog
     transport: stdio
     args:
-    - dnx
     - Microsoft.AITools.BinlogMcp
     - --yes
     - --prerelease
-    - --add-source
+    - --source
     - https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json
     registry: false
-    tools:
-    - '*'
-    command: dotnet
+    command: dnx
+  context7:
+    name: context7
+    transport: stdio
+    args:
+    - -y
+    - '@upstash/context7-mcp@3.2.1'
+    registry: false
+    command: npx
   github:
     name: github
     transport: http
     registry: false
     headers:
-      Authorization: Bearer ${GITHUB_TOKEN}
+      Authorization: Bearer ${GITHUB_PERSONAL_ACCESS_TOKEN}
     url: https://api.githubcopilot.com/mcp
   microsoft-learn:
     name: microsoft-learn

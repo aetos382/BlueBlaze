@@ -8,6 +8,7 @@ devDependencies:
   apm:
   - anthropics/claude-plugins-official/plugins/claude-code-setup
   - anthropics/claude-plugins-official/plugins/claude-md-management
+  - anthropics/claude-plugins-official/plugins/commit-commands
   - anthropics/claude-plugins-official/plugins/feature-dev
   - anthropics/claude-plugins-official/plugins/pr-review-toolkit
   - anthropics/claude-plugins-official/plugins/skill-creator
@@ -22,7 +23,6 @@ devDependencies:
   - dotnet/skills/plugins/dotnet-test
   - dotnet/skills/plugins/dotnet-upgrade
   - MicrosoftDocs/mcp
-  - anthropics/claude-plugins-official/plugins/commit-commands
   mcp: []
 dependencies:
   mcp:
@@ -45,7 +45,24 @@ dependencies:
     transport: http
     url: https://api.githubcopilot.com/mcp
     headers:
-      Authorization: Bearer ${GITHUB_TOKEN}
+      Authorization: Bearer ${GITHUB_PERSONAL_ACCESS_TOKEN}
+  - name: binlog
+    registry: false
+    transport: stdio
+    command: dnx
+    args:
+    - Microsoft.AITools.BinlogMcp
+    - --yes
+    - --prerelease
+    - --source
+    - https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json
+  - name: context7
+    registry: false
+    transport: stdio
+    command: npx
+    args:
+    - -y
+    - '@upstash/context7-mcp@3.2.1'
   apm: []
 includes: auto
 scripts: {}
