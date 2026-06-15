@@ -1,5 +1,5 @@
 lockfile_version: '1'
-generated_at: '2026-06-15T12:32:15.888457+00:00'
+generated_at: '2026-06-15T12:55:30.612283+00:00'
 apm_version: 0.20.0
 dependencies:
 - repo_url: MicrosoftDocs/mcp
@@ -80,9 +80,11 @@ dependencies:
   deployed_files:
   - .claude/agents/code-architect.md
   - .claude/agents/code-explorer.md
+  - .claude/agents/code-reviewer.md
   deployed_file_hashes:
     .claude/agents/code-architect.md: sha256:c50fb08d59a4bbd19660860626a049e44cf1a2b0c1cf782e6c7a99ba7e71b0c3
     .claude/agents/code-explorer.md: sha256:3b277703de7458988ec3b8021c716f79f642e174950ed332629310f68322029a
+    .claude/agents/code-reviewer.md: sha256:019395c3ce457460115cc703e2f4a86fed4bbe560dc58355051c4d877155d366
   content_hash: sha256:9f456222452c8aa2ad23e4f958db2a07b50731100be02e7c43dfdd3c5ea36d64
   is_dev: true
 - repo_url: anthropics/claude-plugins-official
