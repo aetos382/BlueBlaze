@@ -118,20 +118,20 @@
     {
       "customType": "regex",
       "managerFilePatterns": [
-        "/^\\.mcp\\.json$/"
+        "/^apm\\.yml$/"
       ],
-      "matchStrings": ["\"(?<depName>@[\\w-]+/[\\w-]+)@(?<currentValue>[\\d][\\d.]*)\""],
+      "matchStrings": ["- '(?<depName>@[\\w-]+/[\\w-]+)@(?<currentValue>[\\d][\\d.]*)'"],
       "datasourceTemplate": "npm",
-      "description": "MCP server npm packages"
+      "description": "MCP server npm packages in apm.yml"
     },
     {
       "customType": "regex",
       "managerFilePatterns": [
-        "/^\\.mcp\\.json$/"
+        "/^apm\\.yml$/"
       ],
-      "matchStrings": ["\"(?<depName>[\\w][\\w.]*?)@(?<currentValue>[\\d][\\d.]*)\""],
+      "matchStrings": ["- (?<depName>[\\w][\\w.]*?)@(?<currentValue>[\\d][\\d.]*)"],
       "datasourceTemplate": "nuget",
-      "description": "MCP server NuGet packages"
+      "description": "MCP server NuGet packages in apm.yml"
     }
   ],
   "vulnerabilityAlerts": {

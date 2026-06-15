@@ -1,9 +1,5 @@
 ---
-paths:
-  - '**/*.slnx'
-  - '**/*.csproj'
-  - '/Directory.Packages.props'
-  - '/.config/dotnet-tools.json'
+applyTo: '**/*.slnx, **/*.csproj, /Directory.Packages.props, /.config/dotnet-tools.json'
 ---
 
 # .NET に関するルール

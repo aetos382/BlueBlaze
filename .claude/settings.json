@@ -57,44 +57,11 @@
     "deny": [
       "Edit(**/*.lock.json)",
       "Edit(**/*-lock.json)",
+      "Edit(apm.lock.yaml)",
       "Write(**/*.lock.json)",
-      "Write(**/*-lock.json)"
+      "Write(**/*-lock.json)",
+      "Write(apm.lock.yaml)"
     ]
-  },
-  "enabledPlugins": {
-    "claude-code-setup@claude-plugins-official": true,
-    "claude-md-management@claude-plugins-official": true,
-    "commit-commands@claude-plugins-official": true,
-    "context7@claude-plugins-official": true,
-    "feature-dev@claude-plugins-official": true,
-    "github@claude-plugins-official": true,
-    "microsoft-docs@claude-plugins-official": true,
-    "pr-review-toolkit@claude-plugins-official": true,
-    "skill-creator@claude-plugins-official": true,
-    "dotnet@dotnet-agent-skills": true,
-    "dotnet-ai@dotnet-agent-skills": true,
-    "dotnet-aspnetcore@dotnet-agent-skills": true,
-    "dotnet-blazor@dotnet-agent-skills": true,
-    "dotnet-data@dotnet-agent-skills": true,
-    "dotnet-diag@dotnet-agent-skills": true,
-    "dotnet-msbuild@dotnet-agent-skills": true,
-    "dotnet-nuget@dotnet-agent-skills": true,
-    "dotnet-test@dotnet-agent-skills": true,
-    "dotnet-upgrade@dotnet-agent-skills": true
-  },
-  "extraKnownMarketplaces": {
-    "claude-plugins-official": {
-      "source": {
-        "source": "github",
-        "repo": "anthropics/claude-plugins-official"
-      }
-    },
-    "dotnet-agent-skills": {
-      "source": {
-        "source": "github",
-        "repo": "dotnet/skills"
-      }
-    }
   },
   "language": "Japanese"
 }

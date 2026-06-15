@@ -1,6 +1,5 @@
 ---
-paths:
-  - '/.claude/CLAUDE.md'
+applyTo: '/.claude/CLAUDE.md'
 ---
 
 # CLAUDE.md に関するルール

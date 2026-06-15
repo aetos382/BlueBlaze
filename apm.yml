@@ -1,0 +1,43 @@
+name: BlueBlaze
+version: 1.0.0
+description: APM project for BlueBlaze
+author: aetos
+targets:
+- claude
+devDependencies:
+  apm:
+  - anthropics/claude-plugins-official/plugins/claude-code-setup
+  - anthropics/claude-plugins-official/plugins/claude-md-management
+  - anthropics/claude-plugins-official/plugins/commit-commands
+  - anthropics/claude-plugins-official/plugins/feature-dev
+  - anthropics/claude-plugins-official/plugins/pr-review-toolkit
+  - anthropics/claude-plugins-official/plugins/skill-creator
+  - dotnet/skills/plugins/dotnet
+  - dotnet/skills/plugins/dotnet-ai
+  - dotnet/skills/plugins/dotnet-aspnetcore
+  - dotnet/skills/plugins/dotnet-blazor
+  - dotnet/skills/plugins/dotnet-data
+  - dotnet/skills/plugins/dotnet-diag
+  - dotnet/skills/plugins/dotnet-msbuild
+  - dotnet/skills/plugins/dotnet-nuget
+  - dotnet/skills/plugins/dotnet-test
+  - dotnet/skills/plugins/dotnet-upgrade
+  mcp: []
+dependencies:
+  mcp:
+  - name: sequential-thinking
+    registry: false
+    transport: stdio
+    command: npx
+    args:
+    - -y
+    - '@modelcontextprotocol/server-sequential-thinking@2025.12.18'
+  - name: nuget
+    registry: false
+    transport: stdio
+    command: dnx
+    args:
+    - NuGet.Mcp.Server@1.4.3
+    - --yes
+includes: auto
+scripts: {}
