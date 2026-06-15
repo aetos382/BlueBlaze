@@ -8,7 +8,6 @@ devDependencies:
   apm:
   - anthropics/claude-plugins-official/plugins/claude-code-setup
   - anthropics/claude-plugins-official/plugins/claude-md-management
-  - anthropics/claude-plugins-official/plugins/commit-commands
   - anthropics/claude-plugins-official/plugins/feature-dev
   - anthropics/claude-plugins-official/plugins/pr-review-toolkit
   - anthropics/claude-plugins-official/plugins/skill-creator
@@ -46,5 +45,6 @@ dependencies:
     url: https://api.githubcopilot.com/mcp
     headers:
       Authorization: Bearer ${GITHUB_TOKEN}
+  apm: []
 includes: auto
 scripts: {}

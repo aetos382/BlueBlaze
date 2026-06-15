@@ -1,5 +1,5 @@
 lockfile_version: '1'
-generated_at: '2026-06-15T15:36:56.925318+00:00'
+generated_at: '2026-06-15T16:31:35.579386+00:00'
 apm_version: 0.20.0
 dependencies:
 - repo_url: MicrosoftDocs/mcp
@@ -51,25 +51,19 @@ dependencies:
   is_virtual: true
   package_type: marketplace_plugin
   deployed_files:
+  - .claude/commands/revise-claude-md.md
   - .claude/skills/claude-md-improver
   - .claude/skills/claude-md-improver/SKILL.md
   - .claude/skills/claude-md-improver/references/quality-criteria.md
   - .claude/skills/claude-md-improver/references/templates.md
   - .claude/skills/claude-md-improver/references/update-guidelines.md
   deployed_file_hashes:
+    .claude/commands/revise-claude-md.md: sha256:749dc2d70bd14cfad56b424e23205ae3cc81dca9378c869e3c895a78197cdd69
     .claude/skills/claude-md-improver/SKILL.md: sha256:b06c7420be08ca1c7f6d75f7f4709fdb787624a2d363e2f8052216d8c780f85b
     .claude/skills/claude-md-improver/references/quality-criteria.md: sha256:383def16b05dca948297dd1acb33f007cb1b1b2c368454d424c5634348a8bab1
     .claude/skills/claude-md-improver/references/templates.md: sha256:de0aa3ac30120a0c77f9cd82738a75ed8326864f98feb89356a253f2deaf3ab0
     .claude/skills/claude-md-improver/references/update-guidelines.md: sha256:02a158d6ca41a0ab702a67a213e92205f09c073cea53796633251bc62fd7ec55
   content_hash: sha256:eef0aa5a71845be937066ef304fbd152d523d2574587474d342def4c3e8514d4
-  is_dev: true
-- repo_url: anthropics/claude-plugins-official
-  host: github.com
-  resolved_commit: be88f154f6ab4f0c5142585ede3d9763aca38bd4
-  virtual_path: plugins/commit-commands
-  is_virtual: true
-  package_type: marketplace_plugin
-  content_hash: sha256:b870b295191db1f51a105eaf51d5c5dd32cdb0f37df8641867a91e2603606032
   is_dev: true
 - repo_url: anthropics/claude-plugins-official
   host: github.com
@@ -81,10 +75,12 @@ dependencies:
   - .claude/agents/code-architect.md
   - .claude/agents/code-explorer.md
   - .claude/agents/code-reviewer.md
+  - .claude/commands/feature-dev.md
   deployed_file_hashes:
     .claude/agents/code-architect.md: sha256:c50fb08d59a4bbd19660860626a049e44cf1a2b0c1cf782e6c7a99ba7e71b0c3
     .claude/agents/code-explorer.md: sha256:3b277703de7458988ec3b8021c716f79f642e174950ed332629310f68322029a
     .claude/agents/code-reviewer.md: sha256:019395c3ce457460115cc703e2f4a86fed4bbe560dc58355051c4d877155d366
+    .claude/commands/feature-dev.md: sha256:656a01ce40782ee849c444916362df0e4e4173afcd33313777fa86021d89994b
   content_hash: sha256:9f456222452c8aa2ad23e4f958db2a07b50731100be02e7c43dfdd3c5ea36d64
   is_dev: true
 - repo_url: anthropics/claude-plugins-official
@@ -100,6 +96,7 @@ dependencies:
   - .claude/agents/pr-test-analyzer.md
   - .claude/agents/silent-failure-hunter.md
   - .claude/agents/type-design-analyzer.md
+  - .claude/commands/review-pr.md
   deployed_file_hashes:
     .claude/agents/code-reviewer.md: sha256:019395c3ce457460115cc703e2f4a86fed4bbe560dc58355051c4d877155d366
     .claude/agents/code-simplifier.md: sha256:976ddb22b84bc5a714216531a75db5e73169554add6b953442beeedb49b56891
@@ -107,6 +104,7 @@ dependencies:
     .claude/agents/pr-test-analyzer.md: sha256:fcb1cde9ba7b21694b508766a8d6a79bc91bed9982f828f816210059934f46b4
     .claude/agents/silent-failure-hunter.md: sha256:fa9b0daec5a267e7e66435cc48b3328301fc9f70c3af259fe248881327a1babc
     .claude/agents/type-design-analyzer.md: sha256:c1cf67843d3c4fd27ddf6b24aa92521414b16c01610e7f7e87212c7b8681198d
+    .claude/commands/review-pr.md: sha256:1c3ca6f18f9851ac88ffdc3f98b45e9bd19fb139eb14850f2c22cd18c7a167b2
   content_hash: sha256:dceac9c98edbb7a8b5b071a653455e74c5e39341b58865921b20edb903821bee
   is_dev: true
 - repo_url: anthropics/claude-plugins-official
@@ -828,9 +826,9 @@ mcp_configs:
     command: npx
 local_deployed_files:
 - .claude/rules/claude-md.md
-- .claude/rules/dotnet-test.md
 - .claude/rules/dotnet.md
+- .claude/rules/mcp.md
 local_deployed_file_hashes:
   .claude/rules/claude-md.md: sha256:d3e6e0b3e99d38f0466b18726aac40774905806833e2b602796ddb54d1d52c2e
-  .claude/rules/dotnet-test.md: sha256:1a6587f2cac45a1c8a233a93b99689c2938ac345555d8193dbd862be2c4fda84
   .claude/rules/dotnet.md: sha256:e72900bb6c15b8d968314ba29891106e63e18c97b049c1d7838bb7d11b74a104
+  .claude/rules/mcp.md: sha256:3a460900390fa29a98571d7d387fd3841583cbf77b5ce9d319c21d17ba273d6c
