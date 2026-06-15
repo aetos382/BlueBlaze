@@ -57,12 +57,8 @@
     "deny": [
       "Edit(**/*.lock.json)",
       "Edit(**/*-lock.json)",
-      "Edit(apm.lock.yaml)",
-      "Edit(.mcp.json)",
       "Write(**/*.lock.json)",
-      "Write(**/*-lock.json)",
-      "Write(apm.lock.yaml)",
-      "Write(.mcp.json)"
+      "Write(**/*-lock.json)"
     ]
   },
   "language": "Japanese"
