@@ -22,6 +22,7 @@ devDependencies:
   - dotnet/skills/plugins/dotnet-nuget
   - dotnet/skills/plugins/dotnet-test
   - dotnet/skills/plugins/dotnet-upgrade
+  - MicrosoftDocs/mcp
   mcp: []
 dependencies:
   mcp:

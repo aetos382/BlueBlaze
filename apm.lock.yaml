@@ -1,7 +1,26 @@
 lockfile_version: '1'
-generated_at: '2026-06-15T11:39:32.211476+00:00'
+generated_at: '2026-06-15T12:32:15.888457+00:00'
 apm_version: 0.20.0
 dependencies:
+- repo_url: MicrosoftDocs/mcp
+  host: github.com
+  resolved_commit: caa3d670bf2814171dba4f7346ece5080964021e
+  package_type: marketplace_plugin
+  deployed_files:
+  - .claude/skills/microsoft-code-reference
+  - .claude/skills/microsoft-code-reference/SKILL.md
+  - .claude/skills/microsoft-docs
+  - .claude/skills/microsoft-docs/SKILL.md
+  - .claude/skills/microsoft-skill-creator
+  - .claude/skills/microsoft-skill-creator/SKILL.md
+  - .claude/skills/microsoft-skill-creator/references/skill-templates.md
+  deployed_file_hashes:
+    .claude/skills/microsoft-code-reference/SKILL.md: sha256:36354e87d7095fbba0b7138c251ee6fd30f85a89d35a0909e4a6aafdf74280fe
+    .claude/skills/microsoft-docs/SKILL.md: sha256:23d6c309124c4dd7f96ef7166a1998814b4eaeca7e3d654bdac2feacde7e16d1
+    .claude/skills/microsoft-skill-creator/SKILL.md: sha256:b1cd59dfad7379b60dad82da5a23aaebdf25f9523cfe538d6ca4f8d35b6a410e
+    .claude/skills/microsoft-skill-creator/references/skill-templates.md: sha256:ff30f0b66e3d4ce70fa97fb764491fd33728a2b47baf9c37f892bc2b64fe73f6
+  content_hash: sha256:ac58e5211f52f6cc5291beded33404207c6dafe37748e1112d91a32c3daecc2e
+  is_dev: true
 - repo_url: anthropics/claude-plugins-official
   host: github.com
   resolved_commit: be88f154f6ab4f0c5142585ede3d9763aca38bd4
@@ -758,6 +777,7 @@ dependencies:
   is_dev: true
 mcp_servers:
 - binlog
+- microsoft-learn
 - nuget
 - sequential-thinking
 mcp_configs:
@@ -775,6 +795,11 @@ mcp_configs:
     tools:
     - '*'
     command: dotnet
+  microsoft-learn:
+    name: microsoft-learn
+    transport: http
+    registry: false
+    url: https://learn.microsoft.com/api/mcp
   nuget:
     name: nuget
     transport: stdio
