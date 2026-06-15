@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "validate:renovate": "echo \"$GITHUB_REPOSITORY\" | renovate-config-validator"
+    "validate:renovate": "echo aetos382/BlueBlaze | renovate-config-validator"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
