@@ -1,5 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+  <Import Project="../../../Generators/LexiconGenerator/Package/build/BlueBlaze.LexiconGenerator.props" />
+
   <PropertyGroup>
     <TargetFrameworks>net10.0;netstandard2.0</TargetFrameworks>
     <IsPackable>true</IsPackable>
@@ -10,13 +12,33 @@
     <UsePolyfills>true</UsePolyfills>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <BlueBlazeGeneratorRunAsBuildTask>true</BlueBlazeGeneratorRunAsBuildTask>
+    <BlueBlazeGeneratedCodeNamespace>BlueBlaze.Client.Bluesky.Generated</BlueBlazeGeneratedCodeNamespace>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="../AtProtocol/Client.AtProtocol.csproj" />
     <ProjectReference Include="..\..\Core\Core.csproj" />
+    <ProjectReference Include="..\..\..\Generators\LexiconGenerator\MSBuild\LexiconGenerator.MSBuild.csproj">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
   </ItemGroup>
 
   <ItemGroup>
     <InternalsVisibleTo Include="BlueBlaze.Client.Bluesky.Tests" />
   </ItemGroup>
+
+  <ItemGroup>
+    <!-- app/bsky, chat/bsky が参照する com.atproto.* (例: com.atproto.repo.strongRef) を
+         解決するため、com/atproto/** も自己完結的に取り込む。Client.AtProtocol.csproj とは
+         別の名前空間(BlueBlaze.Client.Bluesky.Generated)に重複生成されるが、
+         LexiconGenerator はクロスプロジェクト参照に対応していないため現状はこの方式で対応する。 -->
+    <LexiconDocument Include="../../../submodules/atproto/lexicons/com/atproto/**/*.json" />
+    <LexiconDocument Include="../../../submodules/atproto/lexicons/app/bsky/**/*.json" />
+    <LexiconDocument Include="../../../submodules/atproto/lexicons/chat/bsky/**/*.json" />
+  </ItemGroup>
+
+  <Import Project="../../../Generators/LexiconGenerator/Package/build/BlueBlaze.LexiconGenerator.targets" />
 
 </Project>

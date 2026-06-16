@@ -32,6 +32,11 @@ internal static class RequestEmitter
 
         OpenSealedContainers(isb, segments);
 
+        var kindExpr = isQuery
+            ? $"{ClientCoreNamespace}.LexiconOperationKind.Query"
+            : $"{ClientCoreNamespace}.LexiconOperationKind.Procedure";
+
+        isb.AppendLine($"[{ClientCoreNamespace}.Lexicon(\"{nsid}\", {kindExpr})]");
         isb.AppendLine($"public sealed class {ClassName} : {ClientCoreNamespace}.ILexiconRequest");
         isb.AppendLine("{");
         using (isb.Indent())

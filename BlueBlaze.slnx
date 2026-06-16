@@ -1,5 +1,7 @@
 <Solution>
-  <Folder Name="/Generators/" />
+  <Folder Name="/Generators/">
+    <Project Path="Generators/CommandGenerator/CommandGenerator.csproj" />
+  </Folder>
   <Folder Name="/Generators/ResxSourceGenerator/">
     <Project Path="Generators/ResxSourceGenerator/ResxSourceGenerator.csproj" />
   </Folder>
@@ -29,6 +31,9 @@
     <Project Path="Tests/Core/Core.Tests.csproj" />
   </Folder>
   <Folder Name="/Tests/Generators/" />
+  <Folder Name="/Tests/Generators/CommandGenerator/">
+    <Project Path="Tests/Generators/CommandGenerator/CommandGenerator.Tests.csproj" />
+  </Folder>
   <Folder Name="/Tests/Generators/LexiconGenerator/">
     <Project Path="Tests/Generators/LexiconGenerator/Core/LexiconGenerator.Core.Tests.csproj" />
     <Project Path="Tests/Generators/LexiconGenerator/MSBuild/LexiconGenerator.MSBuild.Tests.csproj" />

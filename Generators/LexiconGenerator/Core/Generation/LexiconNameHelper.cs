@@ -126,7 +126,8 @@ internal static class LexiconNameHelper
         {
             // Case 1: nested inside main class
             // containerPath already includes last segment as class name
-            return containerPath + "." + ToPascalCase(defKey);
+            var targetSegments = NsidToSegments(targetNsid);
+            return containerPath + "." + GetNestedDefClassName(defKey, targetSegments[^1]);
         }
 
         if (mainType is LexiconType.Query or LexiconType.Procedure or LexiconType.Subscription)
@@ -137,7 +138,17 @@ internal static class LexiconNameHelper
         }
 
         // Case 2: defs-only -> nested inside container class
-        return containerPath + "." + ToPascalCase(defKey);
+        var defsOnlySegments = NsidToSegments(targetNsid);
+        return containerPath + "." + GetNestedDefClassName(defKey, defsOnlySegments[^1]);
+    }
+
+    // 非main defのクラス名が、同じ NSID のコンテナ末尾セグメント名(main クラス名、
+    // または defs-only の場合はコンテナ自身の名前)と衝突する場合に回避する。
+    // C# はネスト型の名前を直接のコンテナ型と同じにできない(CS0542)ため。
+    internal static string GetNestedDefClassName(string defKey, string containerClassName)
+    {
+        var className = ToPascalCase(defKey);
+        return className == containerClassName ? className + "Def" : className;
     }
 
     // Returns the hint name prefix for a generated file.

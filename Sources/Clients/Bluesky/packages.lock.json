@@ -85,6 +85,9 @@
           "System.Threading.Tasks.Extensions": "[4.6.3, )"
         }
       },
+      "BlueBlaze.LexiconGenerator.MSBuild": {
+        "type": "Project"
+      },
       "System.Memory": {
         "type": "CentralTransitive",
         "requested": "[4.6.3, )",
@@ -161,6 +164,9 @@
         }
       },
       "BlueBlaze.Core": {
+        "type": "Project"
+      },
+      "BlueBlaze.LexiconGenerator.MSBuild": {
         "type": "Project"
       }
     },

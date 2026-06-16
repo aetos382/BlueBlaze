@@ -364,7 +364,7 @@ internal static class ObjectClassEmitter
             case StringDefinition sd:
                 if (sd.Format.HasValue)
                 {
-                    lines.Add($"[{MetadataNs}.LexiconFormat(\"{FormatToString(sd.Format.Value)}\")]");
+                    lines.Add($"[{MetadataNs}.LexiconStringFormat(\"{FormatToString(sd.Format.Value)}\")]");
                 }
                 if (sd.MinLength.HasValue)
                 {
