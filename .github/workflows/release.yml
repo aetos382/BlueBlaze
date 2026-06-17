@@ -102,9 +102,9 @@ jobs:
           -bl:lexgen-cli-${{ matrix.rid }}.binlog
           --no-logo
 
-      - name: Pack Client.Cli
+      - name: Pack Application.Cli
         run: >
-          dotnet pack Sources/Clients/Cli/Client.Cli.csproj
+          dotnet pack Sources/Applications/Cli/Application.Cli.csproj
           --configuration Release
           -r ${{ matrix.rid }}
           -p:Version=${{ inputs.version }}
