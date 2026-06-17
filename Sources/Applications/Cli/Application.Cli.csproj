@@ -14,6 +14,30 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Clients\Bluesky\Client.Bluesky.csproj" />
+    <ProjectReference Include="..\..\..\Generators\CommandGenerator\CommandGenerator.csproj">
+      <OutputItemType>Analyzer</OutputItemType>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
   </ItemGroup>
+
+  <!--
+    CommandGenerator が CLI コマンドの自動生成対象とする NSID の集合。
+    デフォルトは全 NSID("*")。Remove で個別除外(ブラックリスト)、
+    あるいは Remove="%2a" の後に Include で列挙(ホワイトリスト)で上書きできる。
+    "*" は MSBuild の Include 属性ではファイルシステムのワイルドカードとして
+    解釈されてしまうため、%2a (= '*' の MSBuild エスケープ) でリテラル指定する。
+  -->
+  <ItemGroup>
+    <LexiconCliCommand Include="%2a" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <CompilerVisibleProperty Include="BlueBlazeCommandGeneratorTargetSet" />
+    <CompilerVisibleProperty Include="RootNamespace" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <BlueBlazeCommandGeneratorTargetSet>@(LexiconCliCommand, ';')</BlueBlazeCommandGeneratorTargetSet>
+  </PropertyGroup>
 
 </Project>

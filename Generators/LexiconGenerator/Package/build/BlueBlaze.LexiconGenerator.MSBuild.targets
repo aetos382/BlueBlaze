@@ -38,9 +38,21 @@
              Runtime="$(_BlueBlazeGeneratorBuildTaskRuntime)"
              TaskFactory="TaskHostFactory"/>
 
+  <!--
+    $(IntermediateOutputPath) は Sdk.targets 側で設定されるが、
+    このファイルは Sdk.props 経由で早期インポートされるため、トップレベル PropertyGroup では未定義になる。
+    ターゲット実行時に評価されるよう、専用ターゲット内で設定する。
+  -->
+  <Target Name="BlueBlazeSetLexiconGeneratorProperties">
+    <PropertyGroup>
+      <_BlueBlazeGeneratorManifestFile>$(IntermediateOutputPath)GeneratedSources/BlueBlaze.LexiconGenerator/generated-files.txt</_BlueBlazeGeneratorManifestFile>
+    </PropertyGroup>
+  </Target>
+
   <Target Name="BlueBlazeGenerateLexiconSourceCode"
-          DependsOnTargets="$(BlueBlazeGenerateLexiconSourceCodeDependsOn)"
-          BeforeTargets="CoreCompile">
+          DependsOnTargets="$(BlueBlazeGenerateLexiconSourceCodeDependsOn);BlueBlazeSetLexiconGeneratorProperties"
+          Inputs="@(LexiconDocument);$(_BlueBlazeGeneratorBuildTaskAssemblyFilePath)"
+          Outputs="$(_BlueBlazeGeneratorManifestFile)">
 
     <BlueBlazeGenerateSourceCode
       LexiconDocuments="@(LexiconDocument)"
@@ -56,9 +68,23 @@
 
     </BlueBlazeGenerateSourceCode>
 
-    <ItemGroup>
-      <Compile Include="@(GeneratedLexiconSources)" />
-    </ItemGroup>
+    <WriteLinesToFile
+      File="$(_BlueBlazeGeneratorManifestFile)"
+      Lines="@(GeneratedLexiconSources)"
+      Overwrite="true" />
+
+  </Target>
+
+  <Target Name="BlueBlazeAddGeneratedLexiconSourcesToCompile"
+          DependsOnTargets="BlueBlazeGenerateLexiconSourceCode"
+          BeforeTargets="CoreCompile">
+
+    <ReadLinesFromFile
+      File="$(_BlueBlazeGeneratorManifestFile)"
+      Condition="Exists('$(_BlueBlazeGeneratorManifestFile)')">
+      <Output TaskParameter="Lines" ItemName="Compile" />
+    </ReadLinesFromFile>
+
   </Target>
 
 </Project>

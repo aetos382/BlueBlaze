@@ -42,10 +42,14 @@
         "type": "Project",
         "dependencies": {
           "BlueBlaze.Client.AtProtocol": "[1.0.0, )",
-          "BlueBlaze.Core": "[1.0.0, )"
+          "BlueBlaze.Core": "[1.0.0, )",
+          "BlueBlaze.LexiconGenerator.MSBuild": "[1.0.0, )"
         }
       },
       "BlueBlaze.Core": {
+        "type": "Project"
+      },
+      "BlueBlaze.LexiconGenerator.MSBuild": {
         "type": "Project"
       }
     },

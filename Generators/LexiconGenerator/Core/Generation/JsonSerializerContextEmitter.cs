@@ -12,7 +12,7 @@ internal static class JsonSerializerContextEmitter
         List<GeneratedSourceFile> files)
     {
         // Phase 1: 登録対象の型を収集（typePath → typeInfoPropName）
-        var registeredTypes = BuildRegisteredTypes(documents);
+        var registeredTypes = BuildRegisteredTypes(documents, nsidIndex);
 
         // Phase 2: [JsonSerializable] 属性を生成
         var isb = new IndentedStringBuilder();
@@ -24,64 +24,52 @@ internal static class JsonSerializerContextEmitter
         isb.AppendLine();
 
         var emittedListTypeInfoNames = new HashSet<string>(StringComparer.Ordinal);
-        bool hasSerializableTypes = false;
+        var hasSerializableTypes = false;
 
         foreach (var docInfo in documents)
         {
             var doc = docInfo.Document;
-
-            if (!doc.Definitions.TryGetValue("main", out var mainDef))
-            {
-                continue;
-            }
-
             var currentNsid = doc.Id;
             var segments = LexiconNameHelper.NsidToSegments(currentNsid);
             var modelPath = string.Join(".", segments);
             var segmentsConcat = string.Concat(segments);
 
-            if (mainDef is ProcedureDefinition procDef)
+            if (doc.Definitions.TryGetValue("main", out var mainDef))
             {
-                if (procDef.Input?.Schema is ObjectDefinition inputObj)
+                if (mainDef is ProcedureDefinition procDef)
                 {
-                    EmitTypeWithUnions(isb, inputObj, $"{modelPath}.Input", $"{segmentsConcat}Input", currentNsid, nsidIndex, registeredTypes, emittedListTypeInfoNames);
-                    hasSerializableTypes = true;
-                }
+                    if (procDef.Input?.Schema is ObjectDefinition inputObj)
+                    {
+                        EmitTypeWithUnions(isb, inputObj, $"{modelPath}.Input", $"{segmentsConcat}Input", currentNsid, nsidIndex, registeredTypes, emittedListTypeInfoNames);
+                        hasSerializableTypes = true;
+                    }
 
-                if (procDef.Output?.Schema is ObjectDefinition outputObj)
+                    if (procDef.Output?.Schema is ObjectDefinition outputObj)
+                    {
+                        EmitTypeWithUnions(isb, outputObj, $"{modelPath}.Output", $"{segmentsConcat}Output", currentNsid, nsidIndex, registeredTypes, emittedListTypeInfoNames);
+                        hasSerializableTypes = true;
+                    }
+
+                    hasSerializableTypes |= EmitOutputSiblings(isb, doc, modelPath, segmentsConcat, currentNsid, nsidIndex, registeredTypes, emittedListTypeInfoNames);
+                }
+                else if (mainDef is QueryDefinition queryDef)
                 {
-                    EmitTypeWithUnions(isb, outputObj, $"{modelPath}.Output", $"{segmentsConcat}Output", currentNsid, nsidIndex, registeredTypes, emittedListTypeInfoNames);
-                    hasSerializableTypes = true;
+                    if (queryDef.Output?.Schema is ObjectDefinition outputObj)
+                    {
+                        EmitTypeWithUnions(isb, outputObj, $"{modelPath}.Output", $"{segmentsConcat}Output", currentNsid, nsidIndex, registeredTypes, emittedListTypeInfoNames);
+                        hasSerializableTypes = true;
+                    }
+
+                    hasSerializableTypes |= EmitOutputSiblings(isb, doc, modelPath, segmentsConcat, currentNsid, nsidIndex, registeredTypes, emittedListTypeInfoNames);
                 }
             }
-            else if (mainDef is QueryDefinition queryDef)
-            {
-                if (queryDef.Output?.Schema is ObjectDefinition outputObj)
-                {
-                    EmitTypeWithUnions(isb, outputObj, $"{modelPath}.Output", $"{segmentsConcat}Output", currentNsid, nsidIndex, registeredTypes, emittedListTypeInfoNames);
-                    hasSerializableTypes = true;
-                }
-            }
-            else
-            {
-                continue;
-            }
 
-            // サブ定義（query/procedure の Output プレフィックス付き兄弟クラス）
-            foreach (var (defKey, def) in doc.Definitions)
+            // main/サブ定義のうち Object/Record であるものを登録する。
+            // (Query/Procedure/Subscription の main 自体や、その Output/Message サブ定義は
+            //  上記の専用ロジックで既に処理済みのため対象外。)
+            foreach (var (typePath, typeInfoPropName, objDef) in EnumerateObjectDefinitions(docInfo, nsidIndex))
             {
-                if (defKey == "main")
-                {
-                    continue;
-                }
-
-                if (def is not ObjectDefinition siblingObjDef)
-                {
-                    continue;
-                }
-
-                var siblingClassName = "Output" + LexiconNameHelper.ToPascalCase(defKey);
-                EmitTypeWithUnions(isb, siblingObjDef, $"{modelPath}.{siblingClassName}", $"{segmentsConcat}{siblingClassName}", currentNsid, nsidIndex, registeredTypes, emittedListTypeInfoNames);
+                EmitTypeWithUnions(isb, objDef, typePath, typeInfoPropName, currentNsid, nsidIndex, registeredTypes, emittedListTypeInfoNames);
                 hasSerializableTypes = true;
             }
         }
@@ -99,60 +87,150 @@ internal static class JsonSerializerContextEmitter
         files.Add(new GeneratedSourceFile(hintName, isb.ToString()));
     }
 
-    private static Dictionary<string, string> BuildRegisteredTypes(IReadOnlyList<LexiconDocumentWithInfo> documents)
+    private static Dictionary<string, string> BuildRegisteredTypes(
+        IReadOnlyList<LexiconDocumentWithInfo> documents,
+        IReadOnlyDictionary<string, LexiconType?> nsidIndex)
     {
         var result = new Dictionary<string, string>(StringComparer.Ordinal);
 
         foreach (var docInfo in documents)
         {
             var doc = docInfo.Document;
-
-            if (!doc.Definitions.TryGetValue("main", out var mainDef))
-            {
-                continue;
-            }
-
             var segments = LexiconNameHelper.NsidToSegments(doc.Id);
             var modelPath = string.Join(".", segments);
             var segmentsConcat = string.Concat(segments);
 
-            if (mainDef is ProcedureDefinition procDef)
+            if (doc.Definitions.TryGetValue("main", out var mainDef))
             {
-                if (procDef.Input?.Schema is ObjectDefinition)
+                if (mainDef is ProcedureDefinition procDef)
                 {
-                    result[$"{modelPath}.Input"] = $"{segmentsConcat}Input";
-                }
+                    if (procDef.Input?.Schema is ObjectDefinition)
+                    {
+                        result[$"{modelPath}.Input"] = $"{segmentsConcat}Input";
+                    }
 
-                if (procDef.Output?.Schema is ObjectDefinition)
+                    if (procDef.Output?.Schema is ObjectDefinition)
+                    {
+                        result[$"{modelPath}.Output"] = $"{segmentsConcat}Output";
+                    }
+
+                    RegisterOutputSiblings(doc, modelPath, segmentsConcat, result);
+                }
+                else if (mainDef is QueryDefinition queryDef)
                 {
-                    result[$"{modelPath}.Output"] = $"{segmentsConcat}Output";
+                    if (queryDef.Output?.Schema is ObjectDefinition)
+                    {
+                        result[$"{modelPath}.Output"] = $"{segmentsConcat}Output";
+                    }
+
+                    RegisterOutputSiblings(doc, modelPath, segmentsConcat, result);
                 }
             }
-            else if (mainDef is QueryDefinition queryDef)
-            {
-                if (queryDef.Output?.Schema is ObjectDefinition)
-                {
-                    result[$"{modelPath}.Output"] = $"{segmentsConcat}Output";
-                }
-            }
-            else
-            {
-                continue;
-            }
 
-            foreach (var (defKey, def) in doc.Definitions)
+            foreach (var (typePath, typeInfoPropName, _) in EnumerateObjectDefinitions(docInfo, nsidIndex))
             {
-                if (defKey == "main" || def is not ObjectDefinition)
-                {
-                    continue;
-                }
-
-                var siblingClassName = "Output" + LexiconNameHelper.ToPascalCase(defKey);
-                result[$"{modelPath}.{siblingClassName}"] = $"{segmentsConcat}{siblingClassName}";
+                result[typePath] = typeInfoPropName;
             }
         }
 
         return result;
+    }
+
+    private static void RegisterOutputSiblings(
+        LexiconDocument doc,
+        string modelPath,
+        string segmentsConcat,
+        Dictionary<string, string> result)
+    {
+        foreach (var (defKey, def) in doc.Definitions)
+        {
+            if (defKey == "main" || def is not ObjectDefinition)
+            {
+                continue;
+            }
+
+            var siblingClassName = "Output" + LexiconNameHelper.ToPascalCase(defKey);
+            result[$"{modelPath}.{siblingClassName}"] = $"{segmentsConcat}{siblingClassName}";
+        }
+    }
+
+    private static bool EmitOutputSiblings(
+        IndentedStringBuilder isb,
+        LexiconDocument doc,
+        string modelPath,
+        string segmentsConcat,
+        string currentNsid,
+        IReadOnlyDictionary<string, LexiconType?> nsidIndex,
+        Dictionary<string, string> registeredTypes,
+        HashSet<string> emittedListTypeInfoNames)
+    {
+        var emitted = false;
+
+        foreach (var (defKey, def) in doc.Definitions)
+        {
+            if (defKey == "main" || def is not ObjectDefinition siblingObjDef)
+            {
+                continue;
+            }
+
+            var siblingClassName = "Output" + LexiconNameHelper.ToPascalCase(defKey);
+            EmitTypeWithUnions(isb, siblingObjDef, $"{modelPath}.{siblingClassName}", $"{segmentsConcat}{siblingClassName}", currentNsid, nsidIndex, registeredTypes, emittedListTypeInfoNames);
+            emitted = true;
+        }
+
+        return emitted;
+    }
+
+    // main が Object/Record の場合(main 自体 + defs 内サブ定義)、および defs-only ファイル
+    // (main キーを持たない) のサブ定義を列挙する。Query/Procedure/Subscription の main や、
+    // それらの Output/Message サブ定義は上位の専用ロジックで処理済みのため対象外。
+    private static IEnumerable<(string TypePath, string TypeInfoPropName, ObjectDefinition ObjDef)> EnumerateObjectDefinitions(
+        LexiconDocumentWithInfo docInfo,
+        IReadOnlyDictionary<string, LexiconType?> nsidIndex)
+    {
+        var doc = docInfo.Document;
+        var currentNsid = doc.Id;
+        var segments = LexiconNameHelper.NsidToSegments(currentNsid);
+        var modelPath = string.Join(".", segments);
+        var segmentsConcat = string.Concat(segments);
+
+        nsidIndex.TryGetValue(currentNsid, out var mainType);
+
+        foreach (var (defKey, def) in doc.Definitions)
+        {
+            var isMain = defKey == "main";
+
+            ObjectDefinition? objDef = def switch
+            {
+                ObjectDefinition od => od,
+                RecordDefinition rd => rd.Record,
+                _ => null,
+            };
+
+            if (objDef is null)
+            {
+                continue;
+            }
+
+            if (isMain && mainType is LexiconType.Record or LexiconType.Object)
+            {
+                yield return (modelPath, segmentsConcat, objDef);
+            }
+            else if (!isMain && mainType is LexiconType.Record or LexiconType.Object)
+            {
+                var className = LexiconNameHelper.GetNestedDefClassName(defKey, segments[^1]);
+                yield return ($"{modelPath}.{className}", $"{segmentsConcat}{className}", objDef);
+            }
+            else if (!isMain && mainType is null)
+            {
+                // defs-only ファイルのサブ定義
+                var className = LexiconNameHelper.GetNestedDefClassName(defKey, segments[^1]);
+                yield return ($"{modelPath}.{className}", $"{segmentsConcat}{className}", objDef);
+            }
+
+            // mainType が Query/Procedure/Subscription の場合は、main 自体も
+            // Output/Message サブ定義も上位の専用ロジックで処理済みのため、ここでは何もしない。
+        }
     }
 
     private static void EmitTypeWithUnions(
@@ -166,6 +244,11 @@ internal static class JsonSerializerContextEmitter
         HashSet<string> emittedListTypeInfoNames)
     {
         isb.AppendLine($"[global::System.Text.Json.Serialization.JsonSerializable(typeof({typePath}), TypeInfoPropertyName = \"{typeInfoPropName}\")]");
+
+        if (objDef.Properties is null)
+        {
+            return;
+        }
 
         foreach (var (propKey, propDef) in objDef.Properties)
         {

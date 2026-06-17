@@ -126,7 +126,7 @@ internal static class DocumentEmitter
         else if (!isMain && mainType is LexiconType.Record or LexiconType.Object)
         {
             // Case 1: sub-def nested inside main partial class
-            className = LexiconNameHelper.ToPascalCase(defKey);
+            className = LexiconNameHelper.GetNestedDefClassName(defKey, segments[^1]);
             classPath = string.Join(".", segments) + "." + className;
             hintSuffix = classPath;
         }
@@ -141,7 +141,9 @@ internal static class DocumentEmitter
         else
         {
             // Case 2: defs-only (isMain && mainType==null) or non-main def
-            className = LexiconNameHelper.ToPascalCase(defKey);
+            className = isMain
+                ? LexiconNameHelper.ToPascalCase(defKey)
+                : LexiconNameHelper.GetNestedDefClassName(defKey, segments[^1]);
             classPath = string.Join(".", segments) + "." + className;
             hintSuffix = classPath;
         }
@@ -217,7 +219,7 @@ internal static class DocumentEmitter
             EmitExtensionDataWarnings(error.ExtensionData, filePath, nsid, "main", diagnostics);
         }
 
-        if (parameters != null && parameters.Properties != null)
+        if (parameters?.Properties is { Count: > 0 })
         {
             EmitParametersClass(nsid, segments, parameters, nsidIndex,
                 generatedCodeNamespace, filePath, files, diagnostics, defIndex,
@@ -264,7 +266,7 @@ internal static class DocumentEmitter
             EmitExtensionDataWarnings(error.ExtensionData, filePath, nsid, "main", diagnostics);
         }
 
-        if (subDef.Parameters != null && subDef.Parameters.Properties != null)
+        if (subDef.Parameters?.Properties is { Count: > 0 })
         {
             EmitParametersClass(nsid, segments, subDef.Parameters, nsidIndex,
                 generatedCodeNamespace, filePath, files, diagnostics, defIndex,

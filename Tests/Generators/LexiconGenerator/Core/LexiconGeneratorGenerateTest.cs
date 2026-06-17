@@ -269,6 +269,116 @@ public sealed class LexiconGeneratorGenerateTest
             "Parameters クラスに JsonPropertyName があってはならない");
     }
 
+    [TestMethod]
+    public void SubDefがmainクラス名と同名の場合サフィックスを付与して衝突を回避する()
+    {
+        // app.bsky.embed.external 相当: main クラス名(NSID末尾)と
+        // ref で参照する sub-def のクラス名(defKeyから)が同名になるケース。
+        var json = /*lang=json*/ """
+        {
+            "lexicon": 1,
+            "id": "app.test.thing",
+            "defs": {
+                "main": {
+                    "type": "object",
+                    "required": ["thing"],
+                    "properties": {
+                        "thing": { "type": "ref", "ref": "#thing" }
+                    }
+                },
+                "thing": {
+                    "type": "object",
+                    "required": ["value"],
+                    "properties": {
+                        "value": { "type": "string" }
+                    }
+                }
+            }
+        }
+        """;
+
+        var result = Generate(json);
+
+        AssertNoErrors(result);
+
+        var mainFile = result.Files.Single(f => f.HintName == $"{Namespace}.App.Test.Thing.g.cs");
+        // main クラス(Thing)のプロパティ Thing の型は、ネストされた ThingDef を指す
+        StringAssert.Contains(
+            mainFile.SourceText,
+            $"global::{Namespace}.App.Test.Thing.ThingDef",
+            StringComparison.Ordinal);
+
+        var subDefFile = result.Files.Single(f => f.HintName == $"{Namespace}.App.Test.Thing.ThingDef.g.cs");
+        // ネストされたクラス名がコンテナ(Thing)と異なる(ThingDef)ため CS0542 を回避できている
+        StringAssert.Contains(subDefFile.SourceText, "public sealed partial class ThingDef", StringComparison.Ordinal);
+    }
+
+    [TestMethod]
+    public void Request_Queryの場合Lexicon属性が出力される()
+    {
+        var json = /*lang=json*/ """
+        {
+            "lexicon": 1,
+            "id": "com.example.search",
+            "defs": {
+                "main": {
+                    "type": "query",
+                    "parameters": {
+                        "type": "params",
+                        "required": ["q"],
+                        "properties": {
+                            "q": { "type": "string" }
+                        }
+                    }
+                }
+            }
+        }
+        """;
+
+        var result = Generate(json);
+
+        AssertNoErrors(result);
+
+        var requestFile = result.Files.Single(f => f.HintName == $"{Namespace}.Com.Example.Search.Request.g.cs");
+        StringAssert.Contains(
+            requestFile.SourceText,
+            "[global::BlueBlaze.Core.Lexicon(\"com.example.search\", global::BlueBlaze.Core.LexiconOperationKind.Query)]",
+            StringComparison.Ordinal);
+    }
+
+    [TestMethod]
+    public void Request_Procedureの場合Lexicon属性にProcedureが出力される()
+    {
+        var json = /*lang=json*/ """
+        {
+            "lexicon": 1,
+            "id": "com.example.doProcedure",
+            "defs": {
+                "main": {
+                    "type": "procedure",
+                    "input": {
+                        "encoding": "application/json",
+                        "schema": {
+                            "type": "object",
+                            "properties": {}
+                        }
+                    }
+                }
+            }
+        }
+        """;
+
+        var result = Generate(json);
+
+        AssertNoErrors(result);
+
+        var requestFile = result.Files.Single(f => f.HintName == $"{Namespace}.Com.Example.DoProcedure.Request.g.cs");
+        StringAssert.Contains(
+            requestFile.SourceText,
+            "[global::BlueBlaze.Core.Lexicon(\"com.example.doProcedure\", global::BlueBlaze.Core.LexiconOperationKind.Procedure)]",
+            StringComparison.Ordinal);
+    }
+
     private static GenerateResult Generate(string json)
     {
         return Generate([json]);
