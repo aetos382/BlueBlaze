@@ -9,6 +9,7 @@
       <_BBCliOutputDir>$(IntermediateOutputPath)GeneratedSources/BlueBlaze.LexiconGenerator/</_BBCliOutputDir>
       <_BBCliManifest>$(_BBCliOutputDir)generated-files.txt</_BBCliManifest>
       <_BBCliInputList>$(_BBCliOutputDir)input-files.txt</_BBCliInputList>
+      <_BBCliArgsFile>$(_BBCliOutputDir)args.txt</_BBCliArgsFile>
       <!--
         デフォルトは dotnet bbgen。
         開発中など直接 exe を実行したい場合は BlueBlazeGeneratorCliExe にフルパスを設定してオーバーライドする。
@@ -21,9 +22,26 @@
            Text="The LexiconGenerator CLI executable '$(BlueBlazeGeneratorCliExe)' does not exist. Build the LexiconGenerator.Cli project first, or install the dotnet tool 'dotnet-bbgen'." />
   </Target>
 
+  <!--
+    生成オプション（名前空間・TFM・Nullable・各フラグ）をファイルに記録する。
+    WriteOnlyWhenDifferent により内容が変わった場合のみタイムスタンプが更新され、
+    _BBCliGenerate のインクリメンタルビルド判定に使われる。
+  -->
+  <Target Name="_BBCliWriteArgs" DependsOnTargets="_BBCliSetup">
+    <MakeDir Directories="$(_BBCliOutputDir)" />
+    <ItemGroup>
+      <_BBCliArgLines Include="$(BlueBlazeGeneratedCodeNamespace)" />
+      <_BBCliArgLines Include="$(TargetFramework)" />
+      <_BBCliArgLines Include="$(Nullable)" />
+      <_BBCliArgLines Include="$(BlueBlazeGeneratorGenerateTypeInfo)" />
+      <_BBCliArgLines Include="$(BlueBlazeGeneratorForceEmitAotAttributes)" />
+    </ItemGroup>
+    <WriteLinesToFile File="$(_BBCliArgsFile)" Lines="@(_BBCliArgLines)" Overwrite="true" WriteOnlyWhenDifferent="true" />
+  </Target>
+
   <Target Name="_BBCliGenerate"
-          DependsOnTargets="_BBCliSetup"
-          Inputs="@(LexiconDocument);$(BlueBlazeGeneratorCliExe)"
+          DependsOnTargets="_BBCliSetup;_BBCliWriteArgs"
+          Inputs="@(LexiconDocument);$(BlueBlazeGeneratorCliExe);$(_BBCliArgsFile)"
           Outputs="$(_BBCliManifest)">
 
     <PropertyGroup>
