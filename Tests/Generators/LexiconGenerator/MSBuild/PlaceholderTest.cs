@@ -1,0 +1,10 @@
+namespace BlueBlaze.LexiconGenerator.MSBuild.Tests;
+
+[TestClass]
+public class PlaceholderTest
+{
+    [TestMethod]
+    public void Placeholder()
+    {
+    }
+}

@@ -1,7 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="../../../Generators/LexiconGenerator/Package/build/BlueBlaze.LexiconGenerator.props" />
-
   <PropertyGroup>
     <TargetFrameworks>net10.0;netstandard2.0</TargetFrameworks>
     <IsPackable>true</IsPackable>
@@ -13,16 +11,16 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <BlueBlazeGeneratorRunAsBuildTask>true</BlueBlazeGeneratorRunAsBuildTask>
+    <BlueBlazeGeneratorRunMode>Cli</BlueBlazeGeneratorRunMode>
     <BlueBlazeGeneratedCodeNamespace>BlueBlaze.Client.Bluesky.Generated</BlueBlazeGeneratedCodeNamespace>
+    <_BBCliExeName>BlueBlaze.LexiconGenerator.Cli</_BBCliExeName>
+    <_BBCliExeName Condition="$([MSBuild]::IsOSPlatform('Windows'))">$(_BBCliExeName).exe</_BBCliExeName>
+    <BlueBlazeGeneratorCliExe>$([MSBuild]::NormalizePath('$(ArtifactsPath)', 'bin', 'LexiconGenerator.Cli', '$(Configuration.ToLowerInvariant())', '$(_BBCliExeName)'))</BlueBlazeGeneratorCliExe>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="../AtProtocol/Client.AtProtocol.csproj" />
-    <ProjectReference Include="..\..\Core\Core.csproj" />
-    <ProjectReference Include="..\..\..\Generators\LexiconGenerator\MSBuild\LexiconGenerator.MSBuild.csproj">
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
+    <ProjectReference Include="../../Core/Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>

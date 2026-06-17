@@ -1,6 +1,7 @@
 <Project>
 
   <PropertyGroup>
+    <BlueBlazeGeneratorRunMode Condition="'$(BlueBlazeGeneratorRunMode)' == ''">Roslyn</BlueBlazeGeneratorRunMode>
     <AdditionalFileItemNames>
       $(AdditionalFileItemNames);
       LexiconDocument
@@ -15,7 +16,7 @@
   </ItemDefinitionGroup>
 
   <ItemGroup>
-    <CompilerVisibleProperty Include="BlueBlazeGeneratorRunAsBuildTask" />
+    <CompilerVisibleProperty Include="BlueBlazeGeneratorRunMode" />
     <CompilerVisibleProperty Include="BlueBlazeGeneratedCodeNamespace"/>
     <CompilerVisibleProperty Include="BlueBlazeGeneratorGenerateTypeInfo"/>
     <CompilerVisibleProperty Include="BlueBlazeGeneratorForceEmitAotAttributes"/>

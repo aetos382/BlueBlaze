@@ -11,6 +11,8 @@ namespace BlueBlaze.LexiconGenerator.Roslyn;
 public sealed class LexiconSourceGenerator :
     IIncrementalGenerator
 {
+    private const string RunModeRoslyn = "Roslyn";
+
     private static readonly DiagnosticDescriptor ErrorDescriptor = new(
         id: "BB0001",
         title: ResourcesRoslyn.ErrorDescriptorTitle,
@@ -39,33 +41,25 @@ public sealed class LexiconSourceGenerator :
     /// <inheritdoc />
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        var runAsBuildTaskProvider = context.AnalyzerConfigOptionsProvider
+        var isRoslynProvider = context.AnalyzerConfigOptionsProvider
             .Select(static (input, _) =>
             {
-                var value = false;
-                Core.Diagnostic? diagnostic = null;
-
-                if (!input.GlobalOptions.TryGetValue("build_property.BlueBlazeGeneratorRunAsBuildTask", out var stringValue) ||
-                    !bool.TryParse(stringValue, out value))
+                if (input.GlobalOptions.TryGetValue("build_property.BlueBlazeGeneratorRunMode", out var stringValue) &&
+                    !string.IsNullOrEmpty(stringValue))
                 {
-                    var message = string.IsNullOrEmpty(stringValue)
-                        ? Resources.RunAsBuildTaskNotSet.ToString(null)
-                        : Resources.FormatRunAsBuildTaskInvalidValue(stringValue!).ToString(null);
-
-                    diagnostic = new Core.Diagnostic(Core.DiagnosticSeverity.Error, message, null, null, null);
+                    return string.Equals(stringValue, RunModeRoslyn, StringComparison.OrdinalIgnoreCase);
                 }
-
-                return (Value: value, Diagnostic: diagnostic);
+                return true;
             });
 
         var lexiconFilesProvider = context.AdditionalTextsProvider
             .Combine(context.AnalyzerConfigOptionsProvider)
-            .Combine(runAsBuildTaskProvider)
+            .Combine(isRoslynProvider)
             .Select(static (input, cancellationToken) =>
             {
-                var ((additionalText, optionsProvider), (runAsBuildTask, runAsBuildTaskDiag)) = input;
+                var ((additionalText, optionsProvider), isRoslyn) = input;
 
-                if (runAsBuildTask || runAsBuildTaskDiag is not null)
+                if (!isRoslyn)
                 {
                     return LexiconFileResult.Skip;
                 }
@@ -149,16 +143,16 @@ public sealed class LexiconSourceGenerator :
 
         context.RegisterSourceOutput(
             lexiconFilesProvider.Collect()
-                .Combine(runAsBuildTaskProvider)
+                .Combine(isRoslynProvider)
                 .Combine(generatedCodeNamespaceProvider)
                 .Combine(generatorOptionsProvider),
             static (spc, pair) =>
             {
-                var (((fileResults, (runAsBuildTask, runAsBuildTaskDiag)), (generatedCodeNamespace, namespaceDiag)), generatorOptions) = pair;
+                var (((fileResults, isRoslyn), (generatedCodeNamespace, namespaceDiag)), generatorOptions) = pair;
 
-                if (runAsBuildTaskDiag is not null)
+                if (!isRoslyn)
                 {
-                    ReportDiagnostic(spc, runAsBuildTaskDiag);
+                    return;
                 }
 
                 foreach (var fileResult in fileResults)
@@ -172,10 +166,6 @@ public sealed class LexiconSourceGenerator :
                 if (namespaceDiag is not null)
                 {
                     ReportDiagnostic(spc, namespaceDiag);
-                }
-
-                if (runAsBuildTask || runAsBuildTaskDiag is not null || namespaceDiag is not null)
-                {
                     return;
                 }
 

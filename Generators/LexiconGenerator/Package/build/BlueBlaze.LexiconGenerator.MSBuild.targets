@@ -27,12 +27,6 @@
     <_BlueBlazeGeneratorBuildTaskAssemblyFilePath>$([MSBuild]::NormalizePath('$(ArtifactsPath)', 'bin', 'LexiconGenerator.MSBuild', '$(_BlueBlazeGeneratorBuildTaskArtifactsPivots)', '$(_BlueBlazeGeneratorBuildTaskAssemblyFileName)'))</_BlueBlazeGeneratorBuildTaskAssemblyFilePath>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <BlueBlazeGenerateLexiconSourceCodeTaskDebugBreakOnExecute>false</BlueBlazeGenerateLexiconSourceCodeTaskDebugBreakOnExecute>
-  </PropertyGroup>
-
-  <Import Project="$(MSBuildThisFileDirectory)BlueBlaze.LexiconGenerator.MSBuild.Debug.targets" Condition="Exists('$(MSBuildThisFileDirectory)BlueBlaze.LexiconGenerator.MSBuild.Debug.targets')" />
-
   <UsingTask TaskName="BlueBlazeGenerateSourceCode"
              AssemblyFile="$(_BlueBlazeGeneratorBuildTaskAssemblyFilePath)"
              Runtime="$(_BlueBlazeGeneratorBuildTaskRuntime)"
@@ -62,7 +56,7 @@
       TargetFramework="$(TargetFramework)"
       ForceEmitAotAttributes="$(BlueBlazeGeneratorForceEmitAotAttributes)"
       Nullable="$(Nullable)"
-      DebugBreakOnExecute="$(BlueBlazeGenerateLexiconSourceCodeTaskDebugBreakOnExecute)">
+      DebugBreakOnExecute="false">
 
       <Output TaskParameter="GeneratedFiles" ItemName="GeneratedLexiconSources" />
 
