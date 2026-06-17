@@ -79,7 +79,7 @@ internal static class JsonSerializerContextEmitter
             return;
         }
 
-        isb.AppendLine($"internal sealed partial class LexiconJsonSerializerContext : global::System.Text.Json.Serialization.JsonSerializerContext");
+        isb.AppendLine($"public sealed partial class LexiconJsonSerializerContext : global::System.Text.Json.Serialization.JsonSerializerContext");
         isb.AppendLine("{");
         isb.AppendLine("}");
 

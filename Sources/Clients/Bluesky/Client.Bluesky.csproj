@@ -26,10 +26,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="BlueBlaze.Client.Bluesky.Tests" />
-  </ItemGroup>
-
-  <ItemGroup>
     <!-- app/bsky, chat/bsky が参照する com.atproto.* (例: com.atproto.repo.strongRef) を
          解決するため、com/atproto/** も自己完結的に取り込む。Client.AtProtocol.csproj とは
          別の名前空間(BlueBlaze.Client.Bluesky.Generated)に重複生成されるが、
@@ -37,6 +33,10 @@
     <LexiconDocument Include="../../../submodules/atproto/lexicons/com/atproto/**/*.json" />
     <LexiconDocument Include="../../../submodules/atproto/lexicons/app/bsky/**/*.json" />
     <LexiconDocument Include="../../../submodules/atproto/lexicons/chat/bsky/**/*.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="BlueBlaze.Client.Bluesky.Tests" />
   </ItemGroup>
 
   <Import Project="../../../Generators/LexiconGenerator/Package/build/BlueBlaze.LexiconGenerator.targets" />
