@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 using BlueBlaze.CommandGenerator.Generation;
 
@@ -55,11 +54,6 @@ public sealed class CommandSourceGenerator : IIncrementalGenerator
                     return;
                 }
 
-                var jsonSerializerContextType = compilation
-                    .GetSymbolsWithName("LexiconJsonSerializerContext", SymbolFilter.Type)
-                    .OfType<INamedTypeSymbol>()
-                    .FirstOrDefault();
-
                 var eligible = new List<(LexiconRequestInfo Request, string[] Segments)>();
 
                 foreach (var request in requests)
@@ -80,6 +74,7 @@ public sealed class CommandSourceGenerator : IIncrementalGenerator
                         continue;
                     }
 
+                    var jsonSerializerContextType = FindContextType(compilation, request.InputType);
                     var segments = NameHelper.NsidToSegments(request.Nsid);
                     var source = CliCommandEmitter.Emit(request, eligibility, segments, options.GeneratedNamespace, jsonSerializerContextType);
                     var hintName = string.Join(".", segments) + ".CliCommand.g.cs";
@@ -94,6 +89,28 @@ public sealed class CommandSourceGenerator : IIncrementalGenerator
                     spc.AddSource("CliCommandTree.g.cs", treeSource);
                 }
             });
+    }
+
+    private static INamedTypeSymbol? FindContextType(Compilation compilation, INamedTypeSymbol? inputType)
+    {
+        if (inputType is null)
+        {
+            return null;
+        }
+
+        var ns = inputType.ContainingNamespace;
+        while (ns != null && !ns.IsGlobalNamespace)
+        {
+            var candidate = compilation.GetTypeByMetadataName(ns.ToDisplayString() + ".LexiconJsonSerializerContext");
+            if (candidate != null)
+            {
+                return candidate;
+            }
+
+            ns = ns.ContainingNamespace;
+        }
+
+        return null;
     }
 
     private static bool IsInTargetSet(string nsid, HashSet<string> targetSet)
