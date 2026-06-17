@@ -18,6 +18,24 @@ internal static class InputResolver
         {
             var path = token.Value;
 
+            if (path.StartsWith('@'))
+            {
+                var listFile = path[1..];
+                if (!File.Exists(listFile))
+                {
+                    result.AddError($"入力リストファイルが見つかりません: {listFile}");
+                    continue;
+                }
+                foreach (var line in File.ReadAllLines(listFile))
+                {
+                    if (!string.IsNullOrWhiteSpace(line))
+                    {
+                        files.Add(new FileInfo(line.Trim()));
+                    }
+                }
+                continue;
+            }
+
             if (ContainsGlobChars(path))
             {
                 var (baseDir, pattern) = SplitGlobPattern(path);

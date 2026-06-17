@@ -13,15 +13,15 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <BlueBlazeGeneratorRunAsBuildTask>true</BlueBlazeGeneratorRunAsBuildTask>
+    <BlueBlazeGeneratorRunMode>Cli</BlueBlazeGeneratorRunMode>
     <BlueBlazeGeneratedCodeNamespace>BlueBlaze.Client.AtProtocol.Generated</BlueBlazeGeneratedCodeNamespace>
+    <_BBCliExeName>BlueBlaze.LexiconGenerator.Cli</_BBCliExeName>
+    <_BBCliExeName Condition="$([MSBuild]::IsOSPlatform('Windows'))">$(_BBCliExeName).exe</_BBCliExeName>
+    <BlueBlazeGeneratorCliExe>$([MSBuild]::NormalizePath('$(ArtifactsPath)', 'bin', 'LexiconGenerator.Cli', '$(Configuration.ToLowerInvariant())', '$(_BBCliExeName)'))</BlueBlazeGeneratorCliExe>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../../../Generators/LexiconGenerator/MSBuild/LexiconGenerator.MSBuild.csproj">
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Core\Core.csproj" />
+    <ProjectReference Include="../../Core/Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>

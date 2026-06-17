@@ -15,6 +15,7 @@ internal static class GenerateHandler
         DirectoryInfo outputDir,
         string generatedCodeNamespace,
         GeneratorOptions options,
+        FileInfo? manifestOutput,
         TextWriter errorWriter,
         CancellationToken cancellationToken)
     {
@@ -60,6 +61,8 @@ internal static class GenerateHandler
 
         outputDir.Create();
 
+        var generatedPaths = new List<string>(generateResult.Files.Count);
+
         foreach (var file in generateResult.Files)
         {
             var outputPath = Path.Combine(outputDir.FullName, file.HintName);
@@ -71,6 +74,16 @@ internal static class GenerateHandler
 
             await File
                 .WriteAllTextAsync(outputPath, file.SourceText, new UTF8Encoding(false), cancellationToken)
+                .ConfigureAwait(false);
+
+            generatedPaths.Add(outputPath);
+        }
+
+        if (manifestOutput is not null)
+        {
+            manifestOutput.Directory?.Create();
+            await File
+                .WriteAllLinesAsync(manifestOutput.FullName, generatedPaths, new UTF8Encoding(false), cancellationToken)
                 .ConfigureAwait(false);
         }
 

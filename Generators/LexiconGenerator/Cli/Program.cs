@@ -48,6 +48,11 @@ var emitMetadataAttributesOption = new Option<bool>("--emit-metadata-attributes"
     Description = "Lexicon スキーマのメタデータ情報を BlueBlaze.Core 属性として生成コードに出力します。"
 };
 
+var manifestOutputOption = new Option<FileInfo?>("--manifest-output")
+{
+    Description = "生成されたファイルのパス一覧を書き出すファイルのパス。MSBuild インクリメンタルビルド用。"
+};
+
 var rootCommand = new RootCommand("BlueBlaze Lexicon コードジェネレーター")
 {
     inputArgument,
@@ -57,7 +62,8 @@ var rootCommand = new RootCommand("BlueBlaze Lexicon コードジェネレータ
     targetFrameworkOption,
     forceEmitAotAttributesOption,
     disableNullableAnnotationsOption,
-    emitMetadataAttributesOption
+    emitMetadataAttributesOption,
+    manifestOutputOption
 };
 
 rootCommand.SetAction(async (parseResult, ct) =>
@@ -65,6 +71,7 @@ rootCommand.SetAction(async (parseResult, ct) =>
     var inputs = parseResult.GetRequiredValue(inputArgument);
     var outputDir = parseResult.GetRequiredValue(outputOption);
     var ns = parseResult.GetRequiredValue(namespaceOption);
+    var manifestOutput = parseResult.GetValue(manifestOutputOption);
 
     var options = new BlueBlaze.LexiconGenerator.Core.GeneratorOptions
     {
@@ -78,7 +85,7 @@ rootCommand.SetAction(async (parseResult, ct) =>
     var config = parseResult.InvocationConfiguration;
 
     return await GenerateHandler
-        .RunAsync(inputs, outputDir, ns, options, config.Error, ct)
+        .RunAsync(inputs, outputDir, ns, options, manifestOutput, config.Error, ct)
         .ConfigureAwait(false);
 });
 

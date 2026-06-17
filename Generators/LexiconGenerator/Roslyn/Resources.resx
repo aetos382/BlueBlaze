@@ -64,12 +64,6 @@
   <data name="WarningDescriptorTitle" xml:space="preserve">
     <value>Lexicon generation warning</value>
   </data>
-  <data name="RunAsBuildTaskNotSet" xml:space="preserve">
-    <value>The MSBuild property 'BlueBlazeGeneratorRunAsBuildTask' is not set. It must be set to 'true' or 'false'.</value>
-  </data>
-  <data name="RunAsBuildTaskInvalidValue" xml:space="preserve">
-    <value>The MSBuild property 'BlueBlazeGeneratorRunAsBuildTask' has an invalid value '{0}'. It must be 'true' or 'false'.</value>
-  </data>
   <data name="IsLexiconDocumentNotSet" xml:space="preserve">
     <value>The MSBuild metadata 'IsLexiconDocument' is not set on '{0}'. The file will be skipped.</value>
   </data>
