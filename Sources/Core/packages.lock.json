@@ -119,7 +119,10 @@
         }
       }
     },
+    ".NETStandard,Version=v2.0/linux-arm64": {},
     ".NETStandard,Version=v2.0/linux-x64": {},
+    ".NETStandard,Version=v2.0/osx-arm64": {},
+    ".NETStandard,Version=v2.0/win-arm64": {},
     ".NETStandard,Version=v2.0/win-x64": {},
     "net10.0": {
       "Microsoft.CodeAnalysis.CSharp.CodeStyle": {
@@ -141,7 +144,10 @@
         "contentHash": "i5z+cNu/cOcdO0AgFB8aXk8w6In2H+haaDfSgd9ImvQIK+rSHavHZIogVoAZLL8jLwYx4bAcs5b7EyuMMG4mQQ=="
       }
     },
+    "net10.0/linux-arm64": {},
     "net10.0/linux-x64": {},
+    "net10.0/osx-arm64": {},
+    "net10.0/win-arm64": {},
     "net10.0/win-x64": {}
   }
 }

@@ -66,10 +66,16 @@ jobs:
     strategy:
       matrix:
         include:
+          - os: windows-2025
+            rid: win-x64
+          - os: windows-11-vs2026-arm
+            rid: win-arm64
           - os: ubuntu-slim
             rid: linux-x64
-          - os: windows-latest
-            rid: win-x64
+          - os: ubuntu-26.04-arm
+            rid: linux-arm64
+          - os: macos-26
+            rid: osx-arm64
 
     runs-on: ${{ matrix.os }}
 
