@@ -66,10 +66,16 @@ jobs:
     strategy:
       matrix:
         include:
+          - os: windows-2025
+            rid: win-x64
+          - os: windows-11-vs2026-arm
+            rid: win-arm64
           - os: ubuntu-slim
             rid: linux-x64
-          - os: windows-latest
-            rid: win-x64
+          - os: ubuntu-26.04-arm
+            rid: linux-arm64
+          - os: macos-26
+            rid: osx-arm64
 
     runs-on: ${{ matrix.os }}
 
@@ -96,9 +102,9 @@ jobs:
           -bl:lexgen-cli-${{ matrix.rid }}.binlog
           --no-logo
 
-      - name: Pack Client.Cli
+      - name: Pack Application.Cli
         run: >
-          dotnet pack Sources/Clients/Cli/Client.Cli.csproj
+          dotnet pack Sources/Applications/Cli/Application.Cli.csproj
           --configuration Release
           -r ${{ matrix.rid }}
           -p:Version=${{ inputs.version }}
