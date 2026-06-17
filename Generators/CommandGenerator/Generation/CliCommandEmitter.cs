@@ -26,7 +26,8 @@ internal static class CliCommandEmitter
         LexiconRequestInfo request,
         CliEligibilityResult eligibility,
         string[] segments,
-        string generatedNamespace)
+        string generatedNamespace,
+        INamedTypeSymbol? jsonSerializerContextType)
     {
         var commandClassName = CommandClassName(segments);
 
@@ -40,7 +41,7 @@ internal static class CliCommandEmitter
         isb.AppendLine("{");
         using (isb.Indent())
         {
-            EmitBuildMethod(isb, request, eligibility, segments);
+            EmitBuildMethod(isb, request, eligibility, segments, jsonSerializerContextType);
         }
         isb.AppendLine("}");
 
@@ -51,7 +52,8 @@ internal static class CliCommandEmitter
         IndentedStringBuilder isb,
         LexiconRequestInfo request,
         CliEligibilityResult eligibility,
-        string[] segments)
+        string[] segments,
+        INamedTypeSymbol? jsonSerializerContextType)
     {
         var leafKebabName = NameHelper.ToKebabCase(segments[segments.Length - 1]);
 
@@ -94,7 +96,7 @@ internal static class CliCommandEmitter
                 isb.AppendLine("{");
                 using (isb.Indent())
                 {
-                    EmitHandlerBody(isb, request, eligibility, parameterOptions, inputOptions, inputJsonVarName);
+                    EmitHandlerBody(isb, request, eligibility, parameterOptions, inputOptions, inputJsonVarName, jsonSerializerContextType);
                 }
                 isb.AppendLine("}");
                 isb.AppendLine($"catch ({CoreNs}.LexiconException ex)");
@@ -154,7 +156,8 @@ internal static class CliCommandEmitter
         CliEligibilityResult eligibility,
         Dictionary<LexiconPropertyInfo, string> parameterOptions,
         Dictionary<LexiconPropertyInfo, string> inputOptions,
-        string? inputJsonVarName)
+        string? inputJsonVarName,
+        INamedTypeSymbol? jsonSerializerContextType)
     {
         string? parametersArg = null;
         if (request.ParametersType is not null)
@@ -178,7 +181,8 @@ internal static class CliCommandEmitter
                 using (isb.Indent())
                 {
                     isb.AppendLine($"var resolvedJson = await {CliInputReaderType}.ReadInputJsonAsync(inputJsonValue, cancellationToken).ConfigureAwait(false);");
-                    isb.AppendLine($"input = global::System.Text.Json.JsonSerializer.Deserialize<{inputFullName}>(resolvedJson)");
+                    var deserializeExpr = BuildDeserializeExpression(inputFullName, request.InputType, jsonSerializerContextType);
+                    isb.AppendLine($"input = {deserializeExpr}");
                     using (isb.Indent())
                     {
                         isb.AppendLine("?? throw new global::System.InvalidOperationException(\"--input-json の内容を解釈できませんでした。\");");
@@ -274,6 +278,27 @@ internal static class CliCommandEmitter
             }
             isb.AppendLine("}");
         }
+    }
+
+    private static string BuildDeserializeExpression(
+        string inputFullName,
+        INamedTypeSymbol inputType,
+        INamedTypeSymbol? jsonSerializerContextType)
+    {
+        if (jsonSerializerContextType is not null)
+        {
+            var contextFqn = jsonSerializerContextType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+            var contextNs = jsonSerializerContextType.ContainingNamespace.ToDisplayString();
+            var inputFqn = inputType.ToDisplayString();
+            if (inputFqn.StartsWith(contextNs + ".", System.StringComparison.Ordinal))
+            {
+                var relative = inputFqn.Substring(contextNs.Length + 1);
+                var typeInfoPropName = relative.Replace(".", "");
+                return $"global::System.Text.Json.JsonSerializer.Deserialize(resolvedJson, {contextFqn}.Default.{typeInfoPropName})";
+            }
+        }
+
+        return $"global::System.Text.Json.JsonSerializer.Deserialize<{inputFullName}>(resolvedJson)";
     }
 
     private static string ValueVarName(LexiconPropertyInfo prop)

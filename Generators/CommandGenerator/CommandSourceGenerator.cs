@@ -55,6 +55,11 @@ public sealed class CommandSourceGenerator : IIncrementalGenerator
                     return;
                 }
 
+                var jsonSerializerContextType = compilation
+                    .GetSymbolsWithName("LexiconJsonSerializerContext", SymbolFilter.Type)
+                    .OfType<INamedTypeSymbol>()
+                    .FirstOrDefault();
+
                 var eligible = new List<(LexiconRequestInfo Request, string[] Segments)>();
 
                 foreach (var request in requests)
@@ -76,7 +81,7 @@ public sealed class CommandSourceGenerator : IIncrementalGenerator
                     }
 
                     var segments = NameHelper.NsidToSegments(request.Nsid);
-                    var source = CliCommandEmitter.Emit(request, eligibility, segments, options.GeneratedNamespace);
+                    var source = CliCommandEmitter.Emit(request, eligibility, segments, options.GeneratedNamespace, jsonSerializerContextType);
                     var hintName = string.Join(".", segments) + ".CliCommand.g.cs";
                     spc.AddSource(hintName, source);
 
