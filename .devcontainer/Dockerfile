@@ -41,6 +41,8 @@ RUN mkdir /usr/local/apm && \
     tar -C /usr/local/apm -xzf apm.tar.gz --strip-components=1 && \
     rm apm.tar.gz
 
+RUN /usr/local/node/bin/node --completion-bash > /usr/share/bash-completion/completions/node
+
 USER vscode
 
 WORKDIR /home/vscode

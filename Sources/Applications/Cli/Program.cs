@@ -9,6 +9,7 @@ var accessJwtOption = new Option<string?>("--access-jwt")
 {
     Description = "Bearer トークン(アクセス JWT)。省略時は BLUEBLAZE_ACCESS_JWT 環境変数を使う。",
 };
+
 var serviceOption = new Option<string?>("--service")
 {
     Description = "接続先 PDS のベース URL(既定値: https://bsky.social)。",
@@ -20,6 +21,7 @@ var preParseRoot = new RootCommand
 {
     TreatUnmatchedTokensAsErrors = false,
 };
+
 preParseRoot.Add(accessJwtOption);
 preParseRoot.Add(serviceOption);
 
