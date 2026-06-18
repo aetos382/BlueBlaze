@@ -29,7 +29,6 @@ jobs:
           dotnet-version: 10.0.x
           dotnet-quality: ga
           cache: false
-          cache-dependency-path: '**/packages.lock.json'
 
       - name: Pack
         run: >

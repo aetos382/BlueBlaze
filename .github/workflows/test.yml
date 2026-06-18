@@ -30,7 +30,7 @@ jobs:
         with:
           dotnet-version: 10.0.x
           dotnet-quality: ga
-          cache: false
+          cache: true
           cache-dependency-path: '**/packages.lock.json'
 
       - name: Build LexiconGenerator.Cli
