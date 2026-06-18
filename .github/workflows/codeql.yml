@@ -43,6 +43,10 @@ jobs:
           languages: ${{ matrix.language }}
           build-mode: ${{ matrix.build-mode }}
 
+      - name: Build LexiconGenerator.Cli
+        if: matrix.language == 'csharp'
+        run: dotnet publish Generators/LexiconGenerator/Cli/LexiconGenerator.Cli.csproj -o "${{ runner.temp }}/bbgen"
+
       - name: Build
         if: matrix.language == 'csharp'
         run: >
@@ -50,6 +54,7 @@ jobs:
           --configuration Release
           --no-incremental
           --no-logo
+          -p:BlueBlazeGeneratorCliExe="${{ runner.temp }}/bbgen/BlueBlaze.LexiconGenerator.Cli"
 
       - name: Analyze
         uses: github/codeql-action/analyze@8aad20d150bbac5944a9f9d289da16a4b0d87c1e # v4.36.2
