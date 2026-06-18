@@ -73,25 +73,16 @@ jobs:
         include:
           - os: windows-2025-vs2026
             rid: win-x64
-            sdk-architecture: x64
-            exe: .exe
-          - os: windows-2025-vs2026
-            rid: win-x86
-            sdk-architecture: x86
             exe: .exe
           - os: windows-11-vs2026-arm
             rid: win-arm64
-            sdk-architecture: arm64
             exe: .exe
           - os: ubuntu-slim
             rid: linux-x64
-            sdk-architecture: x64
           - os: ubuntu-26.04-arm
             rid: linux-arm64
-            sdk-architecture: arm64
           - os: macos-26
             rid: osx-arm64
-            sdk-architecture: arm64
 
     runs-on: ${{ matrix.os }}
 
@@ -106,7 +97,6 @@ jobs:
         with:
           dotnet-version: 10.0.x
           dotnet-quality: ga
-          architecture: ${{ matrix['sdk-architecture'] }}
           cache: false
           cache-dependency-path: '**/packages.lock.json'
 
