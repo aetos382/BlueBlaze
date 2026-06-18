@@ -74,9 +74,6 @@ jobs:
           - os: windows-2025-vs2026
             rid: win-x64
             exe: .exe
-          - os: windows-2025-vs2026
-            rid: win-x86
-            exe: .exe
           - os: windows-11-vs2026-arm
             rid: win-arm64
             exe: .exe
