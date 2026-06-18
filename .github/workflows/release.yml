@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   pack:
-    name: Pack
+    name: Pack (any)
     runs-on: ubuntu-slim
 
     steps:
@@ -29,12 +29,16 @@ jobs:
           cache: false
           cache-dependency-path: '**/packages.lock.json'
 
+      - name: Build LexiconGenerator.Cli
+        run: dotnet publish Generators/LexiconGenerator/Cli/LexiconGenerator.Cli.csproj -o "$RUNNER_TEMP/bbgen"
+
       - name: Pack
         run: >
           dotnet pack BlueBlaze.slnx
           --configuration Release
           -p:Version=${{ inputs.version }}
           -p:GenerateSBOM=true
+          -p:BlueBlazeGeneratorCliExe="$RUNNER_TEMP/bbgen/BlueBlaze.LexiconGenerator.Cli"
           -bl:pack.binlog
           --no-logo
 
@@ -61,15 +65,17 @@ jobs:
           compression-level: 0
 
   pack-native:
-    name: Pack NativeAOT (${{ matrix.rid }})
+    name: Pack (${{ matrix.rid }})
 
     strategy:
       matrix:
         include:
           - os: windows-2025
             rid: win-x64
+            exe: .exe
           - os: windows-11-vs2026-arm
             rid: win-arm64
+            exe: .exe
           - os: ubuntu-slim
             rid: linux-x64
           - os: ubuntu-26.04-arm
@@ -92,6 +98,9 @@ jobs:
           cache: false
           cache-dependency-path: '**/packages.lock.json'
 
+      - name: Build LexiconGenerator.Cli
+        run: dotnet publish Generators/LexiconGenerator/Cli/LexiconGenerator.Cli.csproj -o "${{ runner.temp }}/bbgen"
+
       - name: Pack LexiconGenerator.Cli
         run: >
           dotnet pack Generators/LexiconGenerator/Cli/LexiconGenerator.Cli.csproj
@@ -109,6 +118,7 @@ jobs:
           -r ${{ matrix.rid }}
           -p:Version=${{ inputs.version }}
           -p:GenerateSBOM=true
+          -p:BlueBlazeGeneratorCliExe="${{ runner.temp }}/bbgen/BlueBlaze.LexiconGenerator.Cli${{ matrix.exe }}"
           -bl:client-cli-${{ matrix.rid }}.binlog
           --no-logo
 

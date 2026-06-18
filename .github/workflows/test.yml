@@ -33,7 +33,7 @@ jobs:
           cache-dependency-path: '**/packages.lock.json'
 
       - name: Build LexiconGenerator.Cli
-        run: dotnet publish Generators/LexiconGenerator/Cli/LexiconGenerator.Cli.csproj -o "$RUNNER_TEMP/bbgen"
+        run: dotnet publish Generators/LexiconGenerator/Cli/LexiconGenerator.Cli.csproj -o "${{ runner.temp }}/bbgen"
 
       - name: Test
         run: >
@@ -42,7 +42,7 @@ jobs:
           --coverage
           --coverage-output-format cobertura
           --report-trx
-          -p:BlueBlazeGeneratorCliExe="$RUNNER_TEMP/bbgen/BlueBlaze.LexiconGenerator.Cli"
+          -p:BlueBlazeGeneratorCliExe="${{ runner.temp }}/bbgen/BlueBlaze.LexiconGenerator.Cli"
 
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@c950f6fb443cb5af20a377fd0dfaa78838901040 # v2.23.0

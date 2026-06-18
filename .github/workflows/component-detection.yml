@@ -30,12 +30,16 @@ jobs:
           cache: true
           cache-dependency-path: '**/packages.lock.json'
 
+      - name: Build LexiconGenerator.Cli
+        run: dotnet publish Generators/LexiconGenerator/Cli/LexiconGenerator.Cli.csproj -o "${{ runner.temp }}/bbgen"
+
       - name: Build
         run: >
           dotnet build
           --configuration Release
           --no-incremental
           --no-logo
+          -p:BlueBlazeGeneratorCliExe="${{ runner.temp }}/bbgen/BlueBlaze.LexiconGenerator.Cli"
           -binaryLogger
 
       - name: Component Detection
