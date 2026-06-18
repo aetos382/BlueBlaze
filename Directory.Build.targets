@@ -40,15 +40,6 @@
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(PackAsTool)' == 'true'">
-    <_ToolPackageRuntimeIdentifier Include="$(ToolPackageRuntimeIdentifiers)"/>
-    <_ToolPackageRuntimeIdentifier Include="any" Condition="!@(_ToolPackageRuntimeIdentifier->AnyHaveMetadataValue('Identity', 'any'))"/>
-  </ItemGroup>
-
-  <PropertyGroup Condition="'$(PackAsTool)' == 'true'">
-    <ToolPackageRuntimeIdentifiers>@(_ToolPackageRuntimeIdentifier)</ToolPackageRuntimeIdentifiers>
-  </PropertyGroup>
-
   <ItemGroup Condition="'$(IsPackable)' == 'true'">
     <None Include="$(MSBuildThisFileDirectory)README.md">
       <Pack>true</Pack>

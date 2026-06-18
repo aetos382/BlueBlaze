@@ -3,18 +3,6 @@
     Project="$(_OriginalBeforeMicrosoftNETSdkTargets)"
     Condition="'$(_OriginalBeforeMicrosoftNETSdkTargets)' != '' and Exists($(_OriginalBeforeMicrosoftNETSdkTargets))" />
 
-  <PropertyGroup>
-    <_NativeRuntimeIdentitiers>win-x64;win-arm64;linux-x64;linux-arm64;osx-arm64</_NativeRuntimeIdentitiers>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(OutputType)' == 'Exe'">
-    <RuntimeIdentifiers Condition="'$(RuntimeIdentifiers)' == ''">$(_NativeRuntimeIdentitiers)</RuntimeIdentifiers>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(RestorePackagesWithLockFile)' == 'true'">
-    <RuntimeIdentifiers Condition="'$(RuntimeIdentifiers)' == ''">$(_NativeRuntimeIdentitiers)</RuntimeIdentifiers>
-  </PropertyGroup>
-
   <PropertyGroup Condition="'$(NativeAotTool)' == 'true'">
     <IsPackable>true</IsPackable>
     <PackAsTool>true</PackAsTool>
@@ -25,6 +13,15 @@
     <StripSymbols>true</StripSymbols>
     <IncludeSymbols>false</IncludeSymbols>
     <ToolPackageRuntimeIdentifiers Condition="'$(ToolPackageRuntimeIdentifiers)' == '' and '$(RuntimeIdentifiers)' != ''">$(RuntimeIdentifiers)</ToolPackageRuntimeIdentifiers>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(PackAsTool)' == 'true'">
+    <_ToolPackageRuntimeIdentifier Include="$(ToolPackageRuntimeIdentifiers)"/>
+    <_ToolPackageRuntimeIdentifier Include="any" Condition="!@(_ToolPackageRuntimeIdentifier->AnyHaveMetadataValue('Identity', 'any'))"/>
+  </ItemGroup>
+
+  <PropertyGroup Condition="'$(PackAsTool)' == 'true'">
+    <ToolPackageRuntimeIdentifiers>@(_ToolPackageRuntimeIdentifier)</ToolPackageRuntimeIdentifiers>
   </PropertyGroup>
 
   <Target Name="_ExcludeDebugFilesFromToolPackage"
