@@ -43,29 +43,6 @@ jobs:
           -bl:pack.binlog
           --no-logo
 
-      - name: Pack LexiconGenerator.Cli (any)
-        run: >
-          dotnet pack Generators/LexiconGenerator/Cli/LexiconGenerator.Cli.csproj
-          --configuration Release
-          --runtime any
-          -p:PublishAot=false
-          -p:Version=${{ inputs.version }}
-          -p:GenerateSBOM=true
-          -bl:lexgen-cli-any.binlog
-          --no-logo
-
-      - name: Pack Application.Cli (any)
-        run: >
-          dotnet pack Sources/Applications/Cli/Application.Cli.csproj
-          --configuration Release
-          --runtime any
-          -p:PublishAot=false
-          -p:Version=${{ inputs.version }}
-          -p:GenerateSBOM=true
-          -p:BlueBlazeGeneratorCliExe="${{ runner.temp }}/bbgen/BlueBlaze.LexiconGenerator.Cli${{ matrix.exe }}"
-          -bl:client-cli-any.binlog
-          --no-logo
-
       - name: Upload nupkg
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
