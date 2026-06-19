@@ -15,22 +15,18 @@
     <ToolPackageRuntimeIdentifiers Condition="'$(ToolPackageRuntimeIdentifiers)' == '' and '$(RuntimeIdentifiers)' != ''">$(RuntimeIdentifiers)</ToolPackageRuntimeIdentifiers>
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(PackAsTool)' == 'true'">
-    <_ToolPackageRuntimeIdentifier Include="$(ToolPackageRuntimeIdentifiers)"/>
-    <_ToolPackageRuntimeIdentifier Include="any" Condition="!@(_ToolPackageRuntimeIdentifier->AnyHaveMetadataValue('Identity', 'any'))"/>
-  </ItemGroup>
-
+  <!--
+    - ToolPackageRuntimeIdentifiers に any が入っていなければ追加する
+    - win-x86 は GitHub Actions でビルドしていないので除く
+      - Windows と Linux 間での packages.lock.json の一貫性のため、<RuntimeIdentifiers> には win-x86 を入れておく
+    - 文字列操作関数を使うと ; がエスケープされるので Unescape する
+  -->
   <PropertyGroup Condition="'$(PackAsTool)' == 'true'">
-    <ToolPackageRuntimeIdentifiers>@(_ToolPackageRuntimeIdentifier)</ToolPackageRuntimeIdentifiers>
+    <_ToolPackageRuntimeIdentifiers>;$(ToolPackageRuntimeIdentifiers);</_ToolPackageRuntimeIdentifiers>
+    <_ToolPackageRuntimeIdentifiers>$(_ToolPackageRuntimeIdentifiers.Replace(';win-x86;', ';'))</_ToolPackageRuntimeIdentifiers>
+    <_ToolPackageRuntimeIdentifiers Condition="!$(_ToolPackageRuntimeIdentifiers.Contains(';any;'))">$(_ToolPackageRuntimeIdentifiers);any</_ToolPackageRuntimeIdentifiers>
+    <_ToolPackageRuntimeIdentifiers>$(_ToolPackageRuntimeIdentifiers.Replace(';;', ';').Trim(';'))</_ToolPackageRuntimeIdentifiers>
+    <ToolPackageRuntimeIdentifiers>$([MSBuild]::Unescape($(_ToolPackageRuntimeIdentifiers)))</ToolPackageRuntimeIdentifiers>
   </PropertyGroup>
-
-  <Target Name="_ExcludeDebugFilesFromToolPackage"
-          AfterTargets="PackTool"
-          Condition="'$(NativeAotTool)' == 'true'">
-    <ItemGroup>
-      <TfmSpecificPackageFile Remove="@(TfmSpecificPackageFile)" Condition="'%(Extension)' == '.pdb'" />
-      <TfmSpecificPackageFile Remove="@(TfmSpecificPackageFile)" Condition="'%(Extension)' == '.dbg'" />
-    </ItemGroup>
-  </Target>
 
 </Project>
