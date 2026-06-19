@@ -23,7 +23,6 @@
   <PropertyGroup Condition="'$(PackAsTool)' == 'true'">
     <_ToolPackageRuntimeIdentifiers>;$(ToolPackageRuntimeIdentifiers);</_ToolPackageRuntimeIdentifiers>
     <_ToolPackageRuntimeIdentifiers>$(_ToolPackageRuntimeIdentifiers.Replace(';win-x86;', ';'))</_ToolPackageRuntimeIdentifiers>
-    <_ToolPackageRuntimeIdentifiers>$(_ToolPackageRuntimeIdentifiers.Replace(';;', ';').Trim(';'))</_ToolPackageRuntimeIdentifiers>
     <ToolPackageRuntimeIdentifiers>$([MSBuild]::Unescape($(_ToolPackageRuntimeIdentifiers)))</ToolPackageRuntimeIdentifiers>
   </PropertyGroup>
 
