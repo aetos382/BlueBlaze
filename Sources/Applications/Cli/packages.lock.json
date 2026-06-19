@@ -49,6 +49,7 @@
         "type": "Project"
       }
     },
+    "net10.0/any": {},
     "net10.0/linux-arm64": {
       "Microsoft.DotNet.ILCompiler": {
         "type": "Direct",

@@ -127,6 +127,7 @@
         }
       }
     },
+    ".NETStandard,Version=v2.0/any": {},
     ".NETStandard,Version=v2.0/linux-arm64": {},
     ".NETStandard,Version=v2.0/linux-x64": {},
     ".NETStandard,Version=v2.0/osx-arm64": {},
@@ -156,6 +157,7 @@
         "type": "Project"
       }
     },
+    "net10.0/any": {},
     "net10.0/linux-arm64": {},
     "net10.0/linux-x64": {},
     "net10.0/osx-arm64": {},
