@@ -17,13 +17,13 @@ jobs:
     runs-on: ubuntu-slim
 
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           submodules: true
           persist-credentials: false
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@9a946fdbd5fb07b82b2f5a4466058b876ab72bb2 # v5.3.0
+        uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5.4.0
         with:
           dotnet-version: 10.0.x
           dotnet-quality: ga
@@ -74,40 +74,30 @@ jobs:
         include:
           - os: windows-2025-vs2026
             rid: win-x64
-            sdk-architecture: x64
-            exe: .exe
-          - os: windows-2025-vs2026
-            rid: win-x86
-            sdk-architecture: x86
             exe: .exe
           - os: windows-11-vs2026-arm
             rid: win-arm64
-            sdk-architecture: arm64
             exe: .exe
           - os: ubuntu-slim
             rid: linux-x64
-            sdk-architecture: x64
           - os: ubuntu-26.04-arm
             rid: linux-arm64
-            sdk-architecture: arm64
           - os: macos-26
             rid: osx-arm64
-            sdk-architecture: arm64
 
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           submodules: true
           persist-credentials: false
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@9a946fdbd5fb07b82b2f5a4466058b876ab72bb2 # v5.3.0
+        uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5.4.0
         with:
           dotnet-version: 10.0.x
           dotnet-quality: ga
-          architecture: ${{ matrix['sdk-architecture'] }}
           cache: false
           cache-dependency-path: '**/packages.lock.json'
 
@@ -165,7 +155,7 @@ jobs:
 
     steps:
       - name: Setup .NET
-        uses: actions/setup-dotnet@9a946fdbd5fb07b82b2f5a4466058b876ab72bb2 # v5.3.0
+        uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5.4.0
         with:
           dotnet-version: 10.0.x
           cache: false

@@ -8,7 +8,7 @@ services:
     init: true
 
   pds:
-    image: ghcr.io/bluesky-social/pds:latest@sha256:871194d23acfca3acac084aca2973860c4a4defa1437ecf0fe9fc45d2324702f
+    image: ghcr.io/bluesky-social/pds:latest@sha256:1fa8bbceabb65d8e1710749b1ea92c1c20a7489ca38da4a0a5f64c0c10a70c29
     profiles:
       - pds
     env_file:
