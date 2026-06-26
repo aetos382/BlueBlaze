@@ -15,16 +15,16 @@ ARG NPM_VERSION=11.17.0
 ARG GOAT_VERSION=v0.2.3
 
 # renovate: datasource=npm depName=@anthropic-ai/claude-code
-ARG CLAUDE_CODE_VERSION=2.1.178
+ARG CLAUDE_CODE_VERSION=2.1.186
 
 # renovate: datasource=npm depName=@devcontainers/cli
 ARG DEVCONTAINER_VERSION=0.87.0
 
 # renovate: datasource=npm depName=renovate
-ARG RENOVATE_VERSION=43.220.0
+ARG RENOVATE_VERSION=43.239.0
 
 # renovate: datasource=github-releases depName=microsoft/apm
-ARG APM_VERSION=v0.20.0
+ARG APM_VERSION=v0.21.0
 
 RUN mkdir /usr/local/node && \
     curl -fqsLS https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.xz -o node.tar.xz && \
