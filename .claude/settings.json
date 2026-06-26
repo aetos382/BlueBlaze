@@ -61,10 +61,8 @@
       "Write(**/*-lock.json)"
     ]
   },
-  "enabledMcpjsonServers": [
-    "sequential-thinking",
-    "nuget"
-  ],
+  "enableAllProjectMcpServers": true,
+  "disableClaudeAiConnectors": true,
   "enabledPlugins": {
     "claude-code-setup@claude-plugins-official": true,
     "claude-md-management@claude-plugins-official": true,
