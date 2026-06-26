@@ -12,8 +12,8 @@
     <_ToolPackageRuntimeIdentifiers>$(ToolPackageRuntimeIdentifiers)</_ToolPackageRuntimeIdentifiers>
     <_ToolPackageRuntimeIdentifiers Condition="'$(_ToolPackageRuntimeIdentifiers)' == '' AND '$(RuntimeIdentifiers)' != ''">;$(RuntimeIdentifiers);</_ToolPackageRuntimeIdentifiers>
     <_ToolPackageRuntimeIdentifiers>;$(_ToolPackageRuntimeIdentifiers);</_ToolPackageRuntimeIdentifiers>
-    <_ToolPackageRuntimeIdentifiers>$([MSBuild]::Unescape($(_ToolPackageRuntimeIdentifiers.Replace(';win-x86;', ';'))))</_ToolPackageRuntimeIdentifiers>
-    <ToolPackageRuntimeIdentifiers>$(_ToolPackageRuntimeIdentifiers)</ToolPackageRuntimeIdentifiers>
+    <_ToolPackageRuntimeIdentifiers>$(_ToolPackageRuntimeIdentifiers.Replace(';win-x86;', ';').Trim(';'))</_ToolPackageRuntimeIdentifiers>
+    <ToolPackageRuntimeIdentifiers>$([MSBuild]::Unescape($(_ToolPackageRuntimeIdentifiers)))</ToolPackageRuntimeIdentifiers>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(NativeAotTool)' == 'true'">
