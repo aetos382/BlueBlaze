@@ -61,6 +61,8 @@
       "Write(**/*-lock.json)"
     ]
   },
+  "enableAllProjectMcpServers": true,
+  "disableClaudeAiConnectors": true,
   "enabledPlugins": {
     "claude-code-setup@claude-plugins-official": true,
     "claude-md-management@claude-plugins-official": true,
@@ -77,10 +79,11 @@
     "dotnet-blazor@dotnet-agent-skills": true,
     "dotnet-data@dotnet-agent-skills": true,
     "dotnet-diag@dotnet-agent-skills": true,
+    "dotnet-maui@dotnet-agent-skills": true,
     "dotnet-msbuild@dotnet-agent-skills": true,
     "dotnet-nuget@dotnet-agent-skills": true,
-    "dotnet-test@dotnet-agent-skills": true,
-    "dotnet-upgrade@dotnet-agent-skills": true
+    "dotnet-template-engine@dotnet-agent-skills": true,
+    "dotnet-test@dotnet-agent-skills": true
   },
   "extraKnownMarketplaces": {
     "claude-plugins-official": {
@@ -92,7 +95,8 @@
     "dotnet-agent-skills": {
       "source": {
         "source": "github",
-        "repo": "dotnet/skills"
+        "repo": "aetos382/dotnet-skills",
+        "ref": "add-claude-plugin-manifests"
       }
     }
   },

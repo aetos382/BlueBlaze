@@ -15,16 +15,6 @@
         "NuGet.Mcp.Server@1.4.3",
         "--yes"
       ]
-    },
-    "binlog": {
-      "type": "stdio",
-      "command": "dnx",
-      "args": [
-        "Microsoft.AITools.BinlogMcp@1.0.0-preview.26308.1",
-        "--source",
-        "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json",
-        "--yes"
-      ]
     }
   }
 }
