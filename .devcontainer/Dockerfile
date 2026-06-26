@@ -24,7 +24,7 @@ ARG DEVCONTAINER_VERSION=0.87.0
 ARG RENOVATE_VERSION=43.239.0
 
 # renovate: datasource=github-releases depName=microsoft/apm
-ARG APM_VERSION=v0.20.0
+ARG APM_VERSION=v0.21.0
 
 RUN mkdir /usr/local/node && \
     curl -fqsLS https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.xz -o node.tar.xz && \
