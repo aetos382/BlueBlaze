@@ -31,7 +31,7 @@ jobs:
           cache-dependency-path: '**/packages.lock.json'
 
       - name: Build LexiconGenerator.Cli
-        run: dotnet publish Generators/LexiconGenerator/Cli/LexiconGenerator.Cli.csproj -o "$RUNNER_TEMP/bbgen"
+        run: dotnet publish Generators/LexiconGenerator/Cli/LexiconGenerator.Cli.csproj -o "${{ runner.temp }}/bbgen"
 
       - name: Pack
         run: >
@@ -39,22 +39,17 @@ jobs:
           --configuration Release
           -p:Version=${{ inputs.version }}
           -p:GenerateSBOM=true
-          -p:BlueBlazeGeneratorCliExe="$RUNNER_TEMP/bbgen/BlueBlaze.LexiconGenerator.Cli"
+          -p:BlueBlazeGeneratorCliExe="${{ runner.temp }}/bbgen/BlueBlaze.LexiconGenerator.Cli"
           -bl:pack.binlog
           --no-logo
 
-      - name: Upload nupkg
+      - name: Upload packages
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: nupkgs-any
-          path: artifacts/package/release/*.nupkg
-          compression-level: 0
-
-      - name: Upload snupkg
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: snupkgs-any
-          path: artifacts/package/release/*.snupkg
+          path: |
+            artifacts/package/release/*.nupkg
+            artifacts/package/release/*.snupkg
           compression-level: 0
 
       - name: Upload binlog
@@ -97,7 +92,7 @@ jobs:
         with:
           dotnet-version: 10.0.x
           dotnet-quality: ga
-          cache: false
+          cache: true
           cache-dependency-path: '**/packages.lock.json'
 
       - name: Build LexiconGenerator.Cli
@@ -107,7 +102,7 @@ jobs:
         run: >
           dotnet pack Generators/LexiconGenerator/Cli/LexiconGenerator.Cli.csproj
           --configuration Release
-          -r ${{ matrix.rid }}
+          --runtime ${{ matrix.rid }}
           -p:Version=${{ inputs.version }}
           -p:GenerateSBOM=true
           -bl:lexgen-cli-${{ matrix.rid }}.binlog
@@ -117,7 +112,7 @@ jobs:
         run: >
           dotnet pack Sources/Applications/Cli/Application.Cli.csproj
           --configuration Release
-          -r ${{ matrix.rid }}
+          --runtime ${{ matrix.rid }}
           -p:Version=${{ inputs.version }}
           -p:GenerateSBOM=true
           -p:BlueBlazeGeneratorCliExe="${{ runner.temp }}/bbgen/BlueBlaze.LexiconGenerator.Cli${{ matrix.exe }}"
@@ -139,9 +134,33 @@ jobs:
           path: '*-${{ matrix.rid }}.binlog'
           compression-level: 0
 
+  merge:
+    name: Merge artifacts
+    needs: [pack, pack-native]
+    if: always()
+    runs-on: ubuntu-slim
+
+    steps:
+      - name: Merge nupkgs
+        uses: actions/upload-artifact/merge@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: nupkgs
+          pattern: nupkgs-*
+          delete-merged: true
+          compression-level: 0
+
+      - name: Merge binlogs
+        uses: actions/upload-artifact/merge@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: binlogs
+          pattern: binlogs-*
+          delete-merged: true
+          compression-level: 0
+
   publish:
     name: Publish
-    needs: [pack, pack-native]
+    needs: [pack, pack-native, merge]
     runs-on: ubuntu-slim
 
     permissions:
@@ -158,19 +177,11 @@ jobs:
           dotnet-version: 10.0.x
           cache: false
 
-      - name: Download nupkg
+      - name: Download packages
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          pattern: nupkgs-*
+          name: nupkgs
           path: packages
-          merge-multiple: true
-
-      - name: Download snupkg
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-        with:
-          pattern: snupkgs-*
-          path: packages
-          merge-multiple: true
 
       - name: Push to GitHub Packages
         run: >
