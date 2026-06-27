@@ -18,7 +18,8 @@
   "containerEnv": {
     "LANG": "ja_JP.UTF-8",
     "TZ": "Asia/Tokyo",
-    "GITHUB_PERSONAL_ACCESS_TOKEN": "${localEnv:GH_PAT_FOR_MCP_SERVER}",
+    "GITHUB_PERSONAL_ACCESS_TOKEN": "${localEnv:GITHUB_PERSONAL_ACCESS_TOKEN}",
+    "GH_PAT_FOR_MCP_SERVER": "${localEnv:GH_PAT_FOR_MCP_SERVER}",
     "CLAUDE_CONFIG_DIR": "/home/vscode/.claude",
     "DISABLE_AUTOUPDATER": "1",
     "NUGET_PACKAGES": "/home/vscode/.nuget/packages",
