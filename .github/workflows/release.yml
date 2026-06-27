@@ -48,14 +48,9 @@ jobs:
           uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
           with:
             name: nupkgs-any
-            path: artifacts/package/release/*.nupkg
-            compression-level: 0
-
-        - name: Upload snupkg
-          uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-          with:
-            name: snupkgs-any
-            path: artifacts/package/release/*.snupkg
+            path: |
+              artifacts/package/release/*.nupkg
+              artifacts/package/release/*.snupkg
             compression-level: 0
 
         - name: Upload binlog
@@ -153,7 +148,7 @@ jobs:
           uses: actions/upload-artifact/merge@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
           with:
             name: packages
-            pattern: '{nupkgs,snupkgs}-*'
+            pattern: nupkgs-*
             delete-merged: true
             compression-level: 0
 
