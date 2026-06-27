@@ -3,6 +3,17 @@
     Project="$(_OriginalBeforeMicrosoftNETSdkTargets)"
     Condition="'$(_OriginalBeforeMicrosoftNETSdkTargets)' != '' and Exists($(_OriginalBeforeMicrosoftNETSdkTargets))" />
 
+  <PropertyGroup Condition="'$(NativeAotTool)' == 'true'">
+    <IsPackable>true</IsPackable>
+    <PackAsTool>true</PackAsTool>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <PublishAot>true</PublishAot>
+    <PublishSelfContained>true</PublishSelfContained>
+    <PublishTrimmed>true</PublishTrimmed>
+    <StripSymbols>true</StripSymbols>
+    <IncludeSymbols>false</IncludeSymbols>
+  </PropertyGroup>
+
   <!--
     - win-x86 は GitHub Actions でビルドしていないので除く
       - Windows と Linux 間での packages.lock.json の一貫性のため、<RuntimeIdentifiers> には win-x86 を入れておく
@@ -14,17 +25,6 @@
     <_ToolPackageRuntimeIdentifiers>;$(_ToolPackageRuntimeIdentifiers);</_ToolPackageRuntimeIdentifiers>
     <_ToolPackageRuntimeIdentifiers>$(_ToolPackageRuntimeIdentifiers.Replace(';win-x86;', ';').Trim(';'))</_ToolPackageRuntimeIdentifiers>
     <ToolPackageRuntimeIdentifiers>$([MSBuild]::Unescape($(_ToolPackageRuntimeIdentifiers)))</ToolPackageRuntimeIdentifiers>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(NativeAotTool)' == 'true'">
-    <IsPackable>true</IsPackable>
-    <PackAsTool>true</PackAsTool>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <PublishAot>true</PublishAot>
-    <PublishSelfContained>true</PublishSelfContained>
-    <PublishTrimmed>true</PublishTrimmed>
-    <StripSymbols>true</StripSymbols>
-    <IncludeSymbols>false</IncludeSymbols>
   </PropertyGroup>
 
 </Project>
