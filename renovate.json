@@ -19,14 +19,6 @@
   "git-submodules": {
     "enabled": true
   },
-  "nuget": {
-    "lockFileMaintenance": {
-      "enabled": false
-    },
-    "ignorePaths": [
-      "PackageTest/**"
-    ]
-  },
   "packageRules": [
     {
       "matchDepNames": ["node"],
