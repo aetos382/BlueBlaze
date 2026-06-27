@@ -43,22 +43,28 @@ jobs:
           -bl:pack.binlog
           --no-logo
 
-      - name: Upload packages
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: nupkgs-any
-          path: |
-            artifacts/package/release/*.nupkg
-            artifacts/package/release/*.snupkg
-          compression-level: 0
+      - parallel:
+        - name: Upload nupkg
+          uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+          with:
+            name: nupkgs-any
+            path: artifacts/package/release/*.nupkg
+            compression-level: 0
 
-      - name: Upload binlog
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        if: always()
-        with:
-          name: binlogs-any
-          path: pack.binlog
-          compression-level: 0
+        - name: Upload snupkg
+          uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+          with:
+            name: snupkgs-any
+            path: artifacts/package/release/*.snupkg
+            compression-level: 0
+
+        - name: Upload binlog
+          uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+          if: always()
+          with:
+            name: binlogs-any
+            path: pack.binlog
+            compression-level: 0
 
   pack-native:
     name: Pack (${{ matrix.rid }})
@@ -119,20 +125,21 @@ jobs:
           -bl:client-cli-${{ matrix.rid }}.binlog
           --no-logo
 
-      - name: Upload nupkg
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: nupkgs-${{ matrix.rid }}
-          path: artifacts/package/release/*.nupkg
-          compression-level: 0
+      - parallel:
+        - name: Upload nupkg
+          uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+          with:
+            name: nupkgs-${{ matrix.rid }}
+            path: artifacts/package/release/*.nupkg
+            compression-level: 0
 
-      - name: Upload binlog
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        if: always()
-        with:
-          name: binlogs-${{ matrix.rid }}
-          path: '*-${{ matrix.rid }}.binlog'
-          compression-level: 0
+        - name: Upload binlog
+          uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+          if: always()
+          with:
+            name: binlogs-${{ matrix.rid }}
+            path: '*-${{ matrix.rid }}.binlog'
+            compression-level: 0
 
   merge:
     name: Merge artifacts
@@ -141,22 +148,23 @@ jobs:
     runs-on: ubuntu-slim
 
     steps:
-      - name: Merge nupkgs
-        uses: actions/upload-artifact/merge@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: nupkgs
-          pattern: nupkgs-*
-          delete-merged: true
-          compression-level: 0
+      - parallel:
+        - name: Merge packages
+          uses: actions/upload-artifact/merge@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+          with:
+            name: packages
+            pattern: '{nupkgs,snupkgs}-*'
+            delete-merged: true
+            compression-level: 0
 
-      - name: Merge binlogs
-        uses: actions/upload-artifact/merge@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        if: always()
-        with:
-          name: binlogs
-          pattern: binlogs-*
-          delete-merged: true
-          compression-level: 0
+        - name: Merge binlogs
+          uses: actions/upload-artifact/merge@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+          if: always()
+          with:
+            name: binlogs
+            pattern: binlogs-*
+            delete-merged: true
+            compression-level: 0
 
   publish:
     name: Publish
@@ -180,7 +188,7 @@ jobs:
       - name: Download packages
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          name: nupkgs
+          name: packages
           path: packages
 
       - name: Push to GitHub Packages
