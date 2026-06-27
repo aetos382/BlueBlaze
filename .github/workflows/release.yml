@@ -149,11 +149,11 @@ jobs:
 
     steps:
       - parallel:
-        - name: Merge nupkgs
+        - name: Merge packages
           uses: actions/upload-artifact/merge@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
           with:
-            name: nupkgs
-            pattern: nupkgs-*
+            name: packages
+            pattern: '{nupkgs,snupkgs}-*'
             delete-merged: true
             compression-level: 0
 
@@ -185,20 +185,11 @@ jobs:
           dotnet-version: 10.0.x
           cache: false
 
-      - parallel:
-        - name: Download nupkgs
-          uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-          with:
-            pattern: nupkgs-*
-            path: packages
-            merge-multiple: true
-
-        - name: Download snupkgs
-          uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-          with:
-            pattern: snupkgs-*
-            path: packages
-            merge-multiple: true
+      - name: Download packages
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: packages
+          path: packages
 
       - name: Push to GitHub Packages
         run: >
