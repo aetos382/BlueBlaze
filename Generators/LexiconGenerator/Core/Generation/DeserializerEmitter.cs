@@ -36,7 +36,7 @@ internal static class DeserializerEmitter
             isb.AppendLine("[global::System.Diagnostics.CodeAnalysis.RequiresDynamicCode(\"JSON serialization and deserialization might require types that cannot be statically analyzed. Use the overload that takes a JsonTypeInfo or JsonSerializerContext.\")]");
         }
 
-        isb.AppendLine($"public sealed class {ClassName} : {ClientCoreNamespace}.IResponseDeserializer<{outputType}>");
+        isb.AppendLine($"public sealed class {ClassName} : {ClientCoreNamespace}.IHttpResponseDeserializer<{outputType}>");
         isb.AppendLine("{");
         using (isb.Indent())
         {

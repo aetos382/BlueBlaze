@@ -18,7 +18,7 @@ public sealed class CommandSourceGeneratorTest
                 public sealed partial class Search
                 {
                     [global::BlueBlaze.Core.Lexicon("com.example.search", global::BlueBlaze.Core.LexiconOperationKind.Query)]
-                    public sealed class Request : global::BlueBlaze.Core.ILexiconRequest
+                    public sealed class Request : global::BlueBlaze.Core.IQueryRequest
                     {
                         public Request(global::TestNs.Com.Example.Search.Parameters? parameters = null)
                         {
@@ -26,9 +26,7 @@ public sealed class CommandSourceGeneratorTest
                         }
 
                         public string Nsid => "com.example.search";
-                        public global::System.Net.Http.HttpMethod Method => global::System.Net.Http.HttpMethod.Get;
                         public global::BlueBlaze.Core.ILexiconParameters? Parameters { get; }
-                        public global::BlueBlaze.Core.ILexiconInput? Input => null;
                     }
 
                     public sealed partial class Parameters : global::BlueBlaze.Core.ILexiconParameters
@@ -78,7 +76,7 @@ public sealed class CommandSourceGeneratorTest
                 public sealed partial class CreateThing
                 {
                     [global::BlueBlaze.Core.Lexicon("com.example.createThing", global::BlueBlaze.Core.LexiconOperationKind.Procedure)]
-                    public sealed class Request : global::BlueBlaze.Core.ILexiconRequest
+                    public sealed class Request : global::BlueBlaze.Core.IProcedureRequest
                     {
                         public Request(global::TestNs.Com.Example.CreateThing.Input input)
                         {
@@ -86,8 +84,6 @@ public sealed class CommandSourceGeneratorTest
                         }
 
                         public string Nsid => "com.example.createThing";
-                        public global::System.Net.Http.HttpMethod Method => global::System.Net.Http.HttpMethod.Post;
-                        public global::BlueBlaze.Core.ILexiconParameters? Parameters => null;
                         public global::BlueBlaze.Core.ILexiconInput? Input { get; }
                     }
 
@@ -142,7 +138,7 @@ public sealed class CommandSourceGeneratorTest
                 public sealed partial class CreateRecord
                 {
                     [global::BlueBlaze.Core.Lexicon("com.example.createRecord", global::BlueBlaze.Core.LexiconOperationKind.Procedure)]
-                    public sealed class Request : global::BlueBlaze.Core.ILexiconRequest
+                    public sealed class Request : global::BlueBlaze.Core.IProcedureRequest
                     {
                         public Request(global::TestNs.Com.Example.CreateRecord.Input input)
                         {
@@ -150,8 +146,6 @@ public sealed class CommandSourceGeneratorTest
                         }
 
                         public string Nsid => "com.example.createRecord";
-                        public global::System.Net.Http.HttpMethod Method => global::System.Net.Http.HttpMethod.Post;
-                        public global::BlueBlaze.Core.ILexiconParameters? Parameters => null;
                         public global::BlueBlaze.Core.ILexiconInput? Input { get; }
                     }
 
@@ -195,7 +189,7 @@ public sealed class CommandSourceGeneratorTest
                 public sealed partial class UpdateThing
                 {
                     [global::BlueBlaze.Core.Lexicon("com.example.updateThing", global::BlueBlaze.Core.LexiconOperationKind.Procedure)]
-                    public sealed class Request : global::BlueBlaze.Core.ILexiconRequest
+                    public sealed class Request : global::BlueBlaze.Core.IProcedureRequest
                     {
                         public Request(global::TestNs.Com.Example.UpdateThing.Input input)
                         {
@@ -203,8 +197,6 @@ public sealed class CommandSourceGeneratorTest
                         }
 
                         public string Nsid => "com.example.updateThing";
-                        public global::System.Net.Http.HttpMethod Method => global::System.Net.Http.HttpMethod.Post;
-                        public global::BlueBlaze.Core.ILexiconParameters? Parameters => null;
                         public global::BlueBlaze.Core.ILexiconInput? Input { get; }
                     }
 
@@ -281,15 +273,13 @@ public sealed class CommandSourceGeneratorTest
                 public sealed partial class Search
                 {
                     [global::BlueBlaze.Core.Lexicon("com.example.search", global::BlueBlaze.Core.LexiconOperationKind.Query)]
-                    public sealed class Request : global::BlueBlaze.Core.ILexiconRequest
+                    public sealed class Request : global::BlueBlaze.Core.IQueryRequest
                     {
                         public static readonly Request Instance = new();
                         private Request() { }
 
                         public string Nsid => "com.example.search";
-                        public global::System.Net.Http.HttpMethod Method => global::System.Net.Http.HttpMethod.Get;
                         public global::BlueBlaze.Core.ILexiconParameters? Parameters => null;
-                        public global::BlueBlaze.Core.ILexiconInput? Input => null;
                     }
                 }
             }
@@ -319,30 +309,26 @@ public sealed class CommandSourceGeneratorTest
                 public sealed partial class Search
                 {
                     [global::BlueBlaze.Core.Lexicon("com.example.search", global::BlueBlaze.Core.LexiconOperationKind.Query)]
-                    public sealed class Request : global::BlueBlaze.Core.ILexiconRequest
+                    public sealed class Request : global::BlueBlaze.Core.IQueryRequest
                     {
                         public static readonly Request Instance = new();
                         private Request() { }
 
                         public string Nsid => "com.example.search";
-                        public global::System.Net.Http.HttpMethod Method => global::System.Net.Http.HttpMethod.Get;
                         public global::BlueBlaze.Core.ILexiconParameters? Parameters => null;
-                        public global::BlueBlaze.Core.ILexiconInput? Input => null;
                     }
                 }
 
                 public sealed partial class Other
                 {
                     [global::BlueBlaze.Core.Lexicon("com.example.other", global::BlueBlaze.Core.LexiconOperationKind.Query)]
-                    public sealed class Request : global::BlueBlaze.Core.ILexiconRequest
+                    public sealed class Request : global::BlueBlaze.Core.IQueryRequest
                     {
                         public static readonly Request Instance = new();
                         private Request() { }
 
                         public string Nsid => "com.example.other";
-                        public global::System.Net.Http.HttpMethod Method => global::System.Net.Http.HttpMethod.Get;
                         public global::BlueBlaze.Core.ILexiconParameters? Parameters => null;
-                        public global::BlueBlaze.Core.ILexiconInput? Input => null;
                     }
                 }
             }
@@ -373,30 +359,26 @@ public sealed class CommandSourceGeneratorTest
                 public sealed partial class Search
                 {
                     [global::BlueBlaze.Core.Lexicon("com.example.search", global::BlueBlaze.Core.LexiconOperationKind.Query)]
-                    public sealed class Request : global::BlueBlaze.Core.ILexiconRequest
+                    public sealed class Request : global::BlueBlaze.Core.IQueryRequest
                     {
                         public static readonly Request Instance = new();
                         private Request() { }
 
                         public string Nsid => "com.example.search";
-                        public global::System.Net.Http.HttpMethod Method => global::System.Net.Http.HttpMethod.Get;
                         public global::BlueBlaze.Core.ILexiconParameters? Parameters => null;
-                        public global::BlueBlaze.Core.ILexiconInput? Input => null;
                     }
                 }
 
                 public sealed partial class List
                 {
                     [global::BlueBlaze.Core.Lexicon("com.example.list", global::BlueBlaze.Core.LexiconOperationKind.Query)]
-                    public sealed class Request : global::BlueBlaze.Core.ILexiconRequest
+                    public sealed class Request : global::BlueBlaze.Core.IQueryRequest
                     {
                         public static readonly Request Instance = new();
                         private Request() { }
 
                         public string Nsid => "com.example.list";
-                        public global::System.Net.Http.HttpMethod Method => global::System.Net.Http.HttpMethod.Get;
                         public global::BlueBlaze.Core.ILexiconParameters? Parameters => null;
-                        public global::BlueBlaze.Core.ILexiconInput? Input => null;
                     }
                 }
             }
