@@ -32,6 +32,10 @@
     <LexiconDocument Include="../../../submodules/atproto/lexicons/com/atproto/**/*.json" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="System.Formats.Cbor" />
+  </ItemGroup>
+
   <Import Project="../../../Generators/LexiconGenerator/Package/build/BlueBlaze.LexiconGenerator.targets" />
 
 </Project>
