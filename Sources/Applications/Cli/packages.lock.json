@@ -35,7 +35,8 @@
       "BlueBlaze.Client.AtProtocol": {
         "type": "Project",
         "dependencies": {
-          "BlueBlaze.Core": "[1.0.0, )"
+          "BlueBlaze.Core": "[1.0.0, )",
+          "System.Formats.Cbor": "[10.0.9, )"
         }
       },
       "BlueBlaze.Client.Bluesky": {
