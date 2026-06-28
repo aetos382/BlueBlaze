@@ -46,7 +46,7 @@ done
 if [ ${#bom_files[@]} -gt 0 ]; then
     echo "" >&2
     echo "BOM を除去するには以下を実行してください:" >&2
-    echo "  bash .hooks/check-encoding.sh --correct ${bom_files[*]}" >&2
+    echo "  bash .git-hooks/check-encoding.sh --correct ${bom_files[*]}" >&2
 fi
 
 exit $fail

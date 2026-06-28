@@ -41,7 +41,7 @@
 
 ```bash
 git submodule update --init --recursive
-git config --local include.path ../.hooks/hooks.gitconfig
+git config --local include.path ../.git-hooks/hooks.gitconfig
 dotnet tool restore
 npm ci
 ```
@@ -74,7 +74,7 @@ npm completion > ~/.local/share/bash-completion/completions/npm
 
 ```powershell
 git submodule update --init --recursive
-git config --local include.path ../.hooks/hooks.gitconfig
+git config --local include.path ../.git-hooks/hooks.gitconfig
 dotnet tool restore
 npm ci
 ```
