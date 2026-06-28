@@ -46,7 +46,23 @@
         }
       },
       "BlueBlaze.Core": {
-        "type": "Project"
+        "type": "Project",
+        "dependencies": {
+          "Microsoft.Bcl.AsyncInterfaces": "[10.0.9, )",
+          "System.Formats.Cbor": "[10.0.9, )"
+        }
+      },
+      "Microsoft.Bcl.AsyncInterfaces": {
+        "type": "CentralTransitive",
+        "requested": "[10.0.9, )",
+        "resolved": "10.0.9",
+        "contentHash": "Aq7M8lG6BrHeatqKqncVm9m55ec34k6nnfPRLe/PvGg+b/pAsRM2ejofeKmCLjTXMa+5NGXm382f8CG/D5WDow=="
+      },
+      "System.Formats.Cbor": {
+        "type": "CentralTransitive",
+        "requested": "[10.0.9, )",
+        "resolved": "10.0.9",
+        "contentHash": "1iRjljxTMvQ1EtArg6kkj+9PV5LthrtlH//GM+MLez5L9jmZFDXGoH9lNiUpOeYY3sB60CgFVRnGctcmHEKqRw=="
       }
     },
     "net10.0/linux-arm64": {
