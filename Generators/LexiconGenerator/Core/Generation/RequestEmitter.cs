@@ -36,15 +36,15 @@ internal static class RequestEmitter
             ? $"{ClientCoreNamespace}.LexiconOperationKind.Query"
             : $"{ClientCoreNamespace}.LexiconOperationKind.Procedure";
 
+        var interfaceName = isQuery
+            ? $"{ClientCoreNamespace}.IQueryRequest"
+            : $"{ClientCoreNamespace}.IProcedureRequest";
+
         isb.AppendLine($"[{ClientCoreNamespace}.Lexicon(\"{nsid}\", {kindExpr})]");
-        isb.AppendLine($"public sealed class {ClassName} : {ClientCoreNamespace}.ILexiconRequest");
+        isb.AppendLine($"public sealed class {ClassName} : {interfaceName}");
         isb.AppendLine("{");
         using (isb.Indent())
         {
-            var methodExpr = isQuery
-                ? "global::System.Net.Http.HttpMethod.Get"
-                : "global::System.Net.Http.HttpMethod.Post";
-
             // Constructor / singleton
             if (hasInput)
             {
@@ -79,24 +79,28 @@ internal static class RequestEmitter
             }
 
             isb.AppendLine($"public string Nsid => \"{nsid}\";");
-            isb.AppendLine($"public global::System.Net.Http.HttpMethod Method => {methodExpr};");
 
-            if (hasParameters)
+            if (isQuery)
             {
-                isb.AppendLine($"public {ClientCoreNamespace}.ILexiconParameters? Parameters {{ get; }}");
+                if (hasParameters)
+                {
+                    isb.AppendLine($"public {ClientCoreNamespace}.ILexiconParameters? Parameters {{ get; }}");
+                }
+                else
+                {
+                    isb.AppendLine($"public {ClientCoreNamespace}.ILexiconParameters? Parameters => null;");
+                }
             }
             else
             {
-                isb.AppendLine($"public {ClientCoreNamespace}.ILexiconParameters? Parameters => null;");
-            }
-
-            if (hasInput)
-            {
-                isb.AppendLine($"public {ClientCoreNamespace}.ILexiconInput? Input {{ get; }}");
-            }
-            else
-            {
-                isb.AppendLine($"public {ClientCoreNamespace}.ILexiconInput? Input => null;");
+                if (hasInput)
+                {
+                    isb.AppendLine($"public {ClientCoreNamespace}.ILexiconInput? Input {{ get; }}");
+                }
+                else
+                {
+                    isb.AppendLine($"public {ClientCoreNamespace}.ILexiconInput? Input => null;");
+                }
             }
         }
         isb.AppendLine("}");

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 namespace BlueBlaze.Core;
 
 public sealed class VoidOutputDeserializer :
-    IResponseDeserializer<VoidOutput>
+    IHttpResponseDeserializer<VoidOutput>
 {
     private VoidOutputDeserializer()
     {
