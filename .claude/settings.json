@@ -11,6 +11,7 @@
       "Bash(dotnet test *)",
       "Bash(git config get *)",
       "Bash(git config list *)",
+      "Bash(git fetch *)",
       "Bash(git remote get-url *)",
       "Bash(gh * list *)",
       "Bash(gh * view *)",
@@ -63,6 +64,29 @@
   },
   "enableAllProjectMcpServers": true,
   "disableClaudeAiConnectors": true,
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -File .claude/hooks/build-if-cs-changed.ps1"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pwsh -NoProfile -File .claude/hooks/if-cs-changed.ps1"
+          }
+        ]
+      }
+    ]
+  },
   "enabledPlugins": {
     "claude-code-setup@claude-plugins-official": true,
     "claude-md-management@claude-plugins-official": true,
@@ -104,28 +128,5 @@
       }
     }
   },
-  "language": "Japanese",
-  "hooks": {
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "pwsh -NoProfile -File .claude/hooks/build-if-cs-changed.ps1"
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "Edit|Write",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "pwsh -NoProfile -File .claude/hooks/if-cs-changed.ps1"
-          }
-        ]
-      }
-    ]
-  }
+  "language": "Japanese"
 }
