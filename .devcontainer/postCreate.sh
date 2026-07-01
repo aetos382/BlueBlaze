@@ -5,4 +5,4 @@ mkdir -p ~/.local/share/bash-completion/completions
 docker completion bash --no-descriptions > ~/.local/share/bash-completion/completions/docker
 npm completion > ~/.local/share/bash-completion/completions/npm
 
-pwsh -File setup.ps1
+pwsh -File setup.ps1 -SkipMcpConfig

@@ -31,25 +31,5 @@ if (!$SkipNpmInstall) {
 
 if (!$SkipMcpConfig) {
   Write-Host "Configuring GitHub Copilot MCP..."
-
-  $pat = $env:GITHUB_PERSONAL_ACCESS_TOKEN
-  if (!$pat) {
-    $pat = $env:GH_PAT_FOR_MCP_SERVER
-  }
-
-  if (!$pat) {
-    Write-Error "GITHUB_PERSONAL_ACCESS_TOKEN environment variable is not set."
-    exit 1
-  }
-
-  $githubMcpConfig = @{
-    type = 'http'
-    url = 'https://api.githubcopilot.com/mcp/'
-    headers = @{
-      Authorization = "Bearer $pat"
-    }
-  }
-
-  claude mcp remove github
-  claude mcp add-json --scope user github ($githubMcpConfig | ConvertTo-Json -Compress)
+  & "$PSScriptRoot/Register-GitHubCopilotMcp.ps1"
 }

@@ -13,6 +13,7 @@
       "Bash(git config list *)",
       "Bash(git fetch *)",
       "Bash(git remote get-url *)",
+      "Bash(op read *)",
       "Bash(gh * list *)",
       "Bash(gh * view *)",
       "Bash(gh search *)",
