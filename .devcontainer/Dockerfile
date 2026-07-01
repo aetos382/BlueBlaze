@@ -21,7 +21,7 @@ ARG DEVCONTAINER_VERSION=0.87.0
 ARG RENOVATE_VERSION=43.239.0
 
 # ---- op (1Password CLI) stage ----
-FROM 1password/op:2.34.1 AS op
+FROM 1password/op:2.34.1@sha256:08503f72b054f2673537d42b5f016e377c351a0f07336f7d7519ba5234c697c3 AS op
 
 # ---- Plugin seed stage ----
 FROM node:${NODE_VERSION}-slim AS plugin-seed
