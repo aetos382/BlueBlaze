@@ -20,6 +20,9 @@ ARG DEVCONTAINER_VERSION=0.87.0
 # renovate: datasource=npm depName=renovate
 ARG RENOVATE_VERSION=43.239.0
 
+# ---- op (1Password CLI) stage ----
+FROM 1password/op:2.34.1 AS op
+
 # ---- Plugin seed stage ----
 FROM node:${NODE_VERSION}-slim AS plugin-seed
 
@@ -80,6 +83,8 @@ RUN mkdir /usr/local/goat && \
     curl -fqsLS https://github.com/bluesky-social/goat/releases/download/${GOAT_VERSION}/goat_Linux_x86_64.tar.gz -o goat.tar.gz && \
     tar -C /usr/local/goat -xzf goat.tar.gz && \
     rm goat.tar.gz
+
+COPY --from=op /usr/local/bin/op /usr/local/bin/op
 
 RUN /usr/local/node/bin/node --completion-bash > /usr/share/bash-completion/completions/node
 
