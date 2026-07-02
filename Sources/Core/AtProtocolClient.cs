@@ -25,49 +25,27 @@ public class AtProtocolClient :
         this._baseAddress = baseAddress;
     }
 
-    public ValueTask<LexiconResponse<TOutput>> QueryAsync<TOutput>(
-        IQueryRequest request,
-        IHttpResponseDeserializer<TOutput> responseDeserializer,
+    public async ValueTask<LexiconResponse<TOutput>> SendAsync<TOutput>(
+        ILexiconRequest request,
+        IResponseDeserializer<TOutput> responseDeserializer,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(request);
         ArgumentNullException.ThrowIfNull(responseDeserializer);
 
-        return this.SendHttpAsync(HttpMethod.Get, request.Nsid, request.Parameters, input: null, responseDeserializer, cancellationToken);
-    }
-
-    public ValueTask<LexiconResponse<TOutput>> ProcedureAsync<TOutput>(
-        IProcedureRequest request,
-        IHttpResponseDeserializer<TOutput> responseDeserializer,
-        CancellationToken cancellationToken = default)
-    {
-        ArgumentNullException.ThrowIfNull(request);
-        ArgumentNullException.ThrowIfNull(responseDeserializer);
-
-        return this.SendHttpAsync(HttpMethod.Post, request.Nsid, parameters: null, request.Input, responseDeserializer, cancellationToken);
-    }
-
-    private async ValueTask<LexiconResponse<TOutput>> SendHttpAsync<TOutput>(
-        HttpMethod method,
-        string nsid,
-        ILexiconParameters? parameters,
-        ILexiconInput? input,
-        IHttpResponseDeserializer<TOutput> responseDeserializer,
-        CancellationToken cancellationToken)
-    {
-        var queryParameters = parameters?.ToDictionary().ToUriParameterString();
+        var queryParameters = request.Parameters?.ToDictionary().ToUriParameterString();
 
         var uriBuilder = new UriBuilder(this._baseAddress)
         {
-            Path = $"/xrpc/{nsid}",
+            Path = $"/xrpc/{request.Nsid}",
             Query = queryParameters
         };
 
         var requestUri = uriBuilder.Uri;
 
-        using var requestMessage = new HttpRequestMessage(method, requestUri)
+        using var requestMessage = new HttpRequestMessage(request.Method, requestUri)
         {
-            Content = input?.ToHttpContent()
+            Content = request.Input?.ToHttpContent()
         };
 
         using var responseMessage = await this._httpClient
@@ -80,7 +58,7 @@ public class AtProtocolClient :
                 .ReadFromJsonAsync(ErrorSerializerContext.Default.LexiconError, cancellationToken)
                 .ConfigureAwait(false);
 
-            throw new LexiconHttpException(
+            throw new LexiconException(
                 requestUri,
                 responseMessage.StatusCode,
                 responseMessage.Headers,

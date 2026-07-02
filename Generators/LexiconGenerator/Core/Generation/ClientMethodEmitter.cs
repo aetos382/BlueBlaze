@@ -119,8 +119,7 @@ internal static class ClientMethodEmitter
             isb.AppendLine("{");
             using (isb.Indent())
             {
-                var methodName2 = hasInput ? "ProcedureAsync" : "QueryAsync";
-                isb.AppendLine($"return client.{methodName2}(");
+                isb.AppendLine("return client.SendAsync(");
                 using (isb.Indent())
                 {
                     isb.AppendLine($"{requestExpr},");

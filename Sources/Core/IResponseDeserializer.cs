@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace BlueBlaze.Core;
 
-public interface IHttpResponseDeserializer<TOutput>
+public interface IResponseDeserializer<TOutput>
 {
     ValueTask<TOutput> DeserializeAsync(
         HttpContent content,
