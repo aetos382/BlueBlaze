@@ -37,18 +37,21 @@ RUN apt-get update && \
 RUN npm install -g @anthropic-ai/claude-code@${CLAUDE_CODE_VERSION}
 
 RUN export CLAUDE_CODE_PLUGIN_CACHE_DIR=/claude-plugin-seed && \
-    claude plugin marketplace add anthropics/claude-plugins-official && \
-    claude plugin marketplace add aetos382/dotnet-skills#add-claude-plugin-manifests && \
-    claude plugin marketplace add MicrosoftDocs/mcp && \
+    claude plugin marketplace add --scope user anthropics/claude-plugins-official && \
+    claude plugin marketplace add --scope user dotnet/skills && \
+    claude plugin marketplace add --scope user MicrosoftDocs/mcp && \
     for plugin in \
         claude-code-setup@claude-plugins-official \
         claude-md-management@claude-plugins-official \
         commit-commands@claude-plugins-official \
         feature-dev@claude-plugins-official \
+        frontend-design@claude-plugins-official \
         pr-review-toolkit@claude-plugins-official \
+        security-guidance@claude-plugins-official \
         skill-creator@claude-plugins-official \
         microsoft-docs@microsoft-docs-marketplace \
         dotnet@dotnet-agent-skills \
+        dotnet-advanced@dotnet-agent-skills \
         dotnet-ai@dotnet-agent-skills \
         dotnet-aspnetcore@dotnet-agent-skills \
         dotnet-blazor@dotnet-agent-skills \
@@ -59,7 +62,7 @@ RUN export CLAUDE_CODE_PLUGIN_CACHE_DIR=/claude-plugin-seed && \
         dotnet-nuget@dotnet-agent-skills \
         dotnet-template-engine@dotnet-agent-skills \
         dotnet-test@dotnet-agent-skills; do \
-        claude plugin install "$plugin"; \
+        claude plugin install --scope user "$plugin"; \
     done
 
 # ---- Main stage ----
@@ -111,7 +114,9 @@ RUN npm install -g \
     @devcontainers/cli@$DEVCONTAINER_VERSION \
     renovate@$RENOVATE_VERSION
 
+# Codespaces のホストイメージに入っている buildkit が古く、--chmod=a=rX のような構文が使えないので、RUN chmod で明示的に権限を設定する。
 COPY --from=plugin-seed --chown=vscode:vscode /claude-plugin-seed /home/vscode/.claude-plugin-seed
+RUN chmod -R a=rX /home/vscode/.claude-plugin-seed
 ENV CLAUDE_CODE_PLUGIN_SEED_DIR=/home/vscode/.claude-plugin-seed
 
 WORKDIR /workspaces
