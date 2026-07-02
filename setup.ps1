@@ -4,7 +4,8 @@ param(
   [switch] $SkipSubmoduleUpdate,
   [switch] $SkipDotnetToolRestore,
   [switch] $SkipNpmInstall,
-  [switch] $SkipMcpConfig)
+  [switch] $SkipMcpConfig,
+  [switch] $SkipPluginInstall)
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
@@ -32,4 +33,19 @@ if (!$SkipNpmInstall) {
 if (!$SkipMcpConfig) {
   Write-Host "Configuring GitHub Copilot MCP..."
   & "$PSScriptRoot/Register-GitHubCopilotMcp.ps1"
+}
+
+if (!$SkipPluginInstall) {
+  Write-Host "Installing Claude Code plugins..."
+  $settings = Get-Content "$PSScriptRoot/.claude/settings.json" -Raw | ConvertFrom-Json
+
+  foreach ($marketplace in $settings.extraKnownMarketplaces.PSObject.Properties) {
+    claude plugin marketplace add --scope project $marketplace.Value.source.repo
+  }
+
+  foreach ($plugin in $settings.enabledPlugins.PSObject.Properties) {
+    if ($plugin.Value) {
+      claude plugin install --scope project $plugin.Name
+    }
+  }
 }
