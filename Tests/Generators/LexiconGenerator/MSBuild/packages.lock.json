@@ -4,9 +4,9 @@
     ".NETFramework,Version=v4.8.1": {
       "Microsoft.CodeAnalysis.CSharp.CodeStyle": {
         "type": "Direct",
-        "requested": "[5.3.0, )",
-        "resolved": "5.3.0",
-        "contentHash": "VM6uR0nReUDiK3+Ku9DTFTcF9ZmlnpUDKs1UEme+MtcRYJntkLfxWCn4mp/UXJsRBp3izuu8YBPtRzGR1GV/mA=="
+        "requested": "[5.6.0, )",
+        "resolved": "5.6.0",
+        "contentHash": "Egy5QVz6J403MNj9cphWCwiU1ARbUa1nwM2S/0UnlaRt7K32JVr5uRfa1WYR1OmzPd/clTM+CJx8DWfxEqJ0fA=="
       },
       "Microsoft.NETFramework.ReferenceAssemblies": {
         "type": "Direct",
@@ -352,9 +352,9 @@
     "net10.0": {
       "Microsoft.CodeAnalysis.CSharp.CodeStyle": {
         "type": "Direct",
-        "requested": "[5.3.0, )",
-        "resolved": "5.3.0",
-        "contentHash": "VM6uR0nReUDiK3+Ku9DTFTcF9ZmlnpUDKs1UEme+MtcRYJntkLfxWCn4mp/UXJsRBp3izuu8YBPtRzGR1GV/mA=="
+        "requested": "[5.6.0, )",
+        "resolved": "5.6.0",
+        "contentHash": "Egy5QVz6J403MNj9cphWCwiU1ARbUa1nwM2S/0UnlaRt7K32JVr5uRfa1WYR1OmzPd/clTM+CJx8DWfxEqJ0fA=="
       },
       "Microsoft.NET.ILLink.Tasks": {
         "type": "Direct",
