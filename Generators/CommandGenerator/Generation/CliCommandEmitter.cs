@@ -204,7 +204,7 @@ internal static class CliCommandEmitter
         }
 
         // {Operation}Async 拡張メソッド(Output型固定の Deserializer を内部で使う)は経由しない。
-        // Request インスタンスを自分で構築し、IAtProtocolClient.QueryAsync/ProcedureAsync に
+        // Request インスタンスを自分で構築し、IAtProtocolClient.SendAsync に
         // RawJsonDeserializer を直接渡す。これにより「デシリアライズ→再シリアライズ」という
         // 無駄な往復(NativeAOT 非互換なリフレクションシリアライズの原因)を避けられる。
         var requestFullName = request.RequestType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
@@ -214,9 +214,8 @@ internal static class CliCommandEmitter
             (_, not null) => $"new {requestFullName}({inputArg})",
             _ => $"{requestFullName}.Instance",
         };
-        var clientMethodName = request.IsQuery ? "QueryAsync" : "ProcedureAsync";
 
-        isb.AppendLine($"var response = await client.{clientMethodName}({requestExpr}, {CoreNs}.RawJsonDeserializer.Instance, cancellationToken).ConfigureAwait(false);");
+        isb.AppendLine($"var response = await client.SendAsync({requestExpr}, {CoreNs}.RawJsonDeserializer.Instance, cancellationToken).ConfigureAwait(false);");
         isb.AppendLine($"{CliOutputType}.WriteJson(response.Output);");
         isb.AppendLine("return 0;");
     }

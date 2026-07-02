@@ -18,7 +18,7 @@ namespace BlueBlaze.Core;
 /// <c>T=JsonDocument</c> でも警告が出るため使わない。
 /// </summary>
 public sealed class RawJsonDeserializer :
-    IHttpResponseDeserializer<JsonDocument>
+    IResponseDeserializer<JsonDocument>
 {
     private RawJsonDeserializer()
     {

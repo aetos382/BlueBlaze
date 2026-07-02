@@ -8,7 +8,7 @@ public sealed class LexiconError
 {
     public required string Error { get; set; }
 
-    public string? Message { get; set; }
+    public string? Description { get; set; }
 
 #pragma warning disable CA2227
     [JsonExtensionData]
