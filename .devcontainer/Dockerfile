@@ -47,7 +47,6 @@ RUN export CLAUDE_CODE_PLUGIN_CACHE_DIR=/claude-plugin-seed && \
         feature-dev@claude-plugins-official \
         frontend-design@claude-plugins-official \
         pr-review-toolkit@claude-plugins-official \
-        security-guidance@claude-plugins-official \
         skill-creator@claude-plugins-official \
         microsoft-docs@microsoft-docs-marketplace \
         dotnet@dotnet-agent-skills \
