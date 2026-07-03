@@ -68,7 +68,7 @@
     },
     {
       "matchDatasources": ["docker"],
-      "matchRegistryUrls": ["mcr.microsoft.com"],
+      "matchPackageNames": ["mcr.microsoft.com/**"],
       "groupName": "docker mcr.microsoft.com",
       "minimumReleaseAge": null,
       "automerge": true,
