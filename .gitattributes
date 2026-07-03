@@ -6,8 +6,8 @@
 *.cs text diff=csharp
 *.sh text diff=bash
 
-**/packages.lock.json linguist-generated
-**/package-lock.json linguist-generated
-**/devcontainer-lock.json linguist-generated
+**/packages.lock.json linguist-generated merge=ours
+**/package-lock.json linguist-generated merge=ours
+**/devcontainer-lock.json linguist-generated merge=ours
 
 .github/workflows/*.lock.yml linguist-generated merge=ours
