@@ -93,11 +93,13 @@
     "claude-md-management@claude-plugins-official": true,
     "commit-commands@claude-plugins-official": true,
     "feature-dev@claude-plugins-official": true,
+    "frontend-design@claude-plugins-official": true,
     "pr-review-toolkit@claude-plugins-official": true,
     "skill-creator@claude-plugins-official": true,
     "microsoft-docs@microsoft-docs-marketplace": true,
     "dotnet@dotnet-agent-skills": true,
     "dotnet-ai@dotnet-agent-skills": true,
+    "dotnet-advanced@dotnet-agent-skills": true,
     "dotnet-aspnetcore@dotnet-agent-skills": true,
     "dotnet-blazor@dotnet-agent-skills": true,
     "dotnet-data@dotnet-agent-skills": true,
@@ -118,8 +120,7 @@
     "dotnet-agent-skills": {
       "source": {
         "source": "github",
-        "repo": "aetos382/dotnet-skills",
-        "ref": "add-claude-plugin-manifests"
+        "repo": "dotnet/skills"
       }
     },
     "microsoft-docs-marketplace": {
