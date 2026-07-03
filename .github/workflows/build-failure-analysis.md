@@ -44,7 +44,7 @@ steps:
 
   - name: Stage binlog for MCP mount
     run: |
-      set -uo pipefail
+      set -euo pipefail
       if [ -f /tmp/download/test.binlog ]; then
         cp /tmp/download/test.binlog /tmp/test.binlog
         echo "GH_AW_BINLOG_FOUND=true" >> "$GITHUB_ENV"
