@@ -16,6 +16,9 @@
   "osvVulnerabilityAlerts": true,
   "dependencyDashboardOSVVulnerabilitySummary": "all",
   "pinDigests": true,
+  "ignorePaths": [
+    ".github/workflows/*.lock.yml"
+  ],
   "git-submodules": {
     "enabled": true
   },
