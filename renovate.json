@@ -68,7 +68,7 @@
     },
     {
       "matchDatasources": ["docker"],
-      "matchRegistryUrls": ["mcr.microsoft.com"],
+      "matchPackageNames": ["mcr.microsoft.com/**"],
       "groupName": "docker mcr.microsoft.com",
       "minimumReleaseAge": null,
       "automerge": true,
@@ -88,7 +88,7 @@
       "description": "Auto-merge atproto submodule updates"
     },
     {
-      "matchUpdateTypes": ["pin"],
+      "matchUpdateTypes": ["pin", "pinDigest"],
       "minimumReleaseAge": null,
       "automerge": true,
       "description": "Allow automerge pin updates"
