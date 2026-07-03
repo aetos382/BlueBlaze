@@ -12,7 +12,7 @@ $ErrorActionPreference = 'Stop'
 
 if (!$SkipHookConfig) {
   Write-Host "Configuring git hooks..."
-  git config --local include.path ../.git-hooks/hooks.gitconfig
+  git config --local include.path ../.gitconfig
 }
 
 if (!$SkipSubmoduleUpdate) {

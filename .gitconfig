@@ -1,0 +1,13 @@
+# setup.ps1 で設定しないと読み込まれないよ
+
+[hook "lint-staged"]
+  event = pre-commit
+  command = npx lint-staged --config lint-staged.config.mts
+
+# .gitattributes で merge=ours を指定したパス(*.lock.yml 等の生成物)向け。
+# driver = true は常に成功終了するだけで何もしないコマンドを実行する、という意味で、
+# 結果として HEAD 側の内容がそのまま採用されコンフリクトが発生しなくなる。
+# この定義が無いと merge=ours 属性は黙って無視され、通常の3-wayマージで
+# コンフリクトが発生してしまう(実機で確認済み)。
+[merge "ours"]
+  driver = true
