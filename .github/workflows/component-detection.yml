@@ -31,7 +31,15 @@ jobs:
           cache: true
           cache-dependency-path: '**/packages.lock.json'
 
+      - name: Cache LexiconGenerator.Cli
+        id: bbgen-cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/bbgen
+          key: bbgen-${{ runner.os }}-${{ hashFiles('global.json', 'Directory.Build.props', 'Directory.Build.targets', 'Directory.Packages.props', 'BeforeMicrosoftNETSdkTargets.targets', 'Generators/LexiconGenerator/Cli/**', 'Generators/LexiconGenerator/Core/**') }}
+
       - name: Build LexiconGenerator.Cli
+        if: steps.bbgen-cache.outputs.cache-hit != 'true'
         run: dotnet publish Generators/LexiconGenerator/Cli/LexiconGenerator.Cli.csproj -o "${{ runner.temp }}/bbgen"
 
       - name: Build
