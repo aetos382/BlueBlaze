@@ -61,7 +61,7 @@ steps:
       REPO: ${{ github.repository }}
       HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
     run: |
-      set -uo pipefail
+      set -euo pipefail
       PR_NUMBER=$(jq -r '.workflow_run.pull_requests[0].number // empty' "$GITHUB_EVENT_PATH")
       if [ -z "$PR_NUMBER" ]; then
         PR_NUMBER=$(gh api "repos/$REPO/commits/$HEAD_SHA/pulls" \
