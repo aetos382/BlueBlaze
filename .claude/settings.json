@@ -59,8 +59,10 @@
     "deny": [
       "Edit(**/*.lock.json)",
       "Edit(**/*-lock.json)",
+      "Edit(**/*.lock.yml)",
       "Write(**/*.lock.json)",
-      "Write(**/*-lock.json)"
+      "Write(**/*-lock.json)",
+      "Write(**/*.lock.yml)"
     ]
   },
   "enableAllProjectMcpServers": true,

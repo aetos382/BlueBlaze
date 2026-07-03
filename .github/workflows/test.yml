@@ -52,6 +52,17 @@ jobs:
           --coverage-output-format cobertura
           --report-trx
           -p:BlueBlazeGeneratorCliExe="${{ runner.temp }}/bbgen/BlueBlaze.LexiconGenerator.Cli"
+          -bl:${{ runner.temp }}/test.binlog
+
+      - name: Upload Binlog
+        # ビルド失敗解析ワークフロー(build-failure-analysis.md)が参照する。
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: test-binlog
+          path: ${{ runner.temp }}/test.binlog
+          if-no-files-found: warn
+          retention-days: 1
 
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@d0a4676d0e0b938bc201470d88276b7c74c712b3 # v2.24.0
