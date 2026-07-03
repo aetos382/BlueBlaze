@@ -11,8 +11,13 @@ on:
     # PR へのコメントという目的を果たせなくなるため、意図的に指定しない
     # (gh-aw compile 時に出るセキュリティ/パフォーマンス警告は許容する)。
 
-# Test ワークフローが失敗(または cancelled)で完了した場合のみエージェントを起動する。
-if: github.event.workflow_run.conclusion == 'failure' || github.event.workflow_run.conclusion == 'cancelled'
+# PR 起因の Test ワークフローが失敗で完了した場合のみエージェントを起動する。
+# - cancelled は対象外: test.yml の binlog アップロードは if: failure() のみで
+#   実行されるため、cancelled では binlog を取得できずほぼ確実に noop になる。
+#   その noop のためだけに AI Credits を消費するのは無駄なので除外する。
+# - event == 'pull_request' に限定: Test は push(main) でも走るが、push 失敗には
+#   コメント先の PR が存在せず、これも無駄な noop 実行になるだけなので除外する。
+if: github.event.workflow_run.conclusion == 'failure' && github.event.workflow_run.event == 'pull_request'
 
 engine: copilot
 
@@ -65,7 +70,7 @@ steps:
       PR_NUMBER=$(jq -r '.workflow_run.pull_requests[0].number // empty' "$GITHUB_EVENT_PATH")
       if [ -z "$PR_NUMBER" ]; then
         PR_NUMBER=$(gh api "repos/$REPO/commits/$HEAD_SHA/pulls" \
-          -H "Accept: application/vnd.github.groot-preview+json" \
+          -H "Accept: application/vnd.github+json" \
           --jq '.[0].number // empty' 2>/dev/null || true)
       fi
       echo "GH_AW_PR_NUMBER=${PR_NUMBER}" >> "$GITHUB_ENV"

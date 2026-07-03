@@ -6,7 +6,7 @@
 *.cs text diff=csharp
 *.sh text diff=bash
 
-**/*.lock.json linguist-generated merge=ours
-**/*-lock.json linguist-generated merge=ours
+**/*.lock.json linguist-generated=true merge=ours
+**/*-lock.json linguist-generated=true merge=ours
 
-.github/workflows/*.lock.yml linguist-generated merge=ours
+.github/workflows/*.lock.yml linguist-generated=true merge=ours
