@@ -34,7 +34,7 @@ mcp-servers:
 
 steps:
   - name: Download binlog artifact
-    uses: actions/download-artifact@v8.0.1
+    uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
     continue-on-error: true
     with:
       name: test-binlog
