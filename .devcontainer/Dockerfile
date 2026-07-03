@@ -63,7 +63,7 @@ RUN export CLAUDE_CODE_PLUGIN_CACHE_DIR=/claude-plugin-seed && \
     done
 
 # ---- Main stage ----
-FROM mcr.microsoft.com/devcontainers/base:3-noble@sha256:6e5abd134eb1c2b747927487c3d59590bcc17815d5d7b3afd494e1be5de0f6b4
+FROM mcr.microsoft.com/devcontainers/base:3-noble@sha256:c5cc2b45afe06a1df3aba17e58ba0dc4a02b999493198dab37dd0ccd4e2b0705
 
 RUN sed -i.bak 's|http://archive.ubuntu.com/ubuntu/|https://ftp.udx.icscoe.jp/Linux/ubuntu/|g' /etc/apt/sources.list.d/ubuntu.sources
 
