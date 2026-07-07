@@ -97,6 +97,11 @@
       "description": "Allow automerge pin updates"
     },
     {
+      "matchUpdateTypes": ["lockFileMaintenance"],
+      "minimumReleaseAge": null,
+      "description": "lockFileMaintenance does not support minimumReleaseAge validation, causing renovate/stability-days to stay pending forever"
+    },
+    {
       "matchUpdateTypes": ["rollback", "replacement"],
       "minimumReleaseAge": null,
       "automerge": false,
