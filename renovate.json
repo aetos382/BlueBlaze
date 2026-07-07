@@ -99,6 +99,7 @@
     {
       "matchUpdateTypes": ["lockFileMaintenance"],
       "minimumReleaseAge": null,
+      "automerge": true,
       "description": "lockFileMaintenance does not support minimumReleaseAge validation, causing renovate/stability-days to stay pending forever"
     },
     {
