@@ -15,6 +15,6 @@ Python は `python` も `python3` も禁止。
 
 ## git hook
 
-`.devcontainer/postCreate.sh` で `.git-hooks/hooks.gitconfig` が git 設定に読み込まれるようになっている。
+`.devcontainer/postCreate.sh` で `.gitconfig` が git 設定に読み込まれるようになっている。
 この設定は git 2.54 で追加された [config based hook](https://git-scm.com/docs/git-hook/2.54.0) 。
 未対応の形式ではなく、ちゃんと動いてるので、この設定自体は疑わない。
