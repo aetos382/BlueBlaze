@@ -53,8 +53,7 @@
       "mcp__github__search_pull_requests",
       "mcp__github__search_repositories",
       "mcp__github__search_users",
-      "mcp__plugin_microsoft-docs_microsoft-learn",
-      "mcp__sequential-thinking"
+      "mcp__plugin_microsoft-docs_microsoft-learn"
     ],
     "deny": [
       "Edit(**/*.lock.json)",
