@@ -35,6 +35,15 @@ if (!$SkipMcpConfig) {
   & "$PSScriptRoot/Register-GitHubCopilotMcp.ps1"
 }
 
+function Invoke-Claude {
+  param([string[]] $ArgumentList)
+
+  & claude @ArgumentList
+  if ($LASTEXITCODE -ne 0) {
+    throw "claude $($ArgumentList -join ' ') が失敗しました (終了コード: $LASTEXITCODE)"
+  }
+}
+
 if (!$SkipPluginInstall) {
   Write-Host "Installing Claude Code plugins..."
 
@@ -79,10 +88,10 @@ if (!$SkipPluginInstall) {
   )
 
   foreach ($marketplace in $marketplaces) {
-    claude plugin marketplace add --scope user $marketplace.Repo
+    Invoke-Claude -ArgumentList @('plugin', 'marketplace', 'add', '--scope', 'user', $marketplace.Repo)
 
     foreach ($plugin in $marketplace.Plugins) {
-      claude plugin install --scope user "$($plugin)@$($marketplace.Id)"
+      Invoke-Claude -ArgumentList @('plugin', 'install', '--scope', 'user', "$($plugin)@$($marketplace.Id)")
     }
   }
 }
