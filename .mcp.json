@@ -15,14 +15,6 @@
         "-y",
         "@upstash/context7-mcp@3.2.2"
       ]
-    },
-    "sequential-thinking": {
-      "type": "stdio",
-      "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-sequential-thinking@2025.12.18"
-      ]
     }
   }
 }
