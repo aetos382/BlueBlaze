@@ -7,7 +7,7 @@
     "@eslint/js": "10.0.1",
     "@types/node": "24.13.2",
     "@upstash/context7-mcp": "3.2.2",
-    "eslint": "10.6.0",
+    "eslint": "10.7.0",
     "globals": "17.7.0",
     "jiti": "2.7.0",
     "lint-staged": "17.0.8",
