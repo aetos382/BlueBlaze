@@ -5,7 +5,7 @@ $ErrorActionPreference = 'Stop'
 
 $flag = "$PSScriptRoot/.cs-changed"
 if (-not (Test-Path $flag)) { exit 0 }
-Remove-Item $flag
+Remove-Item -Force $flag
 
 dotnet build BlueBlaze.slnx --no-restore --no-logo
 
