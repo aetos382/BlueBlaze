@@ -8,7 +8,7 @@ docker completion bash --no-descriptions > ~/.local/share/bash-completion/comple
 npm completion > ~/.local/share/bash-completion/completions/npm
 
 # .devcontainer.json の features に書いても clone するだけで install してくれない
-gh extension install github/gh-aw
+gh extension install github/gh-aw || gh extension upgrade github/gh-aw
 
 if ! pwsh -File setup.ps1; then
   echo "ERROR: setup.ps1 が失敗しました。" >&2
