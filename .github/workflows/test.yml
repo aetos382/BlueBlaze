@@ -67,7 +67,7 @@ jobs:
         uses: EnricoMi/publish-unit-test-result-action@d0a4676d0e0b938bc201470d88276b7c74c712b3 # v2.24.0
         if: '!cancelled()'
         with:
-          files: artifacts/bin/**/TestResults/*.trx
+          files: TestResults/*.trx
 
       - name: Merge Coverage Reports
         if: '!cancelled()'
@@ -77,8 +77,7 @@ jobs:
         # dotnet-coverage merge で統合することでこれらの属性が補完される。
         run: |
           dotnet tool install --global dotnet-coverage
-          shopt -s globstar
-          dotnet-coverage merge artifacts/bin/**/TestResults/*.cobertura.xml \
+          dotnet-coverage merge TestResults/*.cobertura.xml \
             --output coverage.cobertura.xml \
             --output-format cobertura
 
