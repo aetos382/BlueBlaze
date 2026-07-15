@@ -58,6 +58,11 @@
       ]
     },
     {
+      "matchDepNames": ["dotnet-sdk"],
+      "groupName": ".NET SDK version",
+      "description": "Keep global.json and devcontainer.json dotnet feature version in sync"
+    },
+    {
       "matchDatasources": ["github-tags"],
       "minimumReleaseAge": null,
       "automerge": true,
@@ -133,6 +138,18 @@
       "matchStrings": ["\"(?<depName>[\\w][\\w.]*?)@(?<currentValue>[\\d][\\d.]*)\""],
       "datasourceTemplate": "nuget",
       "description": "MCP server NuGet packages"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/^\\.devcontainer/devcontainer\\.json$/"
+      ],
+      "matchStrings": [
+        "\"ghcr\\.io/devcontainers/features/dotnet:\\d+\":\\s*\\{\\s*\"version\":\\s*\"(?<currentValue>[^\"]+)\""
+      ],
+      "datasourceTemplate": "dotnet-version",
+      "depNameTemplate": "dotnet-sdk",
+      "description": "devcontainer feature's dotnet SDK version, synced with global.json via groupName"
     }
   ],
   "vulnerabilityAlerts": {
