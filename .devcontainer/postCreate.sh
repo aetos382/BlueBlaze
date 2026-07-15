@@ -1,7 +1,7 @@
 set -e
 
 mkdir -p ~/.claude
-ln -s "$(pwd)/.devcontainer/claude-template.md" ~/.claude/CLAUDE.md
+ln -sf "$(pwd)/.devcontainer/claude-template.md" ~/.claude/CLAUDE.md
 
 mkdir -p ~/.local/share/bash-completion/completions
 docker completion bash --no-descriptions > ~/.local/share/bash-completion/completions/docker
