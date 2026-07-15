@@ -4,7 +4,6 @@ param(
   [switch] $SkipSubmoduleUpdate,
   [switch] $SkipDotnetToolRestore,
   [switch] $SkipNpmInstall,
-  [switch] $SkipMcpConfig,
   [switch] $SkipPluginInstall)
 
 Set-StrictMode -Version Latest
@@ -30,22 +29,63 @@ if (!$SkipNpmInstall) {
   npm ci
 }
 
-if (!$SkipMcpConfig) {
-  Write-Host "Configuring GitHub Copilot MCP..."
-  & "$PSScriptRoot/Register-GitHubCopilotMcp.ps1"
+function Invoke-Claude {
+  param([string[]] $ArgumentList)
+
+  & claude @ArgumentList
+  if ($LASTEXITCODE -ne 0) {
+    throw "claude $($ArgumentList -join ' ') が失敗しました (終了コード: $LASTEXITCODE)"
+  }
 }
 
 if (!$SkipPluginInstall) {
   Write-Host "Installing Claude Code plugins..."
-  $settings = Get-Content "$PSScriptRoot/.claude/settings.json" -Raw | ConvertFrom-Json
 
-  foreach ($marketplace in $settings.extraKnownMarketplaces.PSObject.Properties) {
-    claude plugin marketplace add --scope project $marketplace.Value.source.repo
-  }
+  $marketplaces = @(
+    @{
+      Id      = 'claude-plugins-official'
+      Repo    = 'anthropics/claude-plugins-official'
+      Plugins = @(
+        'claude-code-setup',
+        'commit-commands',
+        'feature-dev',
+        'frontend-design',
+        'pr-review-toolkit',
+        'skill-creator'
+      )
+    },
+    @{
+      Id      = 'microsoft-docs-marketplace'
+      Repo    = 'MicrosoftDocs/mcp'
+      Plugins = @(
+        'microsoft-docs'
+      )
+    },
+    @{
+      Id      = 'dotnet-agent-skills'
+      Repo    = 'aetos382/dotnet-skills#fix-dotnet-lsp-manifest'
+      Plugins = @(
+        'dotnet',
+        'dotnet-advanced',
+        'dotnet-ai',
+        'dotnet-aspnetcore',
+        'dotnet-blazor',
+        'dotnet-data',
+        'dotnet-diag',
+        'dotnet-maui',
+        'dotnet-msbuild',
+        'dotnet-nuget',
+        'dotnet-template-engine',
+        'dotnet-test'
+      )
+    }
+  )
 
-  foreach ($plugin in $settings.enabledPlugins.PSObject.Properties) {
-    if ($plugin.Value) {
-      claude plugin install --scope project $plugin.Name
+  foreach ($marketplace in $marketplaces) {
+    Invoke-Claude -ArgumentList @('plugin', 'marketplace', 'add', '--scope', 'user', $marketplace.Repo)
+
+    foreach ($plugin in $marketplace.Plugins) {
+      Invoke-Claude -ArgumentList @('plugin', 'install', '--scope', 'user', "$($plugin)@$($marketplace.Id)")
     }
   }
 }

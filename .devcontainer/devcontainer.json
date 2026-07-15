@@ -24,7 +24,6 @@
   },
   "updateContentCommand": "bash .devcontainer/updateContent.sh",
   "postCreateCommand": "bash .devcontainer/postCreate.sh",
-  "postStartCommand": "bash .devcontainer/postStart.sh",
   "mounts": [
     {
       "type": "volume",

@@ -53,8 +53,7 @@
       "mcp__github__search_pull_requests",
       "mcp__github__search_repositories",
       "mcp__github__search_users",
-      "mcp__plugin_microsoft-docs_microsoft-learn",
-      "mcp__sequential-thinking"
+      "mcp__plugin_microsoft-docs_microsoft-learn"
     ],
     "deny": [
       "Edit(**/*.lock.json)",
@@ -89,47 +88,6 @@
         ]
       }
     ]
-  },
-  "enabledPlugins": {
-    "claude-code-setup@claude-plugins-official": true,
-    "commit-commands@claude-plugins-official": true,
-    "feature-dev@claude-plugins-official": true,
-    "frontend-design@claude-plugins-official": true,
-    "pr-review-toolkit@claude-plugins-official": true,
-    "skill-creator@claude-plugins-official": true,
-    "microsoft-docs@microsoft-docs-marketplace": true,
-    "dotnet@dotnet-agent-skills": true,
-    "dotnet-ai@dotnet-agent-skills": true,
-    "dotnet-advanced@dotnet-agent-skills": true,
-    "dotnet-aspnetcore@dotnet-agent-skills": true,
-    "dotnet-blazor@dotnet-agent-skills": true,
-    "dotnet-data@dotnet-agent-skills": true,
-    "dotnet-diag@dotnet-agent-skills": true,
-    "dotnet-maui@dotnet-agent-skills": true,
-    "dotnet-msbuild@dotnet-agent-skills": true,
-    "dotnet-nuget@dotnet-agent-skills": true,
-    "dotnet-template-engine@dotnet-agent-skills": true,
-    "dotnet-test@dotnet-agent-skills": true
-  },
-  "extraKnownMarketplaces": {
-    "claude-plugins-official": {
-      "source": {
-        "source": "github",
-        "repo": "anthropics/claude-plugins-official"
-      }
-    },
-    "dotnet-agent-skills": {
-      "source": {
-        "source": "github",
-        "repo": "dotnet/skills"
-      }
-    },
-    "microsoft-docs-marketplace": {
-      "source": {
-        "source": "github",
-        "repo": "MicrosoftDocs/mcp"
-      }
-    }
   },
   "language": "Japanese"
 }
