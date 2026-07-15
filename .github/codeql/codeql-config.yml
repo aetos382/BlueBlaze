@@ -1,0 +1,4 @@
+name: "BlueBlaze CodeQL config"
+
+paths-ignore:
+  - submodules/**

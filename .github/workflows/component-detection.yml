@@ -55,3 +55,4 @@ jobs:
         with:
           detectorArgs: DockerReference=Enable,DockerCompose=Enable,MSBuildBinaryLog=EnableIfDefaultOff
           detectorsCategories: NuGet,Npm,DockerReference,DockerCompose
+          directoryExclusionList: submodules/**
