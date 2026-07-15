@@ -140,15 +140,14 @@
       "description": "MCP server NuGet packages"
     },
     {
-      "customType": "regex",
+      "customType": "jsonata",
+      "fileFormat": "json",
       "managerFilePatterns": [
         "/^\\.devcontainer/devcontainer\\.json$/"
       ],
       "matchStrings": [
-        "\"ghcr\\.io/devcontainers/features/dotnet:\\d+\":\\s*\\{\\s*\"version\":\\s*\"(?<currentValue>[^\"]+)\""
+        "{\"depName\": \"dotnet-sdk\", \"currentValue\": features.`ghcr.io/devcontainers/features/dotnet:2`.version, \"datasource\": \"dotnet-version\"}"
       ],
-      "datasourceTemplate": "dotnet-version",
-      "depNameTemplate": "dotnet-sdk",
       "description": "devcontainer feature's dotnet SDK version, synced with global.json via groupName"
     }
   ],
