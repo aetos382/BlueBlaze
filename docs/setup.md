@@ -12,7 +12,7 @@ claude mcp login github
 claude mcp login github --no-browser
 ```
 
-認可情報は `~/.claude`(`claude-code-config-${devcontainerId}` ボリューム)に保存されるため、同じコンテナ/Codespace であればコンテナの再作成 (Rebuild) を跨いでも再認可は不要です。
+認可情報は `~/.claude` (`claude-code-config-${devcontainerId}` ボリューム)に保存されるため、同じコンテナ/Codespace であればコンテナの再作成 (Rebuild) を跨いでも再認可は不要です。
 
 GitHub MCP Server の OAuth client secret は 1Password の Automation vault (`op://Automation/GitHub MCP Server OAuth Client Secret/credential`) から `postCreate.sh` 実行時に取得します。devcontainer/Codespaces で `op` を非対話的に認証するには `OP_SERVICE_ACCOUNT_TOKEN` が必要です（ローテーションしない 1Password Service Account トークンのため、client secret 自体を各環境に配布する必要はありません）。
 
