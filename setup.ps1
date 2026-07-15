@@ -63,7 +63,7 @@ if (!$SkipPluginInstall) {
     },
     @{
       Id      = 'dotnet-agent-skills'
-      Repo    = 'dotnet/skills'
+      Repo    = 'aetos382/dotnet-skills#fix-dotnet-lsp-manifest'
       Plugins = @(
         'dotnet',
         'dotnet-advanced',
