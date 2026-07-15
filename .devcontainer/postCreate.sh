@@ -1,3 +1,5 @@
+set -e
+
 mkdir -p ~/.claude
 ln -s "$(pwd)/.devcontainer/claude-template.md" ~/.claude/CLAUDE.md
 
