@@ -4,4 +4,5 @@ public enum LexiconOperationKind
 {
     Query,
     Procedure,
+    Subscription,
 }

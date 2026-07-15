@@ -25,6 +25,7 @@ internal static class ClientMethodEmitter
         {
             EmitMethod(
                 nsid,
+                isQuery: true,
                 hasParameters: queryDef.Parameters?.Properties?.Count > 0,
                 hasInput: false,
                 hasOutput: queryDef.Output?.Schema is ObjectDefinition,
@@ -36,6 +37,7 @@ internal static class ClientMethodEmitter
         {
             EmitMethod(
                 nsid,
+                isQuery: false,
                 hasParameters: false,
                 hasInput: procDef.Input?.Schema is ObjectDefinition,
                 hasOutput: procDef.Output?.Schema is ObjectDefinition,
@@ -47,6 +49,7 @@ internal static class ClientMethodEmitter
 
     private static void EmitMethod(
         string nsid,
+        bool isQuery,
         bool hasParameters,
         bool hasInput,
         bool hasOutput,
@@ -119,7 +122,8 @@ internal static class ClientMethodEmitter
             isb.AppendLine("{");
             using (isb.Indent())
             {
-                isb.AppendLine("return client.SendAsync(");
+                var methodName2 = isQuery ? "QueryAsync" : "ProcedureAsync";
+                isb.AppendLine($"return client.{methodName2}(");
                 using (isb.Indent())
                 {
                     isb.AppendLine($"{requestExpr},");

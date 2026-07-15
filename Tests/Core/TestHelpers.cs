@@ -10,23 +10,31 @@ using System.Threading.Tasks;
 
 namespace BlueBlaze.Core.Tests;
 
-internal sealed class FakeRequest : ILexiconRequest
+internal sealed class FakeQueryRequest : IQueryRequest
 {
-    internal FakeRequest(
+    internal FakeQueryRequest(
         string nsid,
-        HttpMethod method,
-        ILexiconParameters? parameters = null,
+        ILexiconParameters? parameters = null)
+    {
+        this.Nsid = nsid;
+        this.Parameters = parameters;
+    }
+
+    public string Nsid { get; }
+    public ILexiconParameters? Parameters { get; }
+}
+
+internal sealed class FakeProcedureRequest : IProcedureRequest
+{
+    internal FakeProcedureRequest(
+        string nsid,
         ILexiconInput? input = null)
     {
         this.Nsid = nsid;
-        this.Method = method;
-        this.Parameters = parameters;
         this.Input = input;
     }
 
     public string Nsid { get; }
-    public HttpMethod Method { get; }
-    public ILexiconParameters? Parameters { get; }
     public ILexiconInput? Input { get; }
 }
 
@@ -60,7 +68,7 @@ internal sealed class FakeInput : ILexiconInput
     }
 }
 
-internal sealed class SimpleOutputJsonDeserializer : IResponseDeserializer<SimpleOutput>
+internal sealed class SimpleOutputJsonDeserializer : IHttpResponseDeserializer<SimpleOutput>
 {
     public async ValueTask<SimpleOutput> DeserializeAsync(HttpContent content, CancellationToken cancellationToken = default)
     {
