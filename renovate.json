@@ -122,24 +122,6 @@
   ],
   "customManagers": [
     {
-      "customType": "regex",
-      "managerFilePatterns": [
-        "/^\\.mcp\\.json$/"
-      ],
-      "matchStrings": ["\"(?<depName>@[\\w-]+/[\\w-]+)@(?<currentValue>[\\d][\\d.]*)\""],
-      "datasourceTemplate": "npm",
-      "description": "MCP server npm packages"
-    },
-    {
-      "customType": "regex",
-      "managerFilePatterns": [
-        "/^\\.mcp\\.json$/"
-      ],
-      "matchStrings": ["\"(?<depName>[\\w][\\w.]*?)@(?<currentValue>[\\d][\\d.]*)\""],
-      "datasourceTemplate": "nuget",
-      "description": "MCP server NuGet packages"
-    },
-    {
       "customType": "jsonata",
       "fileFormat": "json",
       "managerFilePatterns": [
