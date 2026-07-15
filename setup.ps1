@@ -4,7 +4,6 @@ param(
   [switch] $SkipSubmoduleUpdate,
   [switch] $SkipDotnetToolRestore,
   [switch] $SkipNpmInstall,
-  [switch] $SkipMcpConfig,
   [switch] $SkipPluginInstall)
 
 Set-StrictMode -Version Latest
@@ -28,11 +27,6 @@ if (!$SkipDotnetToolRestore) {
 if (!$SkipNpmInstall) {
   Write-Host "Installing npm packages..."
   npm ci
-}
-
-if (!$SkipMcpConfig) {
-  Write-Host "Configuring GitHub Copilot MCP..."
-  & "$PSScriptRoot/Register-GitHubCopilotMcp.ps1"
 }
 
 function Invoke-Claude {

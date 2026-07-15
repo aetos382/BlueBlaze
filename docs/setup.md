@@ -1,10 +1,29 @@
 # 開発環境のセットアップ
 
-## GitHub Copilot MCP サーバー認証用 PAT について
+## MCP サーバーについて
 
-GitHub Copilot MCP サーバー認証用の PAT は 1Password に保存し、コンテナ起動のたびに 1Password CLI (`op`) 経由で動的に取得します（`.devcontainer/postStart.sh` → `Register-GitHubCopilotMcp.ps1`）。参照先は `op://Private/BlueBlaze GitHub PAT/credential` を前提としているため、実際の Vault・アイテム名に合わせて `postStart.sh` を調整してください。
+nuget・context7・GitHub MCP Server (`https://api.githubcopilot.com/mcp`) は project scope (`.mcp.json`) ではなく **user scope** で登録する運用です。1度登録すれば、このマシン上のどのプロジェクトを開いても有効になります。
 
-各環境で保持するのは PAT 本体ではなく、ローテーションしない **1Password Service Account トークン** (`OP_SERVICE_ACCOUNT_TOKEN`) のみです。PAT を再発行した場合は 1Password 側のアイテムを更新するだけで、以下のどの環境も自動的に最新の PAT を使うようになります。
+devcontainer/GitHub Codespaces ではコンテナ作成時 (`.devcontainer/postCreate.sh`) に自動で user scope 登録されます。GitHub MCP Server は OAuth (GitHub OAuth App) 方式のため、コンテナ作成後に一度だけ次のコマンドで認可してください。
+
+```bash
+claude mcp login github
+# ブラウザが開けないヘッドレス環境の場合
+claude mcp login github --no-browser
+```
+
+認可情報は `~/.claude`(`claude-code-config-${devcontainerId}` ボリューム)に保存されるため、同じコンテナ/Codespace であればコンテナの再作成 (Rebuild) を跨いでも再認可は不要です。
+
+GitHub MCP Server の OAuth client secret は 1Password の Automation vault (`op://Automation/GitHub MCP Server OAuth Client Secret/credential`) から `postCreate.sh` 実行時に取得します。devcontainer/Codespaces で `op` を非対話的に認証するには `OP_SERVICE_ACCOUNT_TOKEN` が必要です（ローテーションしない 1Password Service Account トークンのため、client secret 自体を各環境に配布する必要はありません）。
+
+ローカルホスト(devcontainer を使わない直接開発)では、この自動登録の対象外です。初回のみ手動で以下を実行してください(以後はこのマシン上のどのプロジェクトでも有効です)。
+
+```bash
+claude mcp add --scope user nuget -- dnx NuGet.Mcp.Server --yes
+claude mcp add --scope user context7 -- npx -y @upstash/context7-mcp
+claude mcp add --transport http --scope user --client-id Ov23li60UN7SPpfSmeTX --client-secret --callback-port 8080 github https://api.githubcopilot.com/mcp
+claude mcp login github
+```
 
 ## GitHub Codespaces
 
@@ -58,12 +77,6 @@ docker completion bash > ~/.local/share/bash-completion/completions/docker
 npm completion > ~/.local/share/bash-completion/completions/npm
 ```
 
-**環境変数**
-
-| 変数名 | 説明 |
-|---|---|
-| `GITHUB_PERSONAL_ACCESS_TOKEN` | GitHub MCP サーバー認証用 PAT。 |
-
 ## Windows ホスト上での直接開発
 
 **前提条件**
@@ -82,21 +95,4 @@ dotnet tool restore
 npm ci
 ```
 
-**GitHub PAT の自動更新（マシン固有設定）**
-
-コンテナ経由の環境と異なり、Windows ベアメタルにはコンテナ起動のようなフックがないため、代わりに **OS ログオン時にタスク スケジューラーで PAT を更新する**運用にします。この設定はマシン固有のグローバル設定であり、リポジトリでは管理しません。各自のマシンで以下のように設定してください。
-
-1. [1Password CLI](https://developer.1password.com/docs/cli/get-started/) をインストールし、`OP_SERVICE_ACCOUNT_TOKEN` をユーザー環境変数として設定する。
-2. `op read` で PAT を取得し、`GITHUB_PERSONAL_ACCESS_TOKEN` をユーザー環境変数として永続化するスクリプトを用意する（例）。
-   ```powershell
-   $pat = op read 'op://Private/BlueBlaze GitHub PAT/credential' --no-newline
-   [Environment]::SetEnvironmentVariable('GITHUB_PERSONAL_ACCESS_TOKEN', $pat, 'User')
-   ```
-3. 上記スクリプトを「ログオン時」トリガーでタスク スケジューラーに登録する（例）。
-   ```powershell
-   $action = New-ScheduledTaskAction -Execute 'pwsh.exe' -Argument '-File "C:\path\to\Update-GitHubPatEnv.ps1"'
-   $trigger = New-ScheduledTaskTrigger -AtLogOn
-   Register-ScheduledTask -TaskName 'Update GitHub PAT (BlueBlaze)' -Action $action -Trigger $trigger
-   ```
-
-これにより、`setup.ps1` を実行する時点では `GITHUB_PERSONAL_ACCESS_TOKEN` が直近のログオン時点の最新の値に更新済みの状態になります。
+MCP サーバーの登録については上記「MCP サーバーについて」の「ローカルホスト」の手順を参照してください。
