@@ -1,9 +1,10 @@
-# Stop フック: Claude が .cs ファイルを編集した応答の終了時に dotnet build を実行してビルドエラーを検出する。
-# PostToolUse フック (if-cs-changed.ps1) が作成したセンチネルファイルで .cs 編集の有無を判定する。
+# Stop フック: Claude が .cs/.csproj/.props/.targets ファイルを編集した応答の終了時に
+# dotnet build を実行してビルドエラーを検出する。
+# PostToolUse フック (if-cs-changed.ps1) が作成したセンチネルファイルで編集の有無を判定する。
 
 $ErrorActionPreference = 'Stop'
 
-$flag = "$PSScriptRoot/.cs-changed"
+$flag = "$PSScriptRoot/.build-needed"
 if (-not (Test-Path $flag)) { exit 0 }
 Remove-Item -Force $flag
 
