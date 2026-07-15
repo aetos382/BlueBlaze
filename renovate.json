@@ -58,6 +58,11 @@
       ]
     },
     {
+      "matchDepNames": ["dotnet-sdk"],
+      "groupName": ".NET SDK version",
+      "description": "Keep global.json and devcontainer.json dotnet feature version in sync"
+    },
+    {
       "matchDatasources": ["github-tags"],
       "minimumReleaseAge": null,
       "automerge": true,
@@ -117,22 +122,15 @@
   ],
   "customManagers": [
     {
-      "customType": "regex",
+      "customType": "jsonata",
+      "fileFormat": "json",
       "managerFilePatterns": [
-        "/^\\.mcp\\.json$/"
+        "/^\\.devcontainer/devcontainer\\.json$/"
       ],
-      "matchStrings": ["\"(?<depName>@[\\w-]+/[\\w-]+)@(?<currentValue>[\\d][\\d.]*)\""],
-      "datasourceTemplate": "npm",
-      "description": "MCP server npm packages"
-    },
-    {
-      "customType": "regex",
-      "managerFilePatterns": [
-        "/^\\.mcp\\.json$/"
+      "matchStrings": [
+        "{\"depName\": \"dotnet-sdk\", \"currentValue\": features.`ghcr.io/devcontainers/features/dotnet:2`.version, \"datasource\": \"dotnet-version\"}"
       ],
-      "matchStrings": ["\"(?<depName>[\\w][\\w.]*?)@(?<currentValue>[\\d][\\d.]*)\""],
-      "datasourceTemplate": "nuget",
-      "description": "MCP server NuGet packages"
+      "description": "devcontainer feature's dotnet SDK version, synced with global.json via groupName"
     }
   ],
   "vulnerabilityAlerts": {
