@@ -62,11 +62,13 @@ claude mcp login github
 **セットアップ**
 
 ```bash
-git submodule update --init --recursive
 git config --local include.path ../.git-hooks/hooks.gitconfig
 dotnet tool restore
 npm ci
+node scripts/fetch-atproto-lexicon.mts
 ```
+
+`node scripts/fetch-atproto-lexicon.mts` は [.renovate/atproto-lexicon.version](../.renovate/atproto-lexicon.version) に記録された `@atproto/api` のタグから lexicon を `external/atproto/lexicons/` に取得します（submodule ではなく、このスクリプトが sparse-checkout で取得します）。ビルド前に一度実行してください。
 
 タブ補完を有効にする場合（任意）:
 
@@ -89,10 +91,12 @@ npm completion > ~/.local/share/bash-completion/completions/npm
 **セットアップ**
 
 ```powershell
-git submodule update --init --recursive
 git config --local include.path ../.git-hooks/hooks.gitconfig
 dotnet tool restore
 npm ci
+node scripts/fetch-atproto-lexicon.mts
 ```
+
+`node scripts/fetch-atproto-lexicon.mts` は [.renovate/atproto-lexicon.version](../.renovate/atproto-lexicon.version) に記録された `@atproto/api` のタグから lexicon を `external/atproto/lexicons/` に取得します（submodule ではなく、このスクリプトが sparse-checkout で取得します）。ビルド前に一度実行してください。
 
 MCP サーバーの登録については上記「MCP サーバーについて」の「ローカルホスト」の手順を参照してください。

@@ -1,0 +1,4 @@
+# atproto lexicon のタグバージョン。@atproto/api@<version> の <version> 部分。
+# scripts/fetch-atproto-lexicon.mts が refs/tags/@atproto/api@<version> の lexicons/ を取得する。
+# 更新は Renovate の customManager(git-tags + extractVersion)が自動で行う。
+ATPROTO_LEXICON_VERSION=0.20.30

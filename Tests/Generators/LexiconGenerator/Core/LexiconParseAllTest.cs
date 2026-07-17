@@ -14,7 +14,7 @@ public sealed class LexiconParseAllTest
         var lexiconsDir = FindLexiconsDirectory();
         if (lexiconsDir is null)
         {
-            Assert.Inconclusive("submodules/atproto/lexicons が見つかりません。submodule が checkout されていない環境ではこのテストをスキップします。");
+            Assert.Inconclusive("external/atproto/lexicons が見つかりません。scripts/fetch-atproto-lexicon.mts を実行して lexicon を取得していない環境ではこのテストをスキップします。");
         }
 
         var files = Directory.GetFiles(lexiconsDir, "*.json", SearchOption.AllDirectories);
@@ -54,7 +54,7 @@ public sealed class LexiconParseAllTest
         var dir = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
         while (dir != null)
         {
-            var candidate = Path.Combine(dir.FullName, "submodules", "atproto", "lexicons");
+            var candidate = Path.Combine(dir.FullName, "external", "atproto", "lexicons");
             if (Directory.Exists(candidate))
             {
                 return candidate;

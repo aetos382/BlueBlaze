@@ -19,9 +19,6 @@
   "ignorePaths": [
     ".github/workflows/*.lock.yml"
   ],
-  "git-submodules": {
-    "enabled": true
-  },
   "packageRules": [
     {
       "matchDatasources": ["nuget"],
@@ -72,10 +69,10 @@
       "description": "Auto-merge dev container CLI tools (minor/patch)"
     },
     {
-      "matchDepNames": ["submodules/atproto"],
-      "matchDatasources": ["git-refs"],
+      "matchDepNames": ["bluesky-social/atproto"],
+      "matchDatasources": ["git-tags"],
       "automerge": true,
-      "description": "Auto-merge atproto submodule updates"
+      "description": "Auto-merge atproto lexicon tag updates (tracked via .renovate/atproto-lexicon.version)"
     },
     {
       "matchUpdateTypes": ["pin", "pinDigest"],
@@ -107,6 +104,21 @@
         "{\"depName\": \"dotnet-sdk\", \"currentValue\": features.`ghcr.io/devcontainers/features/dotnet:2`.version, \"datasource\": \"dotnet-version\"}"
       ],
       "description": "devcontainer feature's dotnet SDK version, synced with global.json via groupName"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/^\\.renovate/atproto-lexicon\\.version$/"
+      ],
+      "matchStrings": [
+        "ATPROTO_LEXICON_VERSION=(?<currentValue>\\S+)"
+      ],
+      "depNameTemplate": "bluesky-social/atproto",
+      "packageNameTemplate": "https://github.com/bluesky-social/atproto",
+      "datasourceTemplate": "git-tags",
+      "extractVersionTemplate": "^@atproto/api@(?<version>.+)$",
+      "versioningTemplate": "semver",
+      "description": "Track @atproto/api semver tags for the lexicon checkout"
     }
   ],
   "vulnerabilityAlerts": {

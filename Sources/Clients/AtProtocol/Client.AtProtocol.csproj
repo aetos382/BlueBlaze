@@ -29,7 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <LexiconDocument Include="../../../submodules/atproto/lexicons/com/atproto/**/*.json" />
+    <LexiconDocument Include="../../../external/atproto/lexicons/com/atproto/**/*.json" />
   </ItemGroup>
 
   <Import Project="../../../Generators/LexiconGenerator/Package/build/BlueBlaze.LexiconGenerator.targets" />
