@@ -13,6 +13,14 @@ Python は `python` も `python3` も禁止。
 - JavaScript (node.js)
 - bash
 
+## テストの実行
+
+テストプロジェクトは全て MSTest.Sdk（Microsoft.Testing.Platform, MTP）。VSTest とはコマンドライン引数の扱いが異なる。
+
+- テストのフィルタは `--` の後に渡す: `dotnet test <csproj> --framework net10.0 -- --filter "FullyQualifiedName~Xxx"`
+  - `--` を付けずに `dotnet test ... --filter "..."` とすると **フィルタが MTP ランナーに渡らず、0 件マッチでエラーも出さず静かに終わる**（テストが通ったように見えるので注意）。
+- フィルタ式自体は VSTest と同じ（`FullyQualifiedName~`, `TestCategory=` 等）。
+
 ## git hook
 
 `.devcontainer/postCreate.sh` で `.gitconfig` が git 設定に読み込まれるようになっている。
