@@ -1,5 +1,5 @@
 import { spawnSync } from "node:child_process";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import process from "node:process";
@@ -25,6 +25,14 @@ const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(scriptDir, "..");
 const versionFile = path.join(repoRoot, ".renovate", "atproto-lexicon.version");
 const checkoutDir = path.join(repoRoot, "external", "atproto");
+// 取得済みバージョンを記録するスタンプ。MSBuild が version ファイル(Inputs)と
+// このスタンプ(Outputs)のタイムスタンプを比較して増分実行を判断する。
+const stampFile = path.join(checkoutDir, ".fetched-version");
+// マルチターゲットビルド等で同一の checkoutDir に並列 fetch すると
+// `shallow file has changed` で壊れるため、ディレクトリ作成のアトミック性で排他する。
+const lockDir = path.join(repoRoot, "external", ".atproto-fetch.lock");
+const LOCK_TIMEOUT_MS = 120_000;
+const LOCK_POLL_MS = 100;
 
 function fail(message: string): never {
   console.error(`ERROR: ${message}`);
@@ -71,11 +79,40 @@ function ensureRepo(): void {
   git(["remote", "add", "origin", REPO_URL], { cwd: checkoutDir });
 }
 
-function main(): void {
-  const version = readVersion();
-  const tag = `${TAG_PREFIX}${version}`;
-  const tagRef = `refs/tags/${tag}`;
+const lexiconsDir = path.join(checkoutDir, SPARSE_PATH);
 
+// スタンプが tag 一致 + lexicons/ が存在するなら取得済み。
+function isUpToDate(tag: string): boolean {
+  return existsSync(stampFile) && existsSync(lexiconsDir) &&
+    readFileSync(stampFile, "utf8").trim() === tag;
+}
+
+// ディレクトリ作成のアトミック性で排他ロックを取る。TIMEOUT まで待つ。
+function acquireLock(): void {
+  mkdirSync(path.dirname(lockDir), { recursive: true });
+  const deadline = Date.now() + LOCK_TIMEOUT_MS;
+  for (;;) {
+    try {
+      mkdirSync(lockDir);
+      return;
+    } catch (err) {
+      if ((err as NodeJS.ErrnoException).code !== "EEXIST") {
+        throw err;
+      }
+      if (Date.now() > deadline) {
+        fail(`ロック ${lockDir} の取得がタイムアウトしました。残留していれば手動で削除してください。`);
+      }
+      // 他プロセスが取得中。Atomics.wait で同期的に短時間待つ。
+      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, LOCK_POLL_MS);
+    }
+  }
+}
+
+function releaseLock(): void {
+  rmSync(lockDir, { recursive: true, force: true });
+}
+
+function fetchLexicon(tag: string, tagRef: string): void {
   console.log(`atproto lexicon を ${tag} から取得します。`);
 
   ensureRepo();
@@ -88,12 +125,40 @@ function main(): void {
   git(["fetch", "--depth", "1", "origin", tagRef], { cwd: checkoutDir });
   git(["checkout", "-q", "FETCH_HEAD"], { cwd: checkoutDir });
 
-  const lexiconsDir = path.join(checkoutDir, SPARSE_PATH);
   if (!existsSync(lexiconsDir)) {
     fail(`取得後に ${lexiconsDir} が存在しません。タグまたは sparse-checkout 設定を確認してください。`);
   }
 
+  // 取得完了を記録する。MSBuild の Outputs はこのファイルのタイムスタンプを見る。
+  writeFileSync(stampFile, `${tag}\n`, "utf8");
+
   console.log(`完了: ${path.relative(repoRoot, lexiconsDir)} (${tag})`);
+}
+
+function main(): void {
+  const version = readVersion();
+  const tag = `${TAG_PREFIX}${version}`;
+  const tagRef = `refs/tags/${tag}`;
+
+  // ロック取得前の早期スキップ。毎ビルド呼び出しで余計なロック競合を避けるため。
+  if (isUpToDate(tag)) {
+    console.log(`atproto lexicon は ${tag} で最新です。スキップします。`);
+    return;
+  }
+
+  // マルチターゲット/複数プロジェクトの並列ビルドが同一 checkoutDir に同時 fetch
+  // すると壊れるため、取得はロックで直列化する。
+  acquireLock();
+  try {
+    // ロック待ちの間に別プロセスが取得を終えている場合があるので再確認する。
+    if (isUpToDate(tag)) {
+      console.log(`atproto lexicon は ${tag} で最新です。スキップします。`);
+      return;
+    }
+    fetchLexicon(tag, tagRef);
+  } finally {
+    releaseLock();
+  }
 }
 
 main();

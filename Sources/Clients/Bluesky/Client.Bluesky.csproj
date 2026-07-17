@@ -11,7 +11,6 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <BlueBlazeGeneratorRunMode>Cli</BlueBlazeGeneratorRunMode>
     <BlueBlazeGeneratedCodeNamespace>BlueBlaze.Client.Bluesky.Generated</BlueBlazeGeneratedCodeNamespace>
     <_BBCliExeName>BlueBlaze.LexiconGenerator.Cli</_BBCliExeName>
     <_BBCliExeName Condition="$([MSBuild]::IsOSPlatform('Windows'))">$(_BBCliExeName).exe</_BBCliExeName>
@@ -24,19 +23,22 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!-- app/bsky, chat/bsky が参照する com.atproto.* (例: com.atproto.repo.strongRef) を
-         解決するため、com/atproto/** も自己完結的に取り込む。Client.AtProtocol.csproj とは
-         別の名前空間(BlueBlaze.Client.Bluesky.Generated)に重複生成されるが、
-         LexiconGenerator はクロスプロジェクト参照に対応していないため現状はこの方式で対応する。 -->
-    <LexiconDocument Include="../../../external/atproto/lexicons/com/atproto/**/*.json" />
-    <LexiconDocument Include="../../../external/atproto/lexicons/app/bsky/**/*.json" />
-    <LexiconDocument Include="../../../external/atproto/lexicons/chat/bsky/**/*.json" />
-  </ItemGroup>
-
-  <ItemGroup>
     <InternalsVisibleTo Include="BlueBlaze.Client.Bluesky.Tests" />
   </ItemGroup>
 
   <Import Project="../../../Generators/LexiconGenerator/Package/build/BlueBlaze.LexiconGenerator.targets" />
+  <!-- Cli モード(bbgen でビルド前生成)と atproto lexicon 取得は BlueBlaze 内部専用。
+       配布パッケージには含めず eng/ に置く。 -->
+  <Import Project="../../../eng/BlueBlaze.LexiconGenerator.Cli.targets" />
+
+  <!-- lexicon は FetchAtprotoLexicon.targets が取得後に glob 展開して LexiconDocument へ加える。
+       ここでは glob パターン(セミコロン区切りの文字列)だけを渡す。
+       app/bsky, chat/bsky が参照する com.atproto.* (例: com.atproto.repo.strongRef) を
+       解決するため、com/atproto/** も自己完結的に取り込む。Client.AtProtocol.csproj とは
+       別の名前空間(BlueBlaze.Client.Bluesky.Generated)に重複生成されるが、
+       LexiconGenerator はクロスプロジェクト参照に対応していないため現状はこの方式で対応する。 -->
+  <PropertyGroup>
+    <AtprotoLexiconPatterns>$(AtprotoLexiconRoot)\com\atproto\**\*.json;$(AtprotoLexiconRoot)\app\bsky\**\*.json;$(AtprotoLexiconRoot)\chat\bsky\**\*.json</AtprotoLexiconPatterns>
+  </PropertyGroup>
 
 </Project>

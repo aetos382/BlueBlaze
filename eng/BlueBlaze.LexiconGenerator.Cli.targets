@@ -1,0 +1,176 @@
+<Project>
+
+  <!--
+    LexiconGenerator の Cli モード(dotnet-bbgen をビルド前に実行してソース生成)と、
+    その入力になる atproto lexicon の取得を担う BlueBlaze 内部専用の targets。
+
+    Cli モードは配布パッケージ(BlueBlaze.LexiconGenerator)には含めない。理由:
+    - Cli モードは dotnet-bbgen(別パッケージ)を必要とし、利用者に 2 パッケージの導入を
+      強いる。利用者向けには MSBuild モードが 1 パッケージ完結で同等(Compile 前生成 +
+      Inputs/Outputs 増分制御)を提供するため、Cli モードは配布しない。
+    - Cli モードを内部で使うのは、同ソリューション内で MSBuild タスク DLL を
+      ProjectReference するとビルドロックが起きるのを避けるため(Generators/CLAUDE.md 参照)。
+      これは BlueBlaze 内部固有の事情で、nupkg 経由の利用者には無関係。
+    - atproto lexicon の取得スクリプトもこのリポジトリ固有。
+
+    このファイルは AtProtocol/Bluesky の csproj から直接 Import する。両者は
+    RunMode を指定しない(配布 targets のデフォルト Roslyn だが、Roslyn アナライザを
+    ProjectReference していないので何も生成されない。実生成はこの Cli モードが行う)。
+  -->
+
+  <!-- ================= atproto lexicon 取得 ================= -->
+
+  <!--
+    使い方: lexicon を取得したいプロジェクトは AtprotoLexiconPatterns プロパティに
+    「glob パターンのセミコロン区切り」を指定する($(AtprotoLexiconRoot) を前置する)。
+
+      <PropertyGroup>
+        <AtprotoLexiconPatterns>$(AtprotoLexiconRoot)\com\atproto\**\*.json</AtprotoLexiconPatterns>
+      </PropertyGroup>
+
+    トップレベルで直接 LexiconDocument に glob を書くと、MSBuild の評価順序
+    (PropertyGroup → ItemGroup(glob 展開) → Target)により lexicon 取得前に glob が
+    空展開され、1 回目のクリーンビルドが壊れる。AtprotoLexiconPatterns はプロパティ
+    (文字列)にすぎず、PrepareAtprotoLexicon が取得後にターゲット内 ItemGroup の Include に
+    直接渡して glob 展開する(ターゲット内 ItemGroup は実行時評価なので、この時点で
+    lexicons/ が存在し正しく展開される。transform 経由やパターンを item にすると glob
+    展開されないため、必ず Include 属性へプロパティ文字列を渡す)。
+  -->
+  <PropertyGroup>
+    <_AtprotoLexiconRepoRoot>$([MSBuild]::NormalizeDirectory('$(MSBuildThisFileDirectory)..'))</_AtprotoLexiconRepoRoot>
+    <_AtprotoLexiconVersionFile>$(_AtprotoLexiconRepoRoot).renovate\atproto-lexicon.version</_AtprotoLexiconVersionFile>
+    <_AtprotoLexiconStampFile>$(_AtprotoLexiconRepoRoot)external\atproto\.fetched-version</_AtprotoLexiconStampFile>
+    <_AtprotoLexiconScript>$(_AtprotoLexiconRepoRoot)scripts\fetch-atproto-lexicon.mts</_AtprotoLexiconScript>
+    <!-- AtprotoLexiconPatterns の glob を書くためのルート。 -->
+    <AtprotoLexiconRoot>$(_AtprotoLexiconRepoRoot)external\atproto\lexicons</AtprotoLexiconRoot>
+  </PropertyGroup>
+
+  <!--
+    lexicon を取得する。Inputs/Outputs による増分制御:
+    - Inputs  = .renovate/atproto-lexicon.version(取得すべきタグを決める真実の источник)
+    - Outputs = external/atproto/.fetched-version(取得完了スタンプ)
+    version ファイルが更新されたときだけ実行される。
+  -->
+  <Target Name="_FetchAtprotoLexiconCore"
+          Inputs="$(_AtprotoLexiconVersionFile)"
+          Outputs="$(_AtprotoLexiconStampFile)">
+    <Message Importance="high" Text="Fetching atproto lexicon (from $(_AtprotoLexiconVersionFile))..." />
+    <Exec Command="node &quot;$(_AtprotoLexiconScript)&quot;"
+          WorkingDirectory="$(_AtprotoLexiconRepoRoot)" />
+  </Target>
+
+  <!--
+    マルチターゲット: outer build で inner build を起動する前に一度だけ取得する。
+    inner build(TargetFramework ごと)が並列に同じ external/atproto へ git fetch すると
+    壊れるため、inner build 開始前に済ませる。DispatchToInnerBuilds は outer build にのみ存在。
+  -->
+  <Target Name="FetchAtprotoLexiconOuter"
+          BeforeTargets="DispatchToInnerBuilds"
+          DependsOnTargets="_FetchAtprotoLexiconCore" />
+
+  <!--
+    取得後に AtprotoLexiconPatterns を glob 展開して LexiconDocument へ加える。
+    _BBCliGenerate の DependsOnTargets 拡張ポイント経由でのみ起動する(下の登録)。
+    BeforeTargets は付けない: 付けると _BBCliGenerate の依存経由と二重にスケジュールされ、
+    生成器が同じ出力へ並列書き込みして競合するため。
+    マルチターゲットでは outer build が取得済みなので _FetchAtprotoLexiconCore は
+    増分制御で即スキップされる。
+  -->
+  <Target Name="PrepareAtprotoLexicon"
+          DependsOnTargets="_FetchAtprotoLexiconCore"
+          Condition="'$(AtprotoLexiconPatterns)' != ''">
+    <ItemGroup>
+      <LexiconDocument Include="$(AtprotoLexiconPatterns)" />
+    </ItemGroup>
+  </Target>
+
+  <!--
+    _BBCliGenerate の前に PrepareAtprotoLexicon を走らせる。この登録は無条件に行う。
+    理由: この PropertyGroup は Import 時点で評価されるが、AtprotoLexiconPatterns を定義する
+    csproj の PropertyGroup は(AtprotoLexiconRoot を使う都合上)この Import より後に置かれる
+    ため、Condition="'$(AtprotoLexiconPatterns)' != ''" を付けると常に空扱いで登録されない。
+    パターンが無いプロジェクトでは PrepareAtprotoLexicon が Condition で no-op になる。
+  -->
+  <PropertyGroup>
+    <_BBCliGenerateDependsOn>$(_BBCliGenerateDependsOn);PrepareAtprotoLexicon</_BBCliGenerateDependsOn>
+  </PropertyGroup>
+
+  <!-- ================= Cli モードのソース生成 ================= -->
+
+  <PropertyGroup>
+    <BlueBlazeGeneratorGenerateTypeInfo Condition="'$(BlueBlazeGeneratorGenerateTypeInfo)' == ''">true</BlueBlazeGeneratorGenerateTypeInfo>
+  </PropertyGroup>
+
+  <Target Name="_BBCliSetup">
+    <PropertyGroup>
+      <_BBCliOutputDir>$(IntermediateOutputPath)GeneratedSources/BlueBlaze.LexiconGenerator/</_BBCliOutputDir>
+      <_BBCliManifest>$(_BBCliOutputDir)generated-files.txt</_BBCliManifest>
+      <_BBCliInputList>$(_BBCliOutputDir)input-files.txt</_BBCliInputList>
+      <_BBCliArgsFile>$(_BBCliOutputDir)args.txt</_BBCliArgsFile>
+      <!--
+        デフォルトは dotnet bbgen。
+        開発中など直接 exe を実行したい場合は BlueBlazeGeneratorCliExe にフルパスを設定してオーバーライドする。
+      -->
+      <_BBCliCommand>dotnet bbgen</_BBCliCommand>
+      <_BBCliCommand Condition="'$(BlueBlazeGeneratorCliExe)' != ''">&quot;$(BlueBlazeGeneratorCliExe)&quot;</_BBCliCommand>
+    </PropertyGroup>
+
+    <Error Condition="'$(BlueBlazeGeneratorCliExe)' != '' and !Exists('$(BlueBlazeGeneratorCliExe)')"
+           Text="The LexiconGenerator CLI executable '$(BlueBlazeGeneratorCliExe)' does not exist. Build the LexiconGenerator.Cli project first, or install the dotnet tool 'dotnet-bbgen'." />
+  </Target>
+
+  <!--
+    生成オプション（名前空間・TFM・Nullable・各フラグ）をファイルに記録する。
+    WriteOnlyWhenDifferent により内容が変わった場合のみタイムスタンプが更新され、
+    _BBCliGenerate のインクリメンタルビルド判定に使われる。
+  -->
+  <Target Name="_BBCliWriteArgs" DependsOnTargets="_BBCliSetup">
+    <MakeDir Directories="$(_BBCliOutputDir)" />
+    <ItemGroup>
+      <_BBCliArgLines Include="$(BlueBlazeGeneratedCodeNamespace)" />
+      <_BBCliArgLines Include="$(TargetFramework)" />
+      <_BBCliArgLines Include="$(Nullable)" />
+      <_BBCliArgLines Include="$(BlueBlazeGeneratorGenerateTypeInfo)" />
+      <_BBCliArgLines Include="$(BlueBlazeGeneratorForceEmitAotAttributes)" />
+    </ItemGroup>
+    <WriteLinesToFile File="$(_BBCliArgsFile)" Lines="@(_BBCliArgLines)" Overwrite="true" WriteOnlyWhenDifferent="true" />
+  </Target>
+
+  <!--
+    _BBCliGenerateDependsOn は、生成の前に LexiconDocument を用意したい利用側が
+    自分の準備ターゲットを注入するための拡張ポイント(デフォルト空)。
+    @(LexiconDocument) を Inputs と生成入力に使うため、その評価前に走る必要がある依存を
+    ここに追加する。MSBuild モードの BlueBlazeGenerateLexiconSourceCodeDependsOn と同じ役割。
+    このファイルでは上の PropertyGroup で PrepareAtprotoLexicon を登録している。
+  -->
+  <Target Name="_BBCliGenerate"
+          DependsOnTargets="$(_BBCliGenerateDependsOn);_BBCliSetup;_BBCliWriteArgs"
+          Inputs="@(LexiconDocument);$(BlueBlazeGeneratorCliExe);$(_BBCliArgsFile)"
+          Outputs="$(_BBCliManifest)">
+
+    <PropertyGroup>
+      <_BBCliGenerateTypeInfoArg />
+      <_BBCliGenerateTypeInfoArg Condition="'$(BlueBlazeGeneratorGenerateTypeInfo)' == 'true'">--generate-type-info</_BBCliGenerateTypeInfoArg>
+      <_BBCliForceEmitAotAttrArg />
+      <_BBCliForceEmitAotAttrArg Condition="'$(BlueBlazeGeneratorForceEmitAotAttributes)' == 'true'">--force-emit-aot-attributes</_BBCliForceEmitAotAttrArg>
+      <_BBCliNullableArg />
+      <_BBCliNullableArg Condition="'$(Nullable)' != 'enable' and '$(Nullable)' != 'annotations'">--disable-nullable-annotations</_BBCliNullableArg>
+      <_BBCliTargetFrameworkArg />
+      <_BBCliTargetFrameworkArg Condition="'$(TargetFramework)' != ''">--target-framework &quot;$(TargetFramework)&quot;</_BBCliTargetFrameworkArg>
+    </PropertyGroup>
+
+    <MakeDir Directories="$(_BBCliOutputDir)" />
+    <WriteLinesToFile File="$(_BBCliInputList)" Lines="@(LexiconDocument->'%(FullPath)')" Overwrite="true" />
+    <Exec Command="$(_BBCliCommand) &quot;@$(_BBCliInputList)&quot; -o &quot;$(_BBCliOutputDir)&quot; -n &quot;$(BlueBlazeGeneratedCodeNamespace)&quot; $(_BBCliTargetFrameworkArg) $(_BBCliGenerateTypeInfoArg) $(_BBCliForceEmitAotAttrArg) $(_BBCliNullableArg) --manifest-output &quot;$(_BBCliManifest)&quot;" />
+
+  </Target>
+
+  <Target Name="_BBCliAddToCompile"
+          DependsOnTargets="_BBCliGenerate"
+          BeforeTargets="CoreCompile">
+    <ReadLinesFromFile File="$(_BBCliManifest)" Condition="Exists('$(_BBCliManifest)')">
+      <Output TaskParameter="Lines" ItemName="Compile" />
+    </ReadLinesFromFile>
+  </Target>
+
+</Project>

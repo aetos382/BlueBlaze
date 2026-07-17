@@ -6,11 +6,10 @@
   </PropertyGroup>
 
   <Target Name="_BBWarnInvalidRunMode" BeforeTargets="CoreCompile">
-    <Warning Condition="'$(BlueBlazeGeneratorRunMode)' != 'Roslyn' and '$(BlueBlazeGeneratorRunMode)' != 'Cli' and '$(BlueBlazeGeneratorRunMode)' != 'MSBuild'"
-             Text="The MSBuild property 'BlueBlazeGeneratorRunMode' has an invalid value '$(BlueBlazeGeneratorRunMode)'. Valid values are 'Roslyn', 'Cli', and 'MSBuild'." />
+    <Warning Condition="'$(BlueBlazeGeneratorRunMode)' != 'Roslyn' and '$(BlueBlazeGeneratorRunMode)' != 'MSBuild'"
+             Text="The MSBuild property 'BlueBlazeGeneratorRunMode' has an invalid value '$(BlueBlazeGeneratorRunMode)'. Valid values are 'Roslyn' and 'MSBuild'." />
   </Target>
 
   <Import Project="BlueBlaze.LexiconGenerator.MSBuild.targets" Condition="'$(BlueBlazeGeneratorRunMode)' == 'MSBuild'" />
-  <Import Project="BlueBlaze.LexiconGenerator.Cli.targets" Condition="'$(BlueBlazeGeneratorRunMode)' == 'Cli'" />
 
 </Project>

@@ -13,7 +13,6 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <BlueBlazeGeneratorRunMode>Cli</BlueBlazeGeneratorRunMode>
     <BlueBlazeGeneratedCodeNamespace>BlueBlaze.Client.AtProtocol.Generated</BlueBlazeGeneratedCodeNamespace>
     <_BBCliExeName>BlueBlaze.LexiconGenerator.Cli</_BBCliExeName>
     <_BBCliExeName Condition="$([MSBuild]::IsOSPlatform('Windows'))">$(_BBCliExeName).exe</_BBCliExeName>
@@ -28,10 +27,15 @@
     <InternalsVisibleTo Include="BlueBlaze.Client.AtProtocol.Tests" />
   </ItemGroup>
 
-  <ItemGroup>
-    <LexiconDocument Include="../../../external/atproto/lexicons/com/atproto/**/*.json" />
-  </ItemGroup>
-
   <Import Project="../../../Generators/LexiconGenerator/Package/build/BlueBlaze.LexiconGenerator.targets" />
+  <!-- Cli モード(bbgen でビルド前生成)と atproto lexicon 取得は BlueBlaze 内部専用。
+       配布パッケージには含めず eng/ に置く。 -->
+  <Import Project="../../../eng/BlueBlaze.LexiconGenerator.Cli.targets" />
+
+  <!-- lexicon は FetchAtprotoLexicon.targets が取得後に glob 展開して LexiconDocument へ加える。
+       ここでは glob パターン(文字列)だけを渡す。 -->
+  <PropertyGroup>
+    <AtprotoLexiconPatterns>$(AtprotoLexiconRoot)\com\atproto\**\*.json</AtprotoLexiconPatterns>
+  </PropertyGroup>
 
 </Project>
