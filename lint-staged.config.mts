@@ -17,5 +17,5 @@ export default {
       `dotnet format whitespace BlueBlaze.slnx --verify-no-changes --include ${relFiles}`,
     ];
   },
-  'renovate.json': () => 'npm run validate:renovate',
+  'renovate.json': () => 'node scripts/validate-renovate.mts',
 } satisfies Configuration;
