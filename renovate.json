@@ -1,5 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "configMigration": true,
   "labels": ["dependencies"],
   "extends": [
     "config:best-practices",
@@ -8,8 +9,7 @@
     "group:definitelyTyped",
     "group:dotNetCore",
     "helpers:pinGitHubActionDigestsToSemver",
-    "security:openssf-scorecard",
-    "schedule:automergeDaily"
+    "security:openssf-scorecard"
   ],
   "timezone": "Asia/Tokyo",
   "minimumReleaseAge": "3 days",
@@ -35,7 +35,6 @@
         "https://github.com/microsoft/**"
       ],
       "groupName": "nuget microsoft",
-      "minimumReleaseAge": null,
       "automerge": true,
       "description": "Auto-merge minor/patch updates from Microsoft GitHub organizations"
     },
@@ -50,7 +49,6 @@
     },
     {
       "matchDatasources": ["devcontainer-feature"],
-      "minimumReleaseAge": null,
       "automerge": true,
       "description": "Auto-merge minor/patch updates for official devcontainer features",
       "matchDepNames": [
@@ -64,7 +62,6 @@
     },
     {
       "matchDatasources": ["github-tags"],
-      "minimumReleaseAge": null,
       "automerge": true,
       "description": "Auto-merge minor/patch/pin/digest updates for trusted GitHub Actions",
       "matchDepNames": [
@@ -78,9 +75,15 @@
       "matchDatasources": ["docker"],
       "matchPackageNames": ["mcr.microsoft.com/**"],
       "groupName": "docker mcr.microsoft.com",
-      "minimumReleaseAge": null,
       "automerge": true,
       "description": "Auto-merge minor/patch/pin/digest updates for Microsoft Container Registry images"
+    },
+    {
+      "matchDatasources": ["npm"],
+      "matchDepTypes": ["devDependencies"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true,
+      "description": "Auto-merge dev-only npm minor/patch"
     },
     {
       "matchDatasources": ["npm"],
@@ -91,7 +94,6 @@
     {
       "matchDepNames": ["submodules/atproto"],
       "matchDatasources": ["git-refs"],
-      "minimumReleaseAge": null,
       "automerge": true,
       "description": "Auto-merge atproto submodule updates"
     },
@@ -100,12 +102,6 @@
       "minimumReleaseAge": null,
       "automerge": true,
       "description": "Allow automerge pin updates"
-    },
-    {
-      "matchUpdateTypes": ["lockFileMaintenance"],
-      "minimumReleaseAge": null,
-      "automerge": true,
-      "description": "lockFileMaintenance does not support minimumReleaseAge validation, causing renovate/stability-days to stay pending forever"
     },
     {
       "matchUpdateTypes": ["rollback", "replacement"],

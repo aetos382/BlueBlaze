@@ -1,8 +1,5 @@
 {
   "private": true,
-  "scripts": {
-    "validate:renovate": "echo aetos382/BlueBlaze | renovate-config-validator"
-  },
   "devDependencies": {
     "@eslint/js": "10.0.1",
     "@types/node": "24.13.3",
