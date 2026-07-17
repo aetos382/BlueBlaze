@@ -25,13 +25,8 @@
   "packageRules": [
     {
       "matchDatasources": ["nuget"],
-      "matchSourceUrls": [
-        "https://github.com/dotnet/**",
-        "https://github.com/microsoft/**"
-      ],
-      "groupName": "nuget microsoft",
       "automerge": true,
-      "description": "Auto-merge minor/patch updates from Microsoft GitHub organizations"
+      "description": "Auto-merge minor/patch NuGet updates (safety is gated by CI)"
     },
     {
       "matchDepNames": [
