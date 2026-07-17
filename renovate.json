@@ -40,10 +40,7 @@
     {
       "matchDatasources": ["devcontainer-feature"],
       "automerge": true,
-      "description": "Auto-merge minor/patch updates for official devcontainer features",
-      "matchDepNames": [
-        "/^ghcr\\.io/devcontainers//"
-      ]
+      "description": "Auto-merge minor/patch updates for devcontainer features"
     },
     {
       "matchDepNames": ["dotnet-sdk"],
