@@ -24,19 +24,9 @@
   },
   "packageRules": [
     {
-      "matchDepNames": ["node"],
-      "allowedVersions": "/^(\\d*[02468])\\./",
-      "description": "Node.js LTS (even major) only"
-    },
-    {
       "matchDatasources": ["nuget"],
-      "matchSourceUrls": [
-        "https://github.com/dotnet/**",
-        "https://github.com/microsoft/**"
-      ],
-      "groupName": "nuget microsoft",
       "automerge": true,
-      "description": "Auto-merge minor/patch updates from Microsoft GitHub organizations"
+      "description": "Auto-merge minor/patch NuGet updates (safety is gated by CI)"
     },
     {
       "matchDepNames": [
@@ -50,10 +40,7 @@
     {
       "matchDatasources": ["devcontainer-feature"],
       "automerge": true,
-      "description": "Auto-merge minor/patch updates for official devcontainer features",
-      "matchDepNames": [
-        "/^ghcr\\.io/devcontainers//"
-      ]
+      "description": "Auto-merge minor/patch updates for devcontainer features"
     },
     {
       "matchDepNames": ["dotnet-sdk"],
@@ -72,13 +59,6 @@
       ]
     },
     {
-      "matchDatasources": ["docker"],
-      "matchPackageNames": ["mcr.microsoft.com/**"],
-      "groupName": "docker mcr.microsoft.com",
-      "automerge": true,
-      "description": "Auto-merge minor/patch/pin/digest updates for Microsoft Container Registry images"
-    },
-    {
       "matchDatasources": ["npm"],
       "matchDepTypes": ["devDependencies"],
       "matchUpdateTypes": ["minor", "patch"],
@@ -86,10 +66,10 @@
       "description": "Auto-merge dev-only npm minor/patch"
     },
     {
-      "matchDatasources": ["npm"],
-      "matchDepNames": ["renovate"],
-      "schedule": ["* * * * 1"],
-      "description": "Reduce renovate update frequency to weekly"
+      "matchFileNames": [".devcontainer/Dockerfile"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true,
+      "description": "Auto-merge dev container CLI tools (minor/patch)"
     },
     {
       "matchDepNames": ["submodules/atproto"],
