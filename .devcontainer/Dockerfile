@@ -15,7 +15,7 @@ ARG NPM_VERSION=12.0.1
 ARG GOAT_VERSION=v0.2.3
 
 # renovate: datasource=npm depName=@devcontainers/cli
-ARG DEVCONTAINER_VERSION=0.87.0
+ARG DEVCONTAINER_VERSION=0.88.0
 
 # renovate: datasource=npm depName=renovate
 ARG RENOVATE_VERSION=43.278.3
