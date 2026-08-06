@@ -3,7 +3,7 @@
 # datasource=github-releases のものはバージョン番号に v をつける
 
 # renovate: datasource=node-version depName=node
-ARG NODE_VERSION=24.18.1
+ARG NODE_VERSION=24.19.0
 
 # renovate: datasource=npm depName=@anthropic-ai/claude-code
 ARG CLAUDE_CODE_VERSION=2.1.220
