@@ -9,7 +9,7 @@
     <GlobalPackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'" />
   </ItemGroup>
   <ItemGroup>
-    <PackageVersion Include="Basic.Reference.Assemblies.Net100" Version="1.8.10" />
+    <PackageVersion Include="Basic.Reference.Assemblies.Net100" Version="1.8.11" />
     <PackageVersion Include="Microsoft.Bcl.Memory" Version="10.0.11" />
     <PackageVersion Include="Microsoft.Build.Utilities.Core" Version="18.9.6" />
     <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="5.6.0" />
