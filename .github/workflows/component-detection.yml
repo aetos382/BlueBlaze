@@ -51,7 +51,7 @@ jobs:
           -binaryLogger
 
       - name: Component Detection
-        uses: advanced-security/component-detection-dependency-submission-action@4737f4899f8a2d167aa795f96fffba5cf82dd51e # v0.1.5
+        uses: advanced-security/component-detection-dependency-submission-action@b282c67b1008fde9b60da4bdfcd8849613e293b2 # v0.1.6
         with:
           detectorArgs: DockerReference=Enable,DockerCompose=Enable,MSBuildBinaryLog=EnableIfDefaultOff
           detectorsCategories: NuGet,Npm,DockerReference,DockerCompose
