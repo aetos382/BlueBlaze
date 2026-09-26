@@ -12,7 +12,7 @@ ARG CLAUDE_CODE_VERSION=2.1.280
 ARG NPM_VERSION=12.1.0
 
 # renovate: datasource=github-releases depName=bluesky-social/goat
-ARG GOAT_VERSION=v0.2.4
+ARG GOAT_VERSION=v0.2.5
 
 # renovate: datasource=npm depName=@devcontainers/cli
 ARG DEVCONTAINER_VERSION=0.89.0
