@@ -21,7 +21,7 @@ ARG DEVCONTAINER_VERSION=0.89.0
 ARG RENOVATE_VERSION=43.288.0
 
 # ---- op (1Password CLI) stage ----
-FROM 1password/op:2.39.0@sha256:3cd5a1febc662c93d46b944b983b301e710da5c016ef63be9d436cf2b1ed30d5 AS op
+FROM 1password/op:2.40.0@sha256:3835e4e0fa5eb0fd9c12672c6ae65530f00789663dca3ea39e5b02eb90cd1b54 AS op
 
 # ---- Main stage ----
 FROM mcr.microsoft.com/devcontainers/base:3.0.3-noble@sha256:c5cc2b45afe06a1df3aba17e58ba0dc4a02b999493198dab37dd0ccd4e2b0705
