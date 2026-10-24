@@ -18,7 +18,7 @@ ARG GOAT_VERSION=v0.2.5
 ARG DEVCONTAINER_VERSION=0.89.0
 
 # renovate: datasource=npm depName=renovate
-ARG RENOVATE_VERSION=43.288.0
+ARG RENOVATE_VERSION=44.175.0
 
 # ---- op (1Password CLI) stage ----
 FROM 1password/op:2.41.0@sha256:c218de9c39ac1a65ca1e98b634aa132bee1ff94d762d01d5cdfeebbc3413c697 AS op
