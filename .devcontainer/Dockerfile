@@ -6,7 +6,7 @@
 ARG NODE_VERSION=24.21.0
 
 # renovate: datasource=npm depName=@anthropic-ai/claude-code
-ARG CLAUDE_CODE_VERSION=2.1.310
+ARG CLAUDE_CODE_VERSION=2.1.311
 
 # renovate: datasource=npm depName=npm
 ARG NPM_VERSION=12.2.1
