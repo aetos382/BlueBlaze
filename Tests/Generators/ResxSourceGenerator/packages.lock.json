@@ -4,9 +4,9 @@
     "net10.0": {
       "Basic.Reference.Assemblies.Net100": {
         "type": "Direct",
-        "requested": "[1.8.14, )",
-        "resolved": "1.8.14",
-        "contentHash": "gXZJ3S0FCaOdehTY5Myb2eya4RXX4b1+nY9ctjuLDO8FoBGoQVEvrKLOU4wYhKy1ftu9Y9KJDStwS4mjFtTqVQ==",
+        "requested": "[1.8.15, )",
+        "resolved": "1.8.15",
+        "contentHash": "29NC0bVEAwySKJdpZy2BEMowDTPZT5VE5Emii7AIK23Leg3FoYe09IF9vs4jmmvlHNFXSdhScLPTcqTTq7YwGg==",
         "dependencies": {
           "Microsoft.CodeAnalysis.Common": "4.11.0"
         }
