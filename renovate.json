@@ -14,7 +14,9 @@
   "timezone": "Asia/Tokyo",
   "minimumReleaseAge": "3 days",
   "osvVulnerabilityAlerts": true,
-  "dependencyDashboardOSVVulnerabilitySummary": "all",
+  "dependencyDashboard": {
+    "osvVulnerabilitySummary": "all"
+  },
   "pinDigests": true,
   "ignorePaths": [
     ".github/workflows/*.lock.yml"
